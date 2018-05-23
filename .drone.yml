@@ -18,5 +18,5 @@ pipeline:
     script:
       - docker pull rsschool/ui
       - docker-compose stop ui
-      - docker-compose rm ui
+      - docker-compose rm -f ui
       - docker-compose up -d ui
