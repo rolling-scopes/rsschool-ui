@@ -1,1 +1,1 @@
-# rsschool-ui
+# rsschool UI
