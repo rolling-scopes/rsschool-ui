@@ -4,7 +4,7 @@ import * as ReactDOM from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'react-router-redux';
-import App from './components/App';
+import App from './containers/App';
 import IHotModule from './core/models/hot-module.model';
 import configureStore from './core/store';
 
@@ -32,5 +32,5 @@ render(App);
 declare const module: IHotModule;
 
 if (module.hot) {
-    module.hot.accept('./components/App', () => render(App));
+    module.hot.accept('./containers/App', () => render(App));
 }

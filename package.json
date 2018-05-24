@@ -40,7 +40,7 @@
         "html-webpack-plugin": "2.30.1",
         "node-sass": "4.9.0",
         "prettier": "1.12.1",
-        "sass-loader": "6.0.6",
+        "sass-loader": "7.0.1",
         "style-loader": "0.21.0",
         "tslint": "5.10.0",
         "tslint-react": "3.6.0",
@@ -61,6 +61,7 @@
         "redux": "3.7.2",
         "redux-thunk": "2.2.0",
         "redux-devtools-extension": "2.13.2",
-        "redux-saga": "0.16.0"
+        "redux-saga": "0.16.0",
+        "bootstrap": "4.1.1"
     }
 }

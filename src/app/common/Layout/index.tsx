@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 import { fetchSession } from '../../core/actions';
 import Header from '../Header';
 
+import './index.scss';
+
 interface Props {
     children: React.ReactNode;
     isLoggedIn?: boolean;
@@ -41,14 +43,16 @@ class Layout extends React.Component<Props, any> {
             return (
                 <div>
                     <Header />
-                    <div>{this.props.children}</div>
+                    <main className="container">{this.props.children}</main>
                 </div>
             );
         }
         return (
-            <div>
-                <a href="/api/auth/github">Login</a>
-            </div>
+            <main className="container h-100 d-flex align-items-center justify-content-center">
+                <a className="link-github" href="/api/auth/github">
+                    Login
+                </a>
+            </main>
         );
     }
 }
