@@ -10,7 +10,7 @@ const Header = (): JSX.Element => {
                         <NavLink to="/">Home</NavLink>
                     </li>
                     <li>
-                        <NavLink to="/about">About</NavLink>
+                        <NavLink to="/course/bsu-summer-2018/events">Events</NavLink>
                     </li>
                 </ul>
             </nav>

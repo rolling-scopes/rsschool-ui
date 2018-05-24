@@ -31,7 +31,8 @@
         "named-imports-order": "lowercase-last"
       }
     ],
-    "quotemark": false
+    "quotemark": false,
+    "jsx-no-multiline-js": false
   },
   "rulesDirectory": []
 }

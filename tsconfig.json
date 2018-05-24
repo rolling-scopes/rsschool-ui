@@ -8,8 +8,10 @@
     "moduleResolution": "node",
     "module": "esnext",
     "target": "es5",
+    "strict": true,
+    "noImplicitAny": true,
     "lib": [
-      "DOM",
+      "dom",
       "es6",
       "es2017"
     ],
