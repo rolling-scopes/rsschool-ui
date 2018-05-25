@@ -1,5 +1,5 @@
 const classnames = require('classnames/bind');
 
-export const styleNames = (style: any) => {
+export const classNames = (style: any) => {
     return classnames.bind(style);
 };

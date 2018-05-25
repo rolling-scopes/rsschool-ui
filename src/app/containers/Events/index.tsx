@@ -1,8 +1,7 @@
+import { fetchEvents } from 'core/actions';
+import { IEvent } from 'core/models/events';
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { fetchEvents } from '../../core/actions';
-import { IEvent } from '../../core/models/events';
-
 import './index.scss';
 
 const mapStateToProps = (state: any, props: any): EventsProps => {

@@ -1,3 +1,4 @@
+const path = require('path');
 const webpack = require('webpack');
 const webpackMerge = require('webpack-merge');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -6,6 +7,8 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const common = require('./webpack.common');
 
 const extractStyles = new ExtractTextPlugin({ filename: '[name].[chunkhash].css' });
+
+const root = path.resolve('./');
 
 module.exports = webpackMerge(common.config, {
     mode: 'production',
@@ -41,7 +44,9 @@ module.exports = webpackMerge(common.config, {
         ],
     },
     plugins: [
-        new CleanWebpackPlugin(['dist']),
+        new CleanWebpackPlugin([path.resolve('./dist')], {
+            root,
+        }),
         new webpack.DefinePlugin({
             'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
         }),

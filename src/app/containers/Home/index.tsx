@@ -1,14 +1,12 @@
-import * as classnames from 'classnames';
+import { classNames } from 'core/styles';
 import * as React from 'react';
-import { styleNames } from '../../core/styles';
 
-const style = require('./index.scss');
-const sn = styleNames(style);
+const cn = classNames(require('./index.scss'));
 
 const Home = (): JSX.Element => {
     return (
-        <div className={sn('home-container')}>
-            <header className="home-header">
+        <div className={cn('home-container')}>
+            <header className={cn('home-header')}>
                 <h1>Welcome to RS School</h1>
             </header>
         </div>

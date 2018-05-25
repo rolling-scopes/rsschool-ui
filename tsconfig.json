@@ -2,7 +2,7 @@
   "compileOnSave": true,
   "compilerOptions": {
     "outDir": "./dist/out-tsc",
-    "baseUrl": "./",
+    "baseUrl": "./src/app",
     "sourceMap": true,
     "declaration": false,
     "moduleResolution": "node",
@@ -18,11 +18,6 @@
     "jsx": "react",
     "typeRoots": [
       "node_modules/@types"
-    ],
-    "paths": {
-      "react": [
-        "node_modules/@types/react"
-      ]
-    }
+    ]
   }
 }

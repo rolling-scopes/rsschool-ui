@@ -22,7 +22,7 @@
     "arrow-parens": false,
     "interface-over-type-literal": false,
     "no-console": [true, "log"],
-    "no-implicit-dependencies": [true, "dev"],
+    "no-implicit-dependencies": false,
     "no-unused-expression": false,
     "ordered-imports": [
       true, 

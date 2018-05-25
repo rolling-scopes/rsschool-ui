@@ -34,6 +34,9 @@ const config = {
     },
     resolve: {
         extensions: ['.js', '.ts', '.tsx'],
+        alias: {
+            core: path.resolve('./src/app/core'),
+        },
     },
     plugins: [new CopyWebpackPlugin([{ from: 'assets', to: 'assets' }])],
 };

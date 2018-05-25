@@ -3,6 +3,8 @@ pipeline:
     image: node:8.11
     commands:
       - npm install
+      - npm run lint
+      - npm run test
       - npm run build
   docker:
     image: plugins/docker
