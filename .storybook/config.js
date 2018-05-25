@@ -5,7 +5,7 @@ import { GlobalStorybookDecorator } from './global-decorator';
 
 setAddon(infoAddon);
 setOptions({
-    name: `RS School Storybook`,
+    name: `RS School`,
     goFullScreen: false,
     showStoriesPanel: true,
     showAddonPanel: true,

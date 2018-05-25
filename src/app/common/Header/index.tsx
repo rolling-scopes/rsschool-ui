@@ -17,7 +17,7 @@ const Header = (): JSX.Element => {
                         </NavLink>
                     </li>
                     <li className="nav-item">
-                        <NavLink className="nav-link" to="/me/profile">
+                        <NavLink className="nav-link" to="/profile">
                             Profile
                         </NavLink>
                     </li>
