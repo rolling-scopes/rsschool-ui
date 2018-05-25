@@ -2,7 +2,7 @@ pipeline:
   build:
     image: node:10
     commands:
-      - npm install
+      - npm install --prefer-offline
       - npm run lint
       - npm run test
       - npm run build
