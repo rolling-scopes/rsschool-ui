@@ -13,11 +13,9 @@ setOptions({
     sortStoriesByKind: false,
 });
 
-const components = require.context('../src/app/components', true, /\.stories\.tsx?$/);
 const containers = require.context('../src/app/containers', true, /\.stories\.tsx?$/);
 
 function loadStories() {
-    components.keys().forEach(components);
     containers.keys().forEach(containers);
 }
 
