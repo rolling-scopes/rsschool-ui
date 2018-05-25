@@ -8,7 +8,7 @@ pipeline:
       - npm run build
       - npm run storybook:build
     volumes:
-      - cache-npm:/root/.npm
+      - /tmp/cache-npm:/root/.npm
   docker:
     image: plugins/docker
     secrets: [ docker_username, docker_password ]
