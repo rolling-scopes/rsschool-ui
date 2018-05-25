@@ -1,6 +1,7 @@
 import { configure, setAddon, addDecorator } from '@storybook/react';
 import infoAddon from '@storybook/addon-info';
 import { setOptions } from '@storybook/addon-options';
+import { GlobalStorybookDecorator } from './global-decorator';
 
 setAddon(infoAddon);
 setOptions({
@@ -12,6 +13,8 @@ setOptions({
     addonPanelInRight: true,
     sortStoriesByKind: false,
 });
+
+addDecorator(GlobalStorybookDecorator);
 
 const containers = require.context('../src/app/containers', true, /\.stories\.tsx?$/);
 
