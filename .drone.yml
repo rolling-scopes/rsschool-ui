@@ -6,6 +6,7 @@ pipeline:
       - npm run lint
       - npm run test
       - npm run build
+      - npm run storybook:build
   docker:
     image: plugins/docker
     secrets: [ docker_username, docker_password ]
