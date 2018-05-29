@@ -1,19 +1,22 @@
 import { SESSION_FETCH, SESSION_FETCH_FAIL, SESSION_FETCH_OK } from '../constants';
+import { Action } from '../util';
 
-const initialState = {
+export type SessionState = {
+    isLoggedIn: boolean;
+};
+
+const initialState: SessionState = {
     isLoggedIn: false,
 };
 
-export function sessionReducer(state = initialState, action: any) {
+export function sessionReducer(state = initialState, action: Action<any>): SessionState {
     if (action.type === SESSION_FETCH_OK) {
         return {
-            ...state,
             isLoggedIn: true,
         };
     }
     if (action.type === SESSION_FETCH_FAIL) {
         return {
-            ...state,
             isLoggedIn: false,
         };
     }

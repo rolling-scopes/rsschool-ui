@@ -40,11 +40,11 @@ class Events extends React.Component<EventsProps, any> {
             <div className="Events">
                 <h1 className="Events-title">Events</h1>
                 {this.props.isLoading ? (
-                    <h2>Loading...</h2>
+                    <h3>Loading...</h3>
                 ) : (
                     events.map((event, key) => (
                         <div key={key}>
-                            {event.stage}: {event.name}
+                            {event.stage}: {event.name}, {event.speakers.map(speaker => speaker.name)}
                         </div>
                     ))
                 )}

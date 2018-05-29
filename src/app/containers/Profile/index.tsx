@@ -1,31 +1,49 @@
+import { fetchProfile, updateProfile } from 'core/actions';
 import * as React from 'react';
-import { FormGroup, Input, Label } from 'reactstrap';
+import { connect } from 'react-redux';
+import ProfileForm from '../../components/profile-form';
+import { IProfile } from '../../core/models';
+import { RootState } from '../../core/reducers';
 import './index.scss';
 
-class Profile extends React.Component<any, any> {
+type ProfileProps = {
+    load: any;
+    submit: any;
+    data: any;
+};
+
+const mapStateToProps = (state: RootState, props: ProfileProps): ProfileProps => {
+    return {
+        ...props,
+        data: state.profile.data,
+    };
+};
+
+const mapDispatchToProps = (dispatch: any, props: ProfileProps): ProfileProps => {
+    return {
+        ...props,
+
+        submit: (data: IProfile) => {
+            dispatch(updateProfile(data));
+        },
+        load: () => {
+            dispatch(fetchProfile());
+        },
+    };
+};
+
+class Profile extends React.Component<ProfileProps> {
+    componentDidMount() {
+        this.props.load();
+    }
+
+    handleSubmit(values: any) {
+        this.props.submit(values);
+    }
+
     render() {
-        return (
-            <form>
-                <div className="row">
-                    <FormGroup className="col-md-6">
-                        <Label>First Name</Label>
-                        <Input placeholder="First Name" className="form-control" />
-                    </FormGroup>
-                    <FormGroup className="col-md-6">
-                        <Label>Last Name</Label>
-                        <Input placeholder="Last Name" className="form-control" />
-                    </FormGroup>
-                </div>
-                <hr className="mb-5 mt-5" />
-                <div className="row">
-                    <FormGroup className="col-md-12">
-                        <Label>Email</Label>
-                        <Input placeholder="Email" className="form-control" />
-                    </FormGroup>
-                </div>
-            </form>
-        );
+        return <ProfileForm initialValues={this.props.data} onSubmit={data => this.handleSubmit(data)} />;
     }
 }
 
-export default Profile;
+export default connect(mapStateToProps, mapDispatchToProps)(Profile);

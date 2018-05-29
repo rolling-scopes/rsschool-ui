@@ -16,7 +16,6 @@ const initialState: EventsState = {
 export function eventsReducer(state = initialState, action: Action<any>): EventsState {
     if (action.type === EVENTS_FETCH_OK) {
         return {
-            ...state,
             error: undefined,
             data: action.payload,
             isLoading: false,
@@ -30,7 +29,7 @@ export function eventsReducer(state = initialState, action: Action<any>): Events
     }
     if (action.type === EVENTS_FETCH_FAIL) {
         return {
-            ...state,
+            data: [],
             isLoading: false,
             error: action.payload,
         };

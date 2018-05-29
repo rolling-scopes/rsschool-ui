@@ -7,6 +7,11 @@ const Header = (): JSX.Element => {
             <div className="container">
                 <ul className="nav nav-pills justify-content-end">
                     <li className="nav-item">
+                        <NavLink className="nav-link" to="/home">
+                            Home
+                        </NavLink>
+                    </li>
+                    <li className="nav-item">
                         <NavLink className="nav-link" to="/course/bsu-summer-2018/events">
                             Schedule
                         </NavLink>
@@ -24,6 +29,11 @@ const Header = (): JSX.Element => {
                     <li className="nav-item">
                         <NavLink className="nav-link" to="/me/mentor">
                             My Mentor
+                        </NavLink>
+                    </li>
+                    <li className="nav-item">
+                        <NavLink className="nav-link" to="/admin">
+                            Admin
                         </NavLink>
                     </li>
                 </ul>
