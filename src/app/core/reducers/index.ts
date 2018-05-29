@@ -1,23 +1,28 @@
 import { RouterState, routerReducer } from 'react-router-redux';
 import { combineReducers } from 'redux';
-import { reducer as formReducer } from 'redux-form';
+import { FormState, reducer as formReducer } from 'redux-form';
+import { Action } from '../util';
+import { CoursesState, coursesReducer } from './courses';
 import { EventsState, eventsReducer } from './events';
-import { ProfileState, profileReducer } from './profile';
 import { SessionState, sessionReducer } from './session';
+import { UserState, userReducer } from './user';
 
 export interface RootState {
-    router: RouterState;
-    profile: ProfileState;
+    courses: CoursesState;
     events: EventsState;
+    form: FormState;
+    user: UserState;
+    router: RouterState;
     session: SessionState;
 }
 
-const rootReducer = combineReducers<RootState>({
+const rootReducer = combineReducers<RootState, Action<any>>({
+    courses: coursesReducer,
     events: eventsReducer,
-    form: formReducer,
-    router: routerReducer,
+    form: formReducer as any,
+    user: userReducer,
+    router: routerReducer as any,
     session: sessionReducer,
-    profile: profileReducer,
 });
 
 export default rootReducer;

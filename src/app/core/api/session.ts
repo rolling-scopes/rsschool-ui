@@ -1,9 +1,10 @@
 import axios from 'axios';
+import { IUserSession } from 'core/models';
 
 type SessionResponse = {
-    id: string;
+    data: IUserSession;
 };
 
-export function getSession() {
-    return axios.get<SessionResponse>(`/api/session`);
+export function getSession(): Promise<IUserSession> {
+    return axios.get<SessionResponse>(`/api/session`).then(response => response.data.data);
 }

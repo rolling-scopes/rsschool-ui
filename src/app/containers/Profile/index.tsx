@@ -1,21 +1,21 @@
+import ProfileForm from 'components/ProfileForm';
 import { fetchProfile, updateProfile } from 'core/actions';
+import { IProfile } from 'core/models';
+import { RootState } from 'core/reducers';
 import * as React from 'react';
 import { connect } from 'react-redux';
-import ProfileForm from '../../components/profile-form';
-import { IProfile } from '../../core/models';
-import { RootState } from '../../core/reducers';
 import './index.scss';
 
 type ProfileProps = {
-    load: any;
-    submit: any;
-    data: any;
+    load: () => void;
+    submit: (formData: any) => void;
+    formData: any;
 };
 
 const mapStateToProps = (state: RootState, props: ProfileProps): ProfileProps => {
     return {
         ...props,
-        data: state.profile.data,
+        formData: state.user.profile,
     };
 };
 
@@ -37,13 +37,16 @@ class Profile extends React.Component<ProfileProps> {
         this.props.load();
     }
 
-    handleSubmit(values: any) {
-        this.props.submit(values);
-    }
+    handleSubmit = (formData: any) => {
+        this.props.submit(formData);
+    };
 
     render() {
-        return <ProfileForm initialValues={this.props.data} onSubmit={data => this.handleSubmit(data)} />;
+        return <ProfileForm initialValues={this.props.formData} onSubmit={this.handleSubmit} />;
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Profile);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(Profile);

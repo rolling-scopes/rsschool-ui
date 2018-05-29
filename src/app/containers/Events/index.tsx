@@ -37,8 +37,8 @@ class Events extends React.Component<EventsProps, any> {
     render() {
         const events = this.props != null ? this.props.events : [];
         return (
-            <div className="Events">
-                <h1 className="Events-title">Events</h1>
+            <div className="events">
+                <h1 className="events-title">Events</h1>
                 {this.props.isLoading ? (
                     <h3>Loading...</h3>
                 ) : (
@@ -53,4 +53,7 @@ class Events extends React.Component<EventsProps, any> {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Events);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(Events);

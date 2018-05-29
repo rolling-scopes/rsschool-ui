@@ -1,7 +1,6 @@
 import { History } from 'history';
 import { routerMiddleware as createRouterMiddleware } from 'react-router-redux';
 import { applyMiddleware, createStore } from 'redux';
-import { composeWithDevTools } from 'redux-devtools-extension';
 import createSagaMiddleware from 'redux-saga';
 import IHotModule from './models/hot-module.model';
 import rootReducer from './reducers';
@@ -13,7 +12,7 @@ const configureStore = (history: History) => {
     const routerMiddleware = createRouterMiddleware(history);
     const sagaMiddleware = createSagaMiddleware();
 
-    const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(routerMiddleware, sagaMiddleware)));
+    const store = createStore(rootReducer, applyMiddleware(routerMiddleware, sagaMiddleware));
 
     sagaMiddleware.run(rootSaga);
 

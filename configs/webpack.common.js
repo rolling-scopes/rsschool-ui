@@ -35,6 +35,7 @@ const config = {
     resolve: {
         extensions: ['.js', '.ts', '.tsx'],
         alias: {
+            components: path.resolve('./src/app/components'),
             core: path.resolve('./src/app/core'),
         },
     },

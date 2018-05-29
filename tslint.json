@@ -6,33 +6,26 @@
   ],
   "jsRules": {},
   "rules": {
-    "jsx-wrap-multiline": false,
-    "object-literal-sort-keys": false,
-    "no-submodule-imports": false,
-    "interface-name": false,
-    "member-access": false,
-    "no-empty": false,
-    "no-var-requires": false,
-    "trailing-comma": false,
-    "jsx-no-lambda": false,
-    "prefer-const": false,
-    "object-literal-shorthand": false,
-    "no-shadowed-variable": false,
-    "ignore-bound-class-methods": false,
+    "array-type": false,
     "arrow-parens": false,
+    "interface-name": false,
     "interface-over-type-literal": false,
+    "jsx-no-lambda": false,
+    "jsx-no-multiline-js": false,
+    "jsx-wrap-multiline": false,
+    "member-access": false,
     "no-console": [true, "log"],
+    "no-empty": false,
     "no-implicit-dependencies": false,
-    "no-unused-expression": false,
-    "ordered-imports": [
-      true, 
-      {
-        "import-sources-order": "lowercase-last",
-        "named-imports-order": "lowercase-last"
-      }
-    ],
+    "no-shadowed-variable": false,
+    "no-submodule-imports": false,
+    "no-unused-variable": true,
+    "no-var-requires": false,
+    "object-literal-shorthand": false,
+    "object-literal-sort-keys": false,
+    "ordered-imports": false,
     "quotemark": false,
-    "jsx-no-multiline-js": false
+    "semicolon": false
   },
   "rulesDirectory": []
 }

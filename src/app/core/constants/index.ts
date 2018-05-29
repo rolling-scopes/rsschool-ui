@@ -1,3 +1,4 @@
 export * from './events';
+export * from './courses';
 export * from './session';
-export * from './profile';
+export * from './user';

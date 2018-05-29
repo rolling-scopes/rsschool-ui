@@ -10,6 +10,9 @@
     "target": "es5",
     "strict": true,
     "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "forceConsistentCasingInFileNames": true,
     "lib": [
       "dom",
       "es6",

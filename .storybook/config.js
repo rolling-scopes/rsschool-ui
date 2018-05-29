@@ -17,9 +17,11 @@ setOptions({
 addDecorator(GlobalStorybookDecorator);
 
 const containers = require.context('../src/app/containers', true, /\.stories\.tsx?$/);
+const components = require.context('../src/app/components', true, /\.stories\.tsx?$/);
 
 function loadStories() {
     containers.keys().forEach(containers);
+    components.keys().forEach(components);
 }
 
 configure(loadStories, module);

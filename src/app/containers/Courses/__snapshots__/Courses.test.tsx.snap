@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Courses renders correctly 1`] = `
+<Courses
+  courses={Array []}
+  enrollUser={[Function]}
+  feed={Array []}
+  fetchCourses={[Function]}
+  fetchUserParticipations={[Function]}
+  participations={Array []}
+/>
+`;

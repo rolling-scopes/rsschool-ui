@@ -1,4 +1,3 @@
-import { getEventsByCourseId } from '../api';
 import { EVENTS_FETCH, SESSION_FETCH } from '../constants';
 
 export function fetchEvents(courseId: string) {

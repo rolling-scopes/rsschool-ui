@@ -7,7 +7,7 @@ import * as ReactDOM from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'react-router-redux';
-import App from './containers/app';
+import App from './containers/App';
 import IHotModule from './core/models/hot-module.model';
 import configureStore from './core/store';
 
