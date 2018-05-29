@@ -1,7 +1,8 @@
 import { classNames } from 'core/styles';
 import * as React from 'react';
 
-const cn = classNames(require('./index.scss'));
+const styles = require('./index.scss');
+const cn = classNames(styles);
 
 const Home = (): JSX.Element => {
     return (
