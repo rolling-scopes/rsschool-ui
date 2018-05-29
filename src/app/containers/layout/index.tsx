@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import Login from '../../components/login';
 import { fetchSession } from '../../core/actions';
-import Header from '../Header';
-
+import Header from '../header';
 import './index.scss';
 
 interface Props {
@@ -47,13 +47,7 @@ class Layout extends React.Component<Props, any> {
                 </div>
             );
         }
-        return (
-            <main className="container h-100 d-flex align-items-center justify-content-center">
-                <a className="link-github" href="/api/auth/github">
-                    Login
-                </a>
-            </main>
-        );
+        return <Login />;
     }
 }
 

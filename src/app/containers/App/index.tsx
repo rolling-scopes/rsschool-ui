@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
-import Layout from '../../common/Layout';
-import Admin from '../Admin';
-import Events from '../Events';
-import Home from '../Home';
-import Profile from '../Profile';
+import Admin from '../admin';
+import Events from '../events';
+import Home from '../home';
+import Layout from '../layout';
+import Profile from '../profile';
 
 const App = (): JSX.Element => {
     return (

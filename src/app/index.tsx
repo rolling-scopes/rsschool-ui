@@ -1,15 +1,15 @@
+import './index.scss';
+import './polyfills';
+
 import createHistory from 'history/createBrowserHistory';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'react-router-redux';
-import App from './containers/App';
+import App from './containers/app';
 import IHotModule from './core/models/hot-module.model';
 import configureStore from './core/store';
-
-import './index.scss';
-import './polyfills';
 
 const history = createHistory();
 const store = configureStore(history);

@@ -34,7 +34,7 @@ const ProfileForm = reduxForm({
             <hr className="mb-5 mt-5" />
             <div className="row text-center">
                 <div className="form-group col-md-12">
-                    <Button color="success" type="submit" disabled={pristine}>
+                    <Button color="success" type="submit" disabled={pristine || submitting}>
                         Save Information
                     </Button>
                 </div>
