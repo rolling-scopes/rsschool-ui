@@ -10,7 +10,7 @@ describe('Home', () => {
         __stateGetter.mockImplementation(() => ({}));
     });
 
-    it('renders correctly', () => {
+    it('renders correctly if no data', () => {
         const output = shallow(<Home courses={[]} participations={[]} fetchFeed={noop} feed={[]} />);
         expect(output).toMatchSnapshot();
     });
