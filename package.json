@@ -14,8 +14,10 @@
         "edge >= 14"
     ],
     "scripts": {
-        "start": "cross-env NODE_ENV=development npm-run-all webpack-dev-server --hot",
-        "build": "cross-env NODE_ENV=production webpack --display-chunks --progress",
+        "dev": "webpack-dev-server --hot",
+        "webpack": "webpack --display-chunks --progress",
+        "start": "cross-env NODE_ENV=development npm-run-all dev",
+        "build": "cross-env NODE_ENV=production npm-run-all webpack",
         "test": "jest",
         "test:update": "jest --updateSnapshot",
         "test:watch": "jest --watch",
@@ -31,20 +33,6 @@
             "npm run pretty",
             "git add"
         ]
-    },
-    "betterScripts": {
-        "dev": {
-            "command": "webpack-dev-server --hot",
-            "env": {
-                "NODE_ENV": "development"
-            }
-        },
-        "build": {
-            "command": "webpack --display-chunks --progress",
-            "env": {
-                "NODE_ENV": "production"
-            }
-        }
     },
     "devDependencies": {
         "@storybook/addon-actions": "4.0.0-alpha.8",
