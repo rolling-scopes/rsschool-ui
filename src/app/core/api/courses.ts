@@ -5,7 +5,7 @@ type CoursesResponse = {
     data: ICourse[];
 };
 
-export function getCourses() {
+export function getCourses(): Promise<ICourse[]> {
     return axios.get<CoursesResponse>(`/api/courses`).then(response => response.data.data);
 }
 

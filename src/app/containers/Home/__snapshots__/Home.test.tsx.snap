@@ -2,9 +2,7 @@
 
 exports[`Home renders correctly if no data 1`] = `
 <Home
-  courses={Array []}
   feed={Array []}
   fetchFeed={[Function]}
-  participations={Array []}
 />
 `;
