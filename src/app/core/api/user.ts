@@ -1,12 +1,12 @@
 import axios from 'axios';
-import { ICourse, IProfile } from '../models';
+import { ICourse, IProfile, IUserParticipation } from '../models';
 
 type ProfileResponse = {
     data: IProfile;
 };
 
-type UserParticipationsResponse = {
-    data: ICourse[];
+type UserCoursesResponse = {
+    data: IUserParticipation[];
 };
 
 type FeedResponse = {
@@ -21,8 +21,8 @@ export function getProfile(): Promise<IProfile> {
     return axios.get<ProfileResponse>(`/api/user/profile`).then(response => response.data.data);
 }
 
-export function getUserParticipations(): Promise<ICourse[]> {
-    return axios.get<UserParticipationsResponse>(`/api/user/participations`).then(response => response.data.data);
+export function getUserParticipations(): Promise<IUserParticipation[]> {
+    return axios.get<UserCoursesResponse>(`/api/user/participations`).then(response => response.data.data);
 }
 
 export function getFeed(): Promise<ICourse[]> {

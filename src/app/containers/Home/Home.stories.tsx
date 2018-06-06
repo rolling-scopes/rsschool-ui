@@ -8,5 +8,5 @@ const noop = () => {};
 storiesOf('Home', module)
     .addDecorator(storyFn => <ReduxProviderDecorator>{storyFn()}</ReduxProviderDecorator>)
     .add('No Data', () => {
-        return <Home courses={[]} feed={[]} participations={[]} fetchFeed={noop} />;
+        return <Home feed={[]} fetchFeed={noop} />;
     });

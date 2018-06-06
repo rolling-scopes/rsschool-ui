@@ -9,6 +9,10 @@ export function getCourses() {
     return axios.get<CoursesResponse>(`/api/courses`).then(response => response.data.data);
 }
 
-export function enrollUserInCourse(id: string) {
-    return axios.post<CoursesResponse>(`/api/course/${id}/enroll`);
+export function enrollUserInCourse(courseId: string) {
+    return axios.post<CoursesResponse>(`/api/course/${courseId}/enroll`);
+}
+
+export function assignMentorsToStudents(courseId: string) {
+    return axios.post<CoursesResponse>(`/api/course/${courseId}/mentors/assign`);
 }

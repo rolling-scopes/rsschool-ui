@@ -1,6 +1,6 @@
 import Feed from 'components/Feed';
 import { fetchFeed } from 'core/actions';
-import { ICourse, IFeedRecord, IUserParticipation } from 'core/models';
+import { IFeedRecord } from 'core/models';
 import { RootState } from 'core/reducers';
 import { classNames } from 'core/styles';
 import * as React from 'react';
@@ -15,8 +15,6 @@ const mapStateToProps = (state: RootState, props: Props): Props => {
     }
     return {
         ...props,
-        courses: state.courses.data || [],
-        participations: state.user.participations || [],
         feed: state.user.feed || [],
     };
 };
@@ -32,10 +30,8 @@ const mapDispatchToProps = (dispatch: any, props: Props): Props => {
 };
 
 type Props = {
-    courses: ICourse[];
     feed: IFeedRecord[];
     fetchFeed: () => void;
-    participations: IUserParticipation[];
 };
 
 class Home extends React.Component<Props, any> {

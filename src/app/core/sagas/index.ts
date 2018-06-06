@@ -1,6 +1,6 @@
-import { takeLatest } from 'redux-saga/effects';
-import { COURSES_ENROLL, COURSES_FETCH, EVENTS_FETCH, SESSION_FETCH, USER } from '../constants';
-import { enrollUserInCourse, fetchCourses } from './courses';
+import { takeLatest, all } from 'redux-saga/effects';
+import { COURSE, COURSES_ENROLL, COURSES_FETCH, EVENTS_FETCH, SESSION_FETCH, USER } from '../constants';
+import { enrollUserInCourse, fetchCourses, assignMentors } from './courses';
 import { fetchEvents } from './events';
 import { fetchSession } from './session';
 import { fetchFeed, fetchProfile, fetchUserParticipations, updateProfile } from './user';
@@ -12,10 +12,15 @@ function* watchUser() {
     yield takeLatest(USER.FEED_FETCH, fetchFeed);
 }
 
+function* watchCourse() {
+    yield takeLatest(COURSES_FETCH, fetchCourses);
+    yield takeLatest(COURSES_ENROLL, enrollUserInCourse);
+    yield takeLatest(COURSE.ASSIGN_MENTORS, assignMentors);
+}
+
 export default function* watch() {
     yield takeLatest(EVENTS_FETCH, fetchEvents);
     yield takeLatest(SESSION_FETCH, fetchSession);
-    yield takeLatest(COURSES_FETCH, fetchCourses);
-    yield takeLatest(COURSES_ENROLL, enrollUserInCourse);
-    yield watchUser();
+
+    yield all([watchUser(), watchCourse()]);
 }

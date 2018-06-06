@@ -31,13 +31,6 @@ export interface IUserSession {
     isAdmin: boolean;
 }
 
-export interface IUserParticipation {
-    _id: string;
-    isActive: boolean;
-    courseId: string;
-    role: 'mentor' | 'student';
-}
-
 export interface IUser extends IUserSession {
     profile: Partial<IProfile>;
     participations: IUserParticipation[];

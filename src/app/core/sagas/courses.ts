@@ -1,6 +1,6 @@
 import { call, put } from 'redux-saga/effects';
-import { enrollUserInCourse as enrollUser, getCourses } from '../api';
-import { COURSES_ENROLL_FAIL, COURSES_ENROLL_OK, COURSES_FETCH_FAIL, COURSES_FETCH_OK } from '../constants';
+import { enrollUserInCourse as enrollUser, getCourses, assignMentorsToStudents } from '../api';
+import { COURSE, COURSES_ENROLL_FAIL, COURSES_ENROLL_OK, COURSES_FETCH_FAIL, COURSES_FETCH_OK } from '../constants';
 import { fetchUserParticipations } from './user';
 
 export function* fetchCourses() {
@@ -19,5 +19,14 @@ export function* enrollUserInCourse(action: any) {
         yield fetchUserParticipations();
     } catch (error) {
         yield put({ type: COURSES_ENROLL_FAIL });
+    }
+}
+
+export function* assignMentors(action: any) {
+    try {
+        const _ = yield call(assignMentorsToStudents, action.payload);
+        yield put({ type: COURSE.ASSIGN_MENTORS_OK, data: _ });
+    } catch (error) {
+        yield put({ type: COURSE.ASSIGN_MENTORS_FAIL });
     }
 }

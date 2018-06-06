@@ -26,7 +26,7 @@ export function* fetchProfile() {
 
 export function* fetchUserParticipations() {
     try {
-        const data: Profile = yield call(api.getUserParticipations);
+        const data = yield call(api.getUserParticipations);
         yield put({ type: USER.PARTICIPATIONS_FETCH_OK, payload: data });
     } catch (error) {
         yield put({ type: USER.PARTICIPATIONS_FETCH_FAIL, payload: error });

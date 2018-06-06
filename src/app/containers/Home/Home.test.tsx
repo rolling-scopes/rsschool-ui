@@ -11,7 +11,7 @@ describe('Home', () => {
     });
 
     it('renders correctly if no data', () => {
-        const output = shallow(<Home courses={[]} participations={[]} fetchFeed={noop} feed={[]} />);
+        const output = shallow(<Home fetchFeed={noop} feed={[]} />);
         expect(output).toMatchSnapshot();
     });
 });

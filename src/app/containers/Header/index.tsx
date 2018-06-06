@@ -13,6 +13,7 @@ const mapStateToProps = (state: RootState, props: any): Props => {
         ...props,
         route: state.router.location,
         participations: state.user.participations,
+        isAdmin: state.session.isAdmin,
         hasCourse: Array.isArray(state.user.participations) && state.user.participations.length > 0,
     };
 };
@@ -27,9 +28,11 @@ const mapDispatchToProps = (dispatch: any, props: any): Props => {
 };
 
 type Props = {
-    hasCourse: boolean;
-    participations: IUserParticipation[];
     fetchUserCourses: () => void;
+    hasCourse: boolean;
+    isAdmin: boolean;
+    route: any;
+    participations: IUserParticipation[];
 };
 
 class Header extends React.Component<Props, any> {
@@ -89,6 +92,13 @@ class Header extends React.Component<Props, any> {
                                 </NavLink>
                             </li>
                         )}
+                        {this.props.isAdmin ? (
+                            <li className="nav-item">
+                                <NavLink className="nav-link" to="/admin">
+                                    Admin
+                                </NavLink>
+                            </li>
+                        ) : null}
                     </ul>
                 </div>
             </nav>
