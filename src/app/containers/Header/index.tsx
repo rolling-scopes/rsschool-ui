@@ -11,6 +11,7 @@ const cn = classNames(require('./index.scss'));
 const mapStateToProps = (state: RootState, props: any): Props => {
     return {
         ...props,
+        username: state.session.username,
         route: state.router.location,
         participations: state.user.participations,
         isAdmin: state.session.isAdmin,
@@ -32,6 +33,7 @@ type Props = {
     hasCourse: boolean;
     isAdmin: boolean;
     route: any;
+    username: string;
     participations: IUserParticipation[];
 };
 
@@ -53,6 +55,7 @@ class Header extends React.Component<Props, any> {
                             alt="Rolling Scopes School Logo"
                         />
                     </a>
+                    <p className={cn('logged-user')}>Hello, {this.props.username}</p>
                     <ul className="nav nav-pills justify-content-end">
                         <li className="nav-item">
                             <NavLink className="nav-link" to="/home">
