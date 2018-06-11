@@ -11,7 +11,7 @@ type Props = {
     enroll: (id: string) => void;
 };
 
-class CoursesEnrollment extends React.Component<Props> {
+class CoursesEnrollment extends React.PureComponent<Props> {
     enroll = (courseId: string) => {
         this.props.enroll(courseId);
     };
@@ -21,26 +21,36 @@ class CoursesEnrollment extends React.Component<Props> {
     };
 
     render() {
+        // TODO: use 'reselect'
+        const courses = this.props.courses.map(course => ({
+            ...course,
+            participation: this.props.participations.find(p => course._id === p.courseId),
+        }));
+
         return (
             <CardDeck className="card-deck">
-                <Card className={cn('bg-secondary', 'course-card')}>
-                    <CardHeader>Available Courses</CardHeader>
-                    <CardBody>
-                        {this.props.courses.map(course => (
-                            <div key={course._id}>
-                                <h3>{course.name}</h3>
-                                <p className="card-text">This course for BSU stdents only</p>
-                                {this.isParticipant(course) ? (
-                                    <p>You have enrolled already</p>
-                                ) : (
-                                    <Button onClick={() => this.enroll(course._id)} color="primary">
-                                        Enroll
-                                    </Button>
-                                )}
-                            </div>
-                        ))}
-                    </CardBody>
-                </Card>
+                {courses.map(course => (
+                    <Card className={cn('bg-secondary', 'course-card')}>
+                        <CardHeader>
+                            <h5>{course.name}</h5>
+                        </CardHeader>
+                        <CardBody>
+                            <p className="card-text">This course for BSU stdents only</p>
+                            {this.isParticipant(course) ? (
+                                <p>
+                                    You have enrolled as{' '}
+                                    <span className={cn('course-role')}>
+                                        {course.participation ? course.participation.role : 'UNKNOWN'}
+                                    </span>
+                                </p>
+                            ) : (
+                                <Button onClick={() => this.enroll(course._id)} color="primary">
+                                    Enroll
+                                </Button>
+                            )}
+                        </CardBody>
+                    </Card>
+                ))}
             </CardDeck>
         );
     }
