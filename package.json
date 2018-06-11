@@ -127,7 +127,7 @@
             "^.+\\.(css|scss)$": "identity-obj-proxy"
         },
         "testMatch": [
-            "**/*.test.(ts|tsx)"
+            "**/*.spec.(ts|tsx)"
         ],
         "setupFiles": [
             "./configs/jestsetup.js"
