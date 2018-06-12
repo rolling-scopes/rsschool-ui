@@ -35,7 +35,7 @@ class CoursesEnrollment extends React.PureComponent<Props> {
                             <h5>{course.name}</h5>
                         </CardHeader>
                         <CardBody>
-                            <p className="card-text">This course for BSU stdents only</p>
+                            <p className="card-text">{course.description}</p>
                             {this.isParticipant(course) ? (
                                 <p>
                                     You have enrolled as{' '}
