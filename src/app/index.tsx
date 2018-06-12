@@ -1,5 +1,4 @@
 import './index.scss';
-import './polyfills';
 
 import createHistory from 'history/createBrowserHistory';
 import * as React from 'react';

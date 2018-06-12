@@ -13,7 +13,23 @@ export const CITIES: City[] = [
         name: 'Brest',
     },
     {
+        id: 'gomel',
+        name: 'Gomel',
+    },
+    {
+        id: 'grodna',
+        name: 'Grodna',
+    },
+    {
+        id: 'mogilev',
+        name: 'Mogilev',
+    },
+    {
         id: 'vitebsk',
         name: 'Vitebsk',
+    },
+    {
+        id: 'other',
+        name: 'Other',
     },
 ];
