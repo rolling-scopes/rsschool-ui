@@ -5,8 +5,16 @@ import Courses from './index';
 
 const noop = () => {};
 
-storiesOf('Courses', module)
+storiesOf('Course', module)
     .addDecorator(storyFn => <ReduxProviderDecorator>{storyFn()}</ReduxProviderDecorator>)
     .add('No Data', () => {
-        return <Courses courses={[]} feed={[]} participations={[]} enrollUser={noop} fetchCourses={noop} />;
+        return (
+            <Courses
+                courseId={'1'}
+                courseMentors={[]}
+                courseStudents={[]}
+                fetchCourseMentors={noop}
+                fetchCourseStudents={noop}
+            />
+        );
     });

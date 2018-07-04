@@ -6,7 +6,6 @@ exports[`Courses renders correctly 1`] = `
   enrollUser={[Function]}
   feed={Array []}
   fetchCourses={[Function]}
-  fetchUserParticipations={[Function]}
   participations={Array []}
 />
 `;

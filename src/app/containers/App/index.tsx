@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import Admin from '../Admin';
 import Courses from '../Courses';
+import CourseInfo from '../CourseInfo';
 import Events from '../Events';
 import Home from '../Home';
 import Layout from '../Layout';
@@ -16,6 +17,8 @@ const App = (): JSX.Element => {
                 <Route exact={true} path="/courses" component={Courses} />
 
                 <Route exact={true} path="/course/:id/events" component={Events} />
+                <Route exact={true} path="/course/:id/info" component={CourseInfo} />
+
                 <Route exact={true} path="/profile" component={Profile} />
                 <Route exact={true} path="/admin" component={Admin} />
             </Layout>

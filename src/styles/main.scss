@@ -13,6 +13,7 @@
 @import '~bootstrap/scss/input-group';
 @import '~bootstrap/scss/nav';
 @import '~bootstrap/scss/navbar';
+@import '~bootstrap/scss/tables';
 @import '~bootstrap/scss/grid';
 @import '~bootstrap/scss/type';
 @import '~bootstrap/scss/utilities';
@@ -21,4 +22,13 @@
 
 html, body, #root {
     height: 100%;
+}
+
+
+// REACT TABLES
+.rt-th {
+    font-size: $font-size-base;
+    text-transform: uppercase;
+    background-color: $gray-900;
+    color: $white;
 }

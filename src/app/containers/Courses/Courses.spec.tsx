@@ -12,14 +12,7 @@ describe('Courses', () => {
 
     it('renders correctly', () => {
         const output = shallow(
-            <Courses
-                courses={[]}
-                participations={[]}
-                fetchUserParticipations={noop}
-                enrollUser={noop}
-                fetchCourses={noop}
-                feed={[]}
-            />,
+            <Courses courses={[]} participations={[]} enrollUser={noop} fetchCourses={noop} feed={[]} />,
         );
         expect(output).toMatchSnapshot();
     });

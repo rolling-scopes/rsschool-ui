@@ -39,6 +39,14 @@ const config = {
             core: path.resolve('./src/app/core'),
         },
     },
+    module: {
+        rules: [
+            {
+                test: /\.css$/,
+                use: [{ loader: 'style-loader' }, { loader: 'css-loader' }],
+            },
+        ],
+    },
     plugins: [new CopyWebpackPlugin([{ from: 'assets', to: 'assets' }])],
 };
 

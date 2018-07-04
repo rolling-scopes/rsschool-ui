@@ -1,5 +1,5 @@
 import ProfileForm from 'components/ProfileForm';
-import { fetchProfile, updateProfile } from 'core/actions';
+import { fetchUserProfile, updateUserProfile } from 'core/actions';
 import { IProfile } from 'core/models';
 import { RootState } from 'core/reducers';
 import * as React from 'react';
@@ -24,10 +24,10 @@ const mapDispatchToProps = (dispatch: any, props: ProfileProps): ProfileProps =>
         ...props,
 
         submit: (data: IProfile) => {
-            dispatch(updateProfile(data));
+            dispatch(updateUserProfile(data));
         },
         load: () => {
-            dispatch(fetchProfile());
+            dispatch(fetchUserProfile());
         },
     };
 };

@@ -11,10 +11,10 @@ const cn = classNames(require('./index.scss'));
 const mapStateToProps = (state: RootState, props: any): Props => {
     return {
         ...props,
-        username: state.session.username,
+        username: state.user.username,
         route: state.router.location,
         participations: state.user.participations,
-        isAdmin: state.session.isAdmin,
+        isAdmin: state.user.isAdmin,
         hasCourse: Array.isArray(state.user.participations) && state.user.participations.length > 0,
     };
 };

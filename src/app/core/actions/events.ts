@@ -1,14 +1,22 @@
-import { EVENTS_FETCH, SESSION_FETCH } from '../constants';
+import { EVENTS } from '../constants';
+import { getEventsByCourseId } from '../api';
 
 export function fetchEvents(courseId: string) {
-    return {
-        type: EVENTS_FETCH,
-        payload: courseId,
-    };
-}
+    return async (dispatch: any) => {
+        dispatch({
+            type: EVENTS.FETCH_COURSE_EVENTS,
+        });
 
-export function fetchSession() {
-    return {
-        type: SESSION_FETCH,
+        try {
+            const result = await getEventsByCourseId(courseId);
+            dispatch({
+                type: EVENTS.FETCH_COURSE_EVENTS_OK,
+                payload: result,
+            });
+        } catch (e) {
+            dispatch({
+                type: EVENTS.FETCH_COURSE_EVENTS_FAIL,
+            });
+        }
     };
 }

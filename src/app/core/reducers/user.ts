@@ -6,12 +6,18 @@ export type UserState = {
     profile: IProfile | undefined;
     participations: IUserParticipation[];
     feed: IFeedRecord[];
+    username: string;
+    isAdmin: boolean;
+    isLoggedIn: boolean;
 };
 
 const initialState: UserState = {
     profile: undefined,
     participations: [],
     feed: [],
+    username: '',
+    isAdmin: false,
+    isLoggedIn: false,
 };
 
 export function userReducer(state = initialState, action: Action<any>): UserState {
@@ -38,6 +44,14 @@ export function userReducer(state = initialState, action: Action<any>): UserStat
         return {
             ...state,
             feed: action.payload,
+        };
+    }
+    if (action.type === USER.FETCH_SESSION_OK) {
+        return {
+            ...state,
+            username: action.payload._id,
+            isAdmin: action.payload.isAdmin,
+            isLoggedIn: true,
         };
     }
     return state;

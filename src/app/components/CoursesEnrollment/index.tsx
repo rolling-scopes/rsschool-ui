@@ -30,7 +30,7 @@ class CoursesEnrollment extends React.PureComponent<Props> {
         return (
             <CardDeck className="card-deck">
                 {courses.map(course => (
-                    <Card className={cn('bg-secondary', 'course-card')}>
+                    <Card key={course._id} className={cn('bg-secondary', 'course-card')}>
                         <CardHeader>
                             <h5>{course.name}</h5>
                         </CardHeader>

@@ -18,8 +18,7 @@ interface Props {
 const mapStateToProps = (state: RootState, props: Props): Partial<Props> => {
     return {
         ...props,
-        isLoading: state.session.isLoading,
-        isLoggedIn: state.session.isLoggedIn,
+        isLoggedIn: state.user.isLoggedIn,
     };
 };
 

@@ -1,4 +1,4 @@
-import { COURSES_FETCH, COURSES_FETCH_FAIL, COURSES_FETCH_OK } from '../constants';
+import { COURSE } from '../constants';
 import { ICourse } from '../models';
 import { Action } from '../util';
 
@@ -15,21 +15,21 @@ const initialState: CoursesState = {
 };
 
 export function coursesReducer(state = initialState, action: Action<any>): CoursesState {
-    if (action.type === COURSES_FETCH) {
+    if (action.type === COURSE.FETCH_ALL_COURSES) {
         return {
             ...state,
             isLoading: true,
             data: [],
         };
     }
-    if (action.type === COURSES_FETCH_OK) {
+    if (action.type === COURSE.FETCH_ALL_COURSES_OK) {
         return {
             ...state,
             isLoading: false,
             data: action.payload,
         };
     }
-    if (action.type === COURSES_FETCH_FAIL) {
+    if (action.type === COURSE.FETCH_ALL_COURSES_FAIL) {
         return {
             data: [],
             isLoading: false,

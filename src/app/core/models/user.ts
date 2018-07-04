@@ -18,17 +18,20 @@ export interface IProfile {
     };
 }
 
+export interface IUserBase {
+    _id: string;
+}
+
+export interface IUserSession extends IUserBase {
+    role: 'mentor' | 'student';
+    isAdmin: boolean;
+}
+
 export interface IUserParticipation {
     _id: string;
     isActive: boolean;
     courseId: string;
     role: 'mentor' | 'student';
-}
-
-export interface IUserSession {
-    _id: string;
-    role: 'mentor' | 'student';
-    isAdmin: boolean;
 }
 
 export interface IUser extends IUserSession {

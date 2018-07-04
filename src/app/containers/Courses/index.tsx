@@ -1,5 +1,5 @@
 import CoursesEnrollment from 'components/CoursesEnrollment';
-import { enrollUserInCourse, fetchCourses, fetchUserParticipations } from 'core/actions';
+import { enrollUserInCourse, fetchAllCourses, fetchUserParticipations } from 'core/actions';
 import { ICourse, IFeedRecord, IUserParticipation } from 'core/models';
 import { RootState } from 'core/reducers';
 // import { classNames } from 'core/styles';
@@ -25,10 +25,7 @@ const mapDispatchToProps = (dispatch: any, props: Props): Props => {
     return {
         ...props,
         fetchCourses: () => {
-            dispatch(fetchCourses());
-            dispatch(fetchUserParticipations());
-        },
-        fetchUserParticipations: () => {
+            dispatch(fetchAllCourses());
             dispatch(fetchUserParticipations());
         },
         enrollUser: (id: string) => {
@@ -42,14 +39,12 @@ type Props = {
     enrollUser: (courseId: string) => void;
     feed: IFeedRecord[];
     fetchCourses: () => void;
-    fetchUserParticipations: () => void;
     participations: IUserParticipation[];
 };
 
 class Courses extends React.Component<Props, any> {
     componentDidMount() {
         this.props.fetchCourses();
-        this.props.fetchUserParticipations();
     }
 
     render() {
