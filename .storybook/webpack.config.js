@@ -9,7 +9,7 @@ module.exports = (baseConfig, env, config) => {
         loader: require.resolve('awesome-typescript-loader'),
     });
     config.module.rules.push({
-        test: /\.(scss|css)$/,
+        test: /\.scss$/,
         use: [
             { loader: 'style-loader' },
             {
