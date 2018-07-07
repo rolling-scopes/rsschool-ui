@@ -15,26 +15,28 @@ const initialState: CoursesState = {
 };
 
 export function coursesReducer(state = initialState, action: Action<any>): CoursesState {
-    if (action.type === COURSE.FETCH_ALL_COURSES) {
-        return {
-            ...state,
-            isLoading: true,
-            data: [],
-        };
-    }
-    if (action.type === COURSE.FETCH_ALL_COURSES_OK) {
-        return {
-            ...state,
-            isLoading: false,
-            data: action.payload,
-        };
-    }
-    if (action.type === COURSE.FETCH_ALL_COURSES_FAIL) {
-        return {
-            data: [],
-            isLoading: false,
-            error: action.payload,
-        };
+    switch (action.type) {
+        case COURSE.FETCH_ALL_COURSES: {
+            return {
+                ...state,
+                isLoading: true,
+                data: [],
+            };
+        }
+        case COURSE.FETCH_ALL_COURSES_OK: {
+            return {
+                ...state,
+                isLoading: false,
+                data: action.payload,
+            };
+        }
+        case COURSE.FETCH_ALL_COURSES_FAIL: {
+            return {
+                data: [],
+                isLoading: false,
+                error: action.payload,
+            };
+        }
     }
     return state;
 }

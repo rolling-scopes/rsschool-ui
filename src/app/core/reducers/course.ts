@@ -15,17 +15,19 @@ const initialState: CourseState = {
 };
 
 export function courseReducer(state = initialState, action: Action<any>): CourseState {
-    if (action.type === COURSE.FETCH_MENTORS_OK) {
-        return {
-            ...state,
-            mentors: action.payload,
-        };
-    }
-    if (action.type === COURSE.FETCH_STUDENTS_OK) {
-        return {
-            ...state,
-            students: action.payload,
-        };
+    switch (action.type) {
+        case COURSE.FETCH_MENTORS_OK: {
+            return {
+                ...state,
+                mentors: action.payload,
+            };
+        }
+        case COURSE.FETCH_STUDENTS_OK: {
+            return {
+                ...state,
+                students: action.payload,
+            };
+        }
     }
     return state;
 }
