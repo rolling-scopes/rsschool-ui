@@ -1,39 +1,43 @@
 import { EVENTS } from '../constants';
-import { Action } from '../util';
-import { IEvent } from '../models';
+import { IEventsAction } from '../util';
+import { IEvent, IStage } from '../models';
 
 export type EventsState = {
-    data: IEvent[] | undefined;
+    events: IEvent[] | undefined;
+    stages: IStage[] | undefined;
     error: Error | undefined;
     isLoading: boolean;
 };
 
 const initialState: EventsState = {
-    data: [],
+    events: [],
+    stages: [],
     error: undefined,
     isLoading: false,
 };
 
-export function eventsReducer(state = initialState, action: Action<IEvent[] | Error>): EventsState {
+export function eventsReducer(state = initialState, action: IEventsAction): EventsState {
     switch (action.type) {
-        case EVENTS.FETCH_COURSE_EVENTS: {
+        case EVENTS.FETCH_COURSE_EVENTS_AND_STAGES: {
             return {
                 ...state,
                 isLoading: true,
             };
         }
-        case EVENTS.FETCH_COURSE_EVENTS_OK: {
+        case EVENTS.FETCH_COURSE_EVENTS_AND_STAGES_OK: {
             return {
                 error: undefined,
-                data: action.payload as IEvent[],
+                events: action.payload.events,
+                stages: action.payload.stages,
                 isLoading: false,
             };
         }
-        case EVENTS.FETCH_COURSE_EVENTS_FAIL: {
+        case EVENTS.FETCH_COURSE_EVENTS_AND_STAGES_FAIL: {
             return {
-                data: [],
+                events: [],
+                stages: [],
                 isLoading: false,
-                error: action.payload as Error,
+                error: action.payload,
             };
         }
         default:

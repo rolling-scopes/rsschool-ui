@@ -19,7 +19,7 @@ export interface RootState {
 const rootReducer = combineReducers<RootState, Action<any>>({
     courses: coursesReducer,
     course: courseReducer,
-    events: eventsReducer,
+    events: eventsReducer as any,
     form: formReducer as any,
     user: userReducer,
     router: routerReducer as any,

@@ -3,13 +3,14 @@ import { connect } from 'react-redux';
 
 import Schedule from 'components/Schedule';
 import { fetchEvents } from 'core/actions';
-import { IEvent } from 'core/models/events';
+import { IEvent, IStage } from 'core/models/events';
 import './index.scss';
 
 const mapStateToProps = (state: any, props: any): EventsProps => {
     return {
         ...props,
         isLoading: state.events.isLoading,
+        stages: state.events.stages,
         events: state.events.data,
         courseId: props.match.params.id,
         isAdmin: state.user.isAdmin,
@@ -26,6 +27,7 @@ const mapDispatchToProps = (dispatch: any, props: any): EventsProps => {
 };
 
 type EventsProps = {
+    stages: IStage[];
     events: IEvent[];
     onLoad: (id: string) => void;
     courseId: string;
@@ -43,7 +45,11 @@ class Events extends React.Component<EventsProps, any> {
         return (
             <div className="events">
                 <h1 className="events-title">Events</h1>
-                {this.props.isLoading ? <h3>Loading...</h3> : <Schedule isAdmin={this.props.isAdmin} events={events} />}
+                {this.props.isLoading ? (
+                    <h3>Loading...</h3>
+                ) : (
+                    <Schedule stages={this.props.stages} isAdmin={this.props.isAdmin} events={events} />
+                )}
             </div>
         );
     }
