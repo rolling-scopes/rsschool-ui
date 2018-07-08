@@ -4,12 +4,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencilAlt, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { Button, Badge } from 'reactstrap';
 
-import { IStage } from 'core/models';
+import { IStageDocument } from 'core/models';
 
 const DATE_FORMAT = 'DD.MM.YYYY';
 
 type ScheduleStageProps = {
-    stage: IStage;
+    stage: IStageDocument;
     isAdmin: boolean;
 };
 

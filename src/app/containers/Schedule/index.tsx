@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import ScheduleContainer from 'components/ScheduleContainer';
-import { fetchEventsAndStages } from 'core/actions';
-import { IEvent, IStage } from 'core/models';
+import Schedule from 'components/Schedule';
+import { fetchEventsAndStages, addStage } from 'core/actions';
+import { IEventDocument, IStage, IStageDocument } from 'core/models';
 import './index.scss';
 
-const mapStateToProps = (state: any, props: any): ScheduleProps => {
+const mapStateToProps = (state: any, props: any): ScheduleContainerProps => {
     return {
         ...props,
         isLoading: state.schedule.isLoading,
@@ -17,38 +17,42 @@ const mapStateToProps = (state: any, props: any): ScheduleProps => {
     };
 };
 
-const mapDispatchToProps = (dispatch: any, props: any): ScheduleProps => {
+const mapDispatchToProps = (dispatch: any, props: any): ScheduleContainerProps => {
     return {
         ...props,
         onLoad: id => {
             dispatch(fetchEventsAndStages(id));
         },
+        addStage: (stage: IStage) => {
+            dispatch(addStage(stage));
+        },
     };
 };
 
-type ScheduleProps = {
-    stages: IStage[];
-    events: IEvent[];
+type ScheduleContainerProps = {
+    stages: IStageDocument[];
+    events: IEventDocument[];
     onLoad: (id: string) => void;
+    addStage: (stage: IStage) => void;
     courseId: string;
     isLoading: boolean;
     isAdmin: boolean;
 };
 
-class Schedule extends React.Component<ScheduleProps, any> {
+class ScheduleContainer extends React.Component<ScheduleContainerProps, any> {
     componentDidMount() {
         this.props.onLoad(this.props.courseId);
     }
 
     render() {
-        const events = this.props != null ? this.props.events : [];
+        const { events, stages, isAdmin, isLoading } = this.props;
         return (
             <div className="schedule">
                 <h1 className="schedule-title">Schedule</h1>
-                {this.props.isLoading ? (
+                {isLoading ? (
                     <h3>Loading...</h3>
                 ) : (
-                    <ScheduleContainer stages={this.props.stages} isAdmin={this.props.isAdmin} events={events} />
+                    <Schedule stages={stages} isAdmin={isAdmin} events={events} addStage={this.props.addStage} />
                 )}
             </div>
         );
@@ -58,4 +62,4 @@ class Schedule extends React.Component<ScheduleProps, any> {
 export default connect(
     mapStateToProps,
     mapDispatchToProps,
-)(Schedule);
+)(ScheduleContainer);

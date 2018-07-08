@@ -25,3 +25,7 @@ export interface IEvent {
     tags: IEventTag[];
     venue: IEventVenue;
 }
+
+export interface IEventDocument extends IEvent {
+    _id: string;
+}

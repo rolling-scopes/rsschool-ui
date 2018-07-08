@@ -1,10 +1,10 @@
 import { SCHEDULE } from '../constants';
 import { IScheduleAction } from '../util';
-import { IEvent, IStage } from '../models';
+import { IEventDocument, IStageDocument } from '../models';
 
 export type ScheduleState = {
-    events: IEvent[] | undefined;
-    stages: IStage[] | undefined;
+    events: IEventDocument[];
+    stages: IStageDocument[];
     error: Error | undefined;
     isLoading: boolean;
 };
@@ -18,7 +18,8 @@ const initialState: ScheduleState = {
 
 export function scheduleReducer(state = initialState, action: IScheduleAction): ScheduleState {
     switch (action.type) {
-        case SCHEDULE.FETCH_COURSE_EVENTS_AND_STAGES: {
+        case SCHEDULE.FETCH_COURSE_EVENTS_AND_STAGES:
+        case SCHEDULE.ADD_COURSE_STAGE: {
             return {
                 ...state,
                 isLoading: true,
@@ -32,14 +33,22 @@ export function scheduleReducer(state = initialState, action: IScheduleAction): 
                 isLoading: false,
             };
         }
-        case SCHEDULE.FETCH_COURSE_EVENTS_AND_STAGES_FAIL: {
+        case SCHEDULE.FETCH_COURSE_EVENTS_AND_STAGES_FAIL:
+        case SCHEDULE.ADD_COURSE_STAGE_FAIL: {
             return {
-                events: [],
-                stages: [],
+                ...state,
                 isLoading: false,
                 error: action.payload,
             };
         }
+        case SCHEDULE.ADD_COURSE_STAGE_OK: {
+            return {
+                ...state,
+                stages: [...state.stages, action.payload],
+                isLoading: false,
+            };
+        }
+
         default:
             return state;
     }
