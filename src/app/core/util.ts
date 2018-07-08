@@ -1,26 +1,29 @@
 import { AnyAction } from 'redux';
 
-import { EVENTS } from './constants';
+import { SCHEDULE } from './constants';
 import { IEvent, IStage } from './models';
 
-interface IFetchCourseEventsAction {
-    type: EVENTS.FETCH_COURSE_EVENTS_AND_STAGES;
+interface IFetchCourseEventsAndStagesAction {
+    type: SCHEDULE.FETCH_COURSE_EVENTS_AND_STAGES;
 }
 
-interface IFetchCourseEventsOkAction {
-    type: EVENTS.FETCH_COURSE_EVENTS_AND_STAGES_OK;
+interface IFetchCourseEventsAndStagesOkAction {
+    type: SCHEDULE.FETCH_COURSE_EVENTS_AND_STAGES_OK;
     payload: {
         events: IEvent[];
         stages: IStage[];
     };
 }
 
-interface IFetchCourseEventsFailAction {
-    type: EVENTS.FETCH_COURSE_EVENTS_AND_STAGES_FAIL;
+interface IFetchCourseEventsAndStagesFailAction {
+    type: SCHEDULE.FETCH_COURSE_EVENTS_AND_STAGES_FAIL;
     payload: Error;
 }
 
-export type IEventsAction = IFetchCourseEventsAction | IFetchCourseEventsOkAction | IFetchCourseEventsFailAction;
+export type IScheduleAction =
+    | IFetchCourseEventsAndStagesAction
+    | IFetchCourseEventsAndStagesOkAction
+    | IFetchCourseEventsAndStagesFailAction;
 
 export interface Action<T> extends AnyAction {
     type: string;

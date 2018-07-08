@@ -16,7 +16,7 @@ export function getEventsByCourseId(courseId: string) {
 
 export function getEventsAndStagesByCourseId(courseId: string) {
     return Promise.all([
-        axios.get<EventsResponse>(`/api/course/${courseId}/events`),
+        getEventsByCourseId(courseId),
         axios.get<StagesResponse>(`/api/course/${courseId}/stages`),
     ]).then(([events, stages]) => ({
         events: events.data,

@@ -1,30 +1,30 @@
-import { EVENTS } from '../constants';
-import { IEventsAction } from '../util';
+import { SCHEDULE } from '../constants';
+import { IScheduleAction } from '../util';
 import { IEvent, IStage } from '../models';
 
-export type EventsState = {
+export type ScheduleState = {
     events: IEvent[] | undefined;
     stages: IStage[] | undefined;
     error: Error | undefined;
     isLoading: boolean;
 };
 
-const initialState: EventsState = {
+const initialState: ScheduleState = {
     events: [],
     stages: [],
     error: undefined,
     isLoading: false,
 };
 
-export function eventsReducer(state = initialState, action: IEventsAction): EventsState {
+export function scheduleReducer(state = initialState, action: IScheduleAction): ScheduleState {
     switch (action.type) {
-        case EVENTS.FETCH_COURSE_EVENTS_AND_STAGES: {
+        case SCHEDULE.FETCH_COURSE_EVENTS_AND_STAGES: {
             return {
                 ...state,
                 isLoading: true,
             };
         }
-        case EVENTS.FETCH_COURSE_EVENTS_AND_STAGES_OK: {
+        case SCHEDULE.FETCH_COURSE_EVENTS_AND_STAGES_OK: {
             return {
                 error: undefined,
                 events: action.payload.events,
@@ -32,7 +32,7 @@ export function eventsReducer(state = initialState, action: IEventsAction): Even
                 isLoading: false,
             };
         }
-        case EVENTS.FETCH_COURSE_EVENTS_AND_STAGES_FAIL: {
+        case SCHEDULE.FETCH_COURSE_EVENTS_AND_STAGES_FAIL: {
             return {
                 events: [],
                 stages: [],

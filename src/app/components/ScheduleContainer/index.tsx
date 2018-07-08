@@ -3,15 +3,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { Button, FormGroup, Row } from 'reactstrap';
 
-import { IEvent, IStage } from 'core/models/events';
+import { IEvent, IStage } from 'core/models';
 
-type ScheduleProps = {
+type ScheduleContainerProps = {
     stages: IStage[];
     events: IEvent[];
     isAdmin: boolean;
 };
 
-class Schedule extends React.PureComponent<ScheduleProps> {
+class ScheduleContainer extends React.PureComponent<ScheduleContainerProps> {
     render() {
         const { isAdmin } = this.props;
         return (
@@ -42,4 +42,4 @@ class Schedule extends React.PureComponent<ScheduleProps> {
     }
 }
 
-export default Schedule;
+export default ScheduleContainer;

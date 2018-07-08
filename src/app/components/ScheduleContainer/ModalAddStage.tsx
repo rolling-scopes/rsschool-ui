@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { IStage } from 'core/models/events';
+import { IStage } from 'core/models';
 
 type ModalAddStageProps = {
     stage: IStage;

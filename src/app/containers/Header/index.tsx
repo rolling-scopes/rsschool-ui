@@ -71,7 +71,7 @@ class Header extends React.Component<Props, any> {
                         }
                         {this.props.hasCourse && (
                             <li className="nav-item">
-                                <NavLink exact={true} className="nav-link" to={`/course/${couserId}/events`}>
+                                <NavLink exact={true} className="nav-link" to={`/course/${couserId}/schedule`}>
                                     Schedule
                                 </NavLink>
                             </li>

@@ -25,11 +25,3 @@ export interface IEvent {
     tags: IEventTag[];
     venue: IEventVenue;
 }
-
-export interface IStage {
-    courseId: string;
-    id: string;
-    title: string;
-    startDate: number;
-    endDate: number;
-}

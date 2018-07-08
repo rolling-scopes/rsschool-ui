@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencilAlt, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { Button, Badge } from 'reactstrap';
 
-import { IStage } from 'core/models/events';
+import { IStage } from 'core/models';
 
 const DATE_FORMAT = 'DD.MM.YYYY';
 
