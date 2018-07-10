@@ -14,7 +14,6 @@ class NamesForm extends React.PureComponent<any, any> {
                         className="form-control"
                         placeholder="First Name"
                         component={ReduxFormInputText}
-                        type="text"
                     />
                 </FormGroup>
                 <FormGroup className="col-md-6">

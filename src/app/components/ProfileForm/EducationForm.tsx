@@ -7,7 +7,7 @@ import { EDUCATION_YEARS, EMPTY_FACULTY, UNIVERSITIES } from '../../reference-da
 
 function mapStateToProps(state: any) {
     return {
-        university: state.form.profileForm.values
+        university: (state.form.profileForm || {}).values
             ? state.form.profileForm.values.primaryEducation.university
             : undefined,
     };
