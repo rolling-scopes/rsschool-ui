@@ -11,6 +11,7 @@ const DATE_FORMAT = 'DD.MM.YYYY';
 type ScheduleStageProps = {
     stage: IStageDocument;
     isAdmin: boolean;
+    onEditStage: () => void;
 };
 
 class ScheduleStage extends React.PureComponent<ScheduleStageProps> {
@@ -27,7 +28,7 @@ class ScheduleStage extends React.PureComponent<ScheduleStageProps> {
                 )}`}</Badge>
                 {isAdmin ? (
                     <React.Fragment>
-                        <Button title="Edit" size="sm" color="secondary" onClick={console.log}>
+                        <Button title="Edit" size="sm" color="secondary" onClick={this.props.onEditStage}>
                             <FontAwesomeIcon icon={faPencilAlt} /> Edit
                         </Button>
                         <Button title="Delete" size="sm" color="secondary" onClick={console.log}>

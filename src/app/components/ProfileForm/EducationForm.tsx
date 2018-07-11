@@ -1,4 +1,4 @@
-import ReduxFormSelect from 'components/ReduxFormSelect';
+import ReduxFormInput from 'components/ReduxFormInput';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { FormGroup, Label } from 'reactstrap';
@@ -22,9 +22,9 @@ class EducationForm extends React.PureComponent<any, any> {
                     <Label>Your University</Label>
                     <Field
                         name="primaryEducation.university"
-                        className="form-control"
                         placeholder="Your University"
-                        component={ReduxFormSelect}
+                        component={ReduxFormInput}
+                        type="select"
                     >
                         {UNIVERSITIES.map(university => (
                             <option key={university.id} value={university.id}>
@@ -39,9 +39,9 @@ class EducationForm extends React.PureComponent<any, any> {
                     <Label>Your Faculty</Label>
                     <Field
                         name="primaryEducation.faculty"
-                        className="form-control"
                         placeholder="Your Faculty"
-                        component={ReduxFormSelect}
+                        component={ReduxFormInput}
+                        type="select"
                     >
                         {faculties.map(faculty => (
                             <option key={faculty.id} value={faculty.id}>
@@ -54,9 +54,9 @@ class EducationForm extends React.PureComponent<any, any> {
                     <Label>Graduation Year</Label>
                     <Field
                         name="primaryEducation.graduationYear"
-                        className="form-control"
                         placeholder="Graduation Year"
-                        component={ReduxFormSelect}
+                        component={ReduxFormInput}
+                        type="select"
                     >
                         {EDUCATION_YEARS.map(year => (
                             <option key={year.id} value={year.id}>

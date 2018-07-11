@@ -3,7 +3,8 @@ import { InjectedFormProps, reduxForm, Field } from 'redux-form';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Row, Form, FormGroup, Button } from 'reactstrap';
 
 import { IStageDocument } from 'core/models';
-import ReduxFormInputText from 'components/ReduxFormInputText';
+import { requiredFieldError, requiredFieldSuccess } from 'core/validation';
+import ReduxFormInput from 'components/ReduxFormInput';
 
 type ModalAddStageProps = {
     stage: IStageDocument | undefined;
@@ -11,35 +12,72 @@ type ModalAddStageProps = {
     toggle: () => void;
 };
 
-type FormData = {
+export type StageFormData = {
     title: string;
-    startDate: number;
-    endDate: number;
+    startDate: string;
+    endDate: string;
 };
 
-class ModalStage extends React.PureComponent<ModalAddStageProps & InjectedFormProps<FormData, ModalAddStageProps>> {
+// TODO: implement Date validation
+
+class ModalStage extends React.PureComponent<
+    ModalAddStageProps & InjectedFormProps<StageFormData, ModalAddStageProps>
+> {
+    closeModal = () => {
+        this.props.reset();
+        this.props.toggle();
+    };
+
     render() {
         const { isOpen, toggle, stage, handleSubmit, pristine, submitting } = this.props;
         return (
-            <Modal fade={true} centered={true} isOpen={isOpen} toggle={toggle}>
+            <Modal fade={true} centered={true} isOpen={isOpen} toggle={this.closeModal}>
                 <Form onSubmit={handleSubmit}>
                     <ModalHeader toggle={toggle}>{stage ? 'Edit Stage' : 'New Stage'}</ModalHeader>
                     <ModalBody>
                         <FormGroup>
                             <Field
                                 name="title"
-                                // className="form-control"
                                 label="Title"
                                 placeholder="Stage #1"
-                                component={ReduxFormInputText}
+                                component={ReduxFormInput}
                                 required={true}
+                                type="text"
+                                validate={[requiredFieldError]}
+                                warn={requiredFieldSuccess}
                             />
+                        </FormGroup>
+                        <FormGroup row={true}>
+                            <FormGroup className="col-md-6">
+                                <Field
+                                    name="startDate"
+                                    label="Start Date"
+                                    placeholder="17-01-2018"
+                                    component={ReduxFormInput}
+                                    required={true}
+                                    type="date"
+                                    validate={[requiredFieldError]}
+                                    warn={requiredFieldSuccess}
+                                />
+                            </FormGroup>
+                            <FormGroup className="col-md-6">
+                                <Field
+                                    name="endDate"
+                                    label="End Date"
+                                    placeholder="17-04-2018"
+                                    component={ReduxFormInput}
+                                    required={true}
+                                    type="date"
+                                    validate={[requiredFieldError]}
+                                    warn={requiredFieldSuccess}
+                                />
+                            </FormGroup>
                         </FormGroup>
                     </ModalBody>
                     <ModalFooter>
                         <Row className="text-right">
                             <FormGroup className="col-md-12">
-                                <Button color="secondary" onClick={toggle}>
+                                <Button color="secondary" onClick={this.closeModal}>
                                     Cancel
                                 </Button>{' '}
                                 <Button color="success" type="submit" disabled={pristine || submitting}>
@@ -54,6 +92,6 @@ class ModalStage extends React.PureComponent<ModalAddStageProps & InjectedFormPr
     }
 }
 
-export default reduxForm<FormData, ModalAddStageProps>({
+export default reduxForm<StageFormData, ModalAddStageProps>({
     form: 'stageForm',
 })(ModalStage);

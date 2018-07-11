@@ -1,13 +1,17 @@
 import * as React from 'react';
+import * as moment from 'moment';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { Button, FormGroup, Row } from 'reactstrap';
 
 import { IEventDocument, IStageDocument, IStage } from 'core/models';
 import ScheduleStage from './ScheduleStage';
-import ModalStage from './ModalStage';
+import ModalStage, { StageFormData } from './ModalStage';
+
+const INPUT_DATE_FORMAT = 'YYYY-MM-DD';
 
 type ScheduleProps = {
+    courseId: string;
     stages: IStageDocument[];
     events: IEventDocument[];
     isAdmin: boolean;
@@ -33,9 +37,27 @@ class Schedule extends React.PureComponent<ScheduleProps, ScheduleState> {
         this.setState({ stage, isOpenModalStage: !this.state.isOpenModalStage });
     };
 
+    handleSubmitStage = ({ title, startDate, endDate }: StageFormData) => {
+        const { stage } = this.state;
+        const { courseId } = this.props;
+        if (stage != null) {
+            // TODO
+        } else {
+            const data = {
+                title: title.trim(),
+                startDate: Number(moment(startDate)),
+                endDate: Number(moment(endDate)),
+                courseId,
+            };
+            this.props.addStage(data);
+        }
+        this.setState({ stage: undefined });
+    };
+
     render() {
         const { isAdmin, stages } = this.props;
         const { stage, isOpenModalStage } = this.state;
+
         return (
             <React.Fragment>
                 {isAdmin ? (
@@ -50,8 +72,15 @@ class Schedule extends React.PureComponent<ScheduleProps, ScheduleState> {
                         </FormGroup>
                     </Row>
                 ) : null}
-                {stages.map((stage, index) => {
-                    return <ScheduleStage key={index} stage={stage} isAdmin={isAdmin} />;
+                {stages.map((stg, index) => {
+                    return (
+                        <ScheduleStage
+                            key={index}
+                            stage={stg}
+                            isAdmin={isAdmin}
+                            onEditStage={this.toggleOpenModalStage(stg)}
+                        />
+                    );
                 })}
                 {isAdmin ? (
                     <Row className="text-center mt-5">
@@ -62,7 +91,19 @@ class Schedule extends React.PureComponent<ScheduleProps, ScheduleState> {
                         </FormGroup>
                     </Row>
                 ) : null}
-                <ModalStage isOpen={isOpenModalStage} stage={stage} toggle={this.toggleOpenModalStage()} />
+                <ModalStage
+                    isOpen={isOpenModalStage}
+                    stage={stage}
+                    toggle={this.toggleOpenModalStage()}
+                    initialValues={
+                        stage && {
+                            title: stage.title,
+                            startDate: moment(stage.startDate).format(INPUT_DATE_FORMAT),
+                            endDate: moment(stage.endDate).format(INPUT_DATE_FORMAT),
+                        }
+                    }
+                    onSubmit={this.handleSubmitStage}
+                />
             </React.Fragment>
         );
     }

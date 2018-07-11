@@ -10,9 +10,7 @@ type StagesResponse = {
     data: IStageDocument[];
 };
 
-type StageResponse = {
-    data: IStageDocument;
-};
+type StageResponse = IStageDocument;
 
 function getEventsByCourseId(courseId: string) {
     return axios.get<EventsResponse>(`/api/course/${courseId}/events`);
@@ -30,9 +28,9 @@ export function getEventsAndStagesByCourseId(courseId: string) {
 }
 
 export function setStage(stage: IStage) {
-    return axios.post<StageResponse>(`/api/stage`, stage).then(response => response.data.data);
+    return axios.post<StageResponse>(`/api/stage`, stage).then(response => response.data);
 }
 
 export function updateStage(stage: IStage) {
-    return axios.patch<StageResponse>(`/api/stage`, stage).then(response => response.data.data);
+    return axios.patch<StageResponse>(`/api/stage`, stage).then(response => response.data);
 }

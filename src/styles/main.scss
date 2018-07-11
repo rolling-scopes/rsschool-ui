@@ -35,3 +35,8 @@ html, body, #root {
     background-color: $gray-900;
     color: $white;
 }
+
+.field-required:after {
+    content: "*";
+    color: #f00;
+}
