@@ -16,6 +16,7 @@ type ScheduleProps = {
     events: IEventDocument[];
     isAdmin: boolean;
     addStage: (stage: IStage) => void;
+    updateStage: (stage: IStageDocument) => void;
 };
 
 type ScheduleState = {
@@ -41,7 +42,13 @@ class Schedule extends React.PureComponent<ScheduleProps, ScheduleState> {
         const { stage } = this.state;
         const { courseId } = this.props;
         if (stage != null) {
-            // TODO
+            const data = {
+                ...stage,
+                title: title.trim(),
+                startDate: Number(moment(startDate)),
+                endDate: Number(moment(endDate)),
+            };
+            this.props.updateStage(data);
         } else {
             const data = {
                 title: title.trim(),

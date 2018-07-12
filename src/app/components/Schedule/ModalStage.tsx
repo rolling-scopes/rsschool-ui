@@ -94,4 +94,5 @@ class ModalStage extends React.PureComponent<
 
 export default reduxForm<StageFormData, ModalAddStageProps>({
     form: 'stageForm',
+    enableReinitialize: true,
 })(ModalStage);

@@ -34,13 +34,30 @@ interface IAddCourseStageFailAction {
     payload: Error;
 }
 
+interface IUpdateCourseStageAction {
+    type: SCHEDULE.UPDATE_COURSE_STAGE;
+}
+
+interface IUpdateCourseStageOkAction {
+    type: SCHEDULE.UPDATE_COURSE_STAGE_OK;
+    payload: IStageDocument;
+}
+
+interface IUpdateCourseStageFailAction {
+    type: SCHEDULE.UPDATE_COURSE_STAGE_FAIL;
+    payload: Error;
+}
+
 export type IScheduleAction =
     | IFetchCourseEventsAndStagesAction
     | IFetchCourseEventsAndStagesOkAction
     | IFetchCourseEventsAndStagesFailAction
     | IAddCourseStageAction
     | IAddCourseStageOkAction
-    | IAddCourseStageFailAction;
+    | IAddCourseStageFailAction
+    | IUpdateCourseStageAction
+    | IUpdateCourseStageOkAction
+    | IUpdateCourseStageFailAction;
 
 export interface Action<T> extends AnyAction {
     type: string;
