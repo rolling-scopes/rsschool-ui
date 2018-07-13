@@ -7,8 +7,8 @@ import { Button, FormGroup, Row } from 'reactstrap';
 import { IEventDocument, IStageDocument, IStage } from 'core/models';
 import ScheduleStage from './ScheduleStage';
 import ModalStage, { StageFormData } from './ModalStage';
-
-const INPUT_DATE_FORMAT = 'YYYY-MM-DD';
+import ModalDelete from './ModalDelete';
+import { INPUT_DATE_FORMAT, DELETE_STAGE_CONTEXT } from './constants';
 
 type ScheduleProps = {
     courseId: string;
@@ -19,9 +19,18 @@ type ScheduleProps = {
     updateStage: (stage: IStageDocument) => void;
 };
 
+type DeleteContext = {
+    title: string;
+    body: string;
+    isError: boolean;
+};
+
 type ScheduleState = {
     stage: IStageDocument | undefined;
+    event: IEventDocument | undefined;
     isOpenModalStage: boolean;
+    isOpenModalDelete: boolean;
+    deleteContext: DeleteContext | undefined;
 };
 
 class Schedule extends React.PureComponent<ScheduleProps, ScheduleState> {
@@ -30,12 +39,35 @@ class Schedule extends React.PureComponent<ScheduleProps, ScheduleState> {
 
         this.state = {
             stage: undefined,
+            event: undefined,
             isOpenModalStage: false,
+            isOpenModalDelete: false,
+            deleteContext: undefined,
         };
     }
 
     toggleOpenModalStage = (stage?: IStageDocument) => () => {
         this.setState({ stage, isOpenModalStage: !this.state.isOpenModalStage });
+    };
+
+    onCloseModalStage = () => {
+        this.setState({
+            stage: undefined,
+            isOpenModalStage: false,
+        });
+    };
+
+    onCloseModalDelete = () => {
+        this.setState({
+            stage: undefined,
+            event: undefined,
+            deleteContext: undefined,
+            isOpenModalDelete: false,
+        });
+    };
+
+    toggleOpenModalDeleteStage = (deleteContext?: DeleteContext, stage?: IStageDocument) => () => {
+        this.setState({ stage, deleteContext, isOpenModalDelete: !this.state.isOpenModalDelete });
     };
 
     handleSubmitStage = ({ title, startDate, endDate }: StageFormData) => {
@@ -63,7 +95,7 @@ class Schedule extends React.PureComponent<ScheduleProps, ScheduleState> {
 
     render() {
         const { isAdmin, stages } = this.props;
-        const { stage, isOpenModalStage } = this.state;
+        const { stage, isOpenModalStage, isOpenModalDelete, deleteContext } = this.state;
 
         return (
             <React.Fragment>
@@ -86,6 +118,7 @@ class Schedule extends React.PureComponent<ScheduleProps, ScheduleState> {
                             stage={stg}
                             isAdmin={isAdmin}
                             onEditStage={this.toggleOpenModalStage(stg)}
+                            onDeleteStage={this.toggleOpenModalDeleteStage(DELETE_STAGE_CONTEXT, stg)}
                         />
                     );
                 })}
@@ -101,7 +134,7 @@ class Schedule extends React.PureComponent<ScheduleProps, ScheduleState> {
                 <ModalStage
                     isOpen={isOpenModalStage}
                     stage={stage}
-                    toggle={this.toggleOpenModalStage()}
+                    onCloseModal={this.onCloseModalStage}
                     initialValues={
                         stage && {
                             title: stage.title,
@@ -111,6 +144,9 @@ class Schedule extends React.PureComponent<ScheduleProps, ScheduleState> {
                     }
                     onSubmit={this.handleSubmitStage}
                 />
+                {deleteContext ? (
+                    <ModalDelete {...deleteContext} isOpen={isOpenModalDelete} onCloseModal={this.onCloseModalDelete} />
+                ) : null}
             </React.Fragment>
         );
     }

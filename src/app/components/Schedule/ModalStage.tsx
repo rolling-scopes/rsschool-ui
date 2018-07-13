@@ -9,7 +9,7 @@ import ReduxFormInput from 'components/ReduxFormInput';
 type ModalAddStageProps = {
     stage: IStageDocument | undefined;
     isOpen: boolean;
-    toggle: () => void;
+    onCloseModal: () => void;
 };
 
 export type StageFormData = {
@@ -23,17 +23,17 @@ export type StageFormData = {
 class ModalStage extends React.PureComponent<
     ModalAddStageProps & InjectedFormProps<StageFormData, ModalAddStageProps>
 > {
-    closeModal = () => {
+    onCloseModal = () => {
         this.props.reset();
-        this.props.toggle();
+        this.props.onCloseModal();
     };
 
     render() {
-        const { isOpen, toggle, stage, handleSubmit, pristine, submitting } = this.props;
+        const { isOpen, stage, handleSubmit, pristine, submitting } = this.props;
         return (
-            <Modal fade={true} centered={true} isOpen={isOpen} toggle={this.closeModal}>
+            <Modal fade={true} centered={true} isOpen={isOpen} toggle={this.onCloseModal}>
                 <Form onSubmit={handleSubmit}>
-                    <ModalHeader toggle={toggle}>{stage ? 'Edit Stage' : 'New Stage'}</ModalHeader>
+                    <ModalHeader toggle={this.onCloseModal}>{stage ? 'Edit Stage' : 'New Stage'}</ModalHeader>
                     <ModalBody>
                         <FormGroup>
                             <Field
@@ -77,7 +77,7 @@ class ModalStage extends React.PureComponent<
                     <ModalFooter>
                         <Row className="text-right">
                             <FormGroup className="col-md-12">
-                                <Button color="secondary" onClick={this.closeModal}>
+                                <Button color="secondary" onClick={this.onCloseModal}>
                                     Cancel
                                 </Button>{' '}
                                 <Button color="success" type="submit" disabled={pristine || submitting}>

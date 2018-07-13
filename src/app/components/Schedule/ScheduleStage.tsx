@@ -5,13 +5,13 @@ import { faPencilAlt, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { Button, Badge } from 'reactstrap';
 
 import { IStageDocument } from 'core/models';
-
-const DATE_FORMAT = 'DD.MM.YYYY';
+import { DATE_FORMAT } from './constants';
 
 type ScheduleStageProps = {
     stage: IStageDocument;
     isAdmin: boolean;
     onEditStage: () => void;
+    onDeleteStage: () => void;
 };
 
 class ScheduleStage extends React.PureComponent<ScheduleStageProps> {
@@ -31,7 +31,7 @@ class ScheduleStage extends React.PureComponent<ScheduleStageProps> {
                         <Button title="Edit" size="sm" color="secondary" onClick={this.props.onEditStage}>
                             <FontAwesomeIcon icon={faPencilAlt} /> Edit
                         </Button>
-                        <Button title="Delete" size="sm" color="secondary" onClick={console.log}>
+                        <Button title="Delete" size="sm" color="secondary" onClick={this.props.onDeleteStage}>
                             <FontAwesomeIcon icon={faTrashAlt} /> Delete
                         </Button>
                     </React.Fragment>
