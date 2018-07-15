@@ -1,15 +1,20 @@
 import * as React from 'react';
+import * as moment from 'moment';
+import { connect } from 'react-redux';
 import { InjectedFormProps, reduxForm, Field } from 'redux-form';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Row, Form, FormGroup, Button } from 'reactstrap';
 
 import { IStageDocument } from 'core/models';
 import { requiredFieldError, requiredFieldSuccess } from 'core/validation';
 import ReduxFormInput from 'components/ReduxFormInput';
+import { INPUT_DATE_FORMAT } from './constants';
 
 type ModalAddStageProps = {
     stage: IStageDocument | undefined;
     isOpen: boolean;
     onCloseModal: () => void;
+    startDate?: string;
+    endDate?: string;
 };
 
 export type StageFormData = {
@@ -17,8 +22,6 @@ export type StageFormData = {
     startDate: string;
     endDate: string;
 };
-
-// TODO: implement Date validation
 
 class ModalStage extends React.PureComponent<
     ModalAddStageProps & InjectedFormProps<StageFormData, ModalAddStageProps>
@@ -29,7 +32,7 @@ class ModalStage extends React.PureComponent<
     };
 
     render() {
-        const { isOpen, stage, handleSubmit, pristine, submitting } = this.props;
+        const { isOpen, stage, handleSubmit, pristine, submitting, startDate, endDate } = this.props;
         return (
             <Modal fade={true} centered={true} isOpen={isOpen} toggle={this.onCloseModal}>
                 <Form onSubmit={handleSubmit}>
@@ -56,6 +59,7 @@ class ModalStage extends React.PureComponent<
                                     component={ReduxFormInput}
                                     required={true}
                                     type="date"
+                                    max={endDate ? moment(endDate).format(INPUT_DATE_FORMAT) : undefined}
                                     validate={[requiredFieldError]}
                                     warn={requiredFieldSuccess}
                                 />
@@ -68,6 +72,7 @@ class ModalStage extends React.PureComponent<
                                     component={ReduxFormInput}
                                     required={true}
                                     type="date"
+                                    min={startDate ? moment(startDate).format(INPUT_DATE_FORMAT) : undefined}
                                     validate={[requiredFieldError]}
                                     warn={requiredFieldSuccess}
                                 />
@@ -92,7 +97,20 @@ class ModalStage extends React.PureComponent<
     }
 }
 
+function mapStateToProps(state: any, props: any): ModalAddStageProps {
+    return {
+        ...props,
+        startDate: (state.form.stageForm || {}).values ? state.form.stageForm.values.startDate : undefined,
+        endDate: (state.form.stageForm || {}).values ? state.form.stageForm.values.endDate : undefined,
+    };
+}
+
 export default reduxForm<StageFormData, ModalAddStageProps>({
     form: 'stageForm',
     enableReinitialize: true,
-})(ModalStage);
+})(
+    connect(
+        mapStateToProps,
+        null,
+    )(ModalStage),
+);
