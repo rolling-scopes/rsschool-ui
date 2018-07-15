@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 
 import Schedule from 'components/Schedule';
-import { fetchEventsAndStages, addStage, updateStage } from 'core/actions';
+import { fetchEventsAndStages, addStage, updateStage, deleteStage } from 'core/actions';
 import { IEventDocument, IStage, IStageDocument } from 'core/models';
 import './index.scss';
 
@@ -29,6 +29,9 @@ const mapDispatchToProps = (dispatch: any, props: any): ScheduleContainerProps =
         updateStage: (stage: IStageDocument) => {
             dispatch(updateStage(stage));
         },
+        deleteStage: (id: string) => {
+            dispatch(deleteStage(id));
+        },
     };
 };
 
@@ -38,6 +41,7 @@ type ScheduleContainerProps = {
     onLoad: (id: string) => void;
     addStage: (stage: IStage) => void;
     updateStage: (stage: IStageDocument) => void;
+    deleteStage: (id: string) => void;
     courseId: string;
     isLoading: boolean;
     isAdmin: boolean;
@@ -63,6 +67,7 @@ class ScheduleContainer extends React.Component<ScheduleContainerProps, any> {
                         events={events}
                         addStage={this.props.addStage}
                         updateStage={this.props.updateStage}
+                        deleteStage={this.props.deleteStage}
                     />
                 )}
             </div>

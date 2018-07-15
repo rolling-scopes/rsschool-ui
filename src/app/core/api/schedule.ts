@@ -38,3 +38,7 @@ export function addStageApi(stage: IStage) {
 export function updateStageApi(stage: IStageDocument) {
     return axios.patch<StagePatchResponse>(`/api/stage`, stage).then(response => response.data.data);
 }
+
+export function deleteStageApi(id: string) {
+    return axios.delete(`/api/stage/${id}`);
+}

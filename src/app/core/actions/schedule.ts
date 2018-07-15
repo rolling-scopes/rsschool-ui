@@ -1,6 +1,6 @@
 import { IStage, IStageDocument } from 'core/models';
 import { SCHEDULE } from '../constants';
-import { getEventsAndStagesByCourseId, addStageApi, updateStageApi } from '../api';
+import { getEventsAndStagesByCourseId, addStageApi, updateStageApi, deleteStageApi } from '../api';
 
 export function fetchEventsAndStages(courseId: string) {
     return async (dispatch: any) => {
@@ -59,6 +59,27 @@ export function updateStage(stage: IStageDocument) {
         } catch (e) {
             dispatch({
                 type: SCHEDULE.UPDATE_COURSE_STAGE_FAIL,
+                payload: e,
+            });
+        }
+    };
+}
+
+export function deleteStage(id: string) {
+    return async (dispatch: any) => {
+        dispatch({
+            type: SCHEDULE.DELETE_COURSE_STAGE,
+        });
+
+        try {
+            await deleteStageApi(id);
+            dispatch({
+                type: SCHEDULE.DELETE_COURSE_STAGE_OK,
+                payload: id,
+            });
+        } catch (e) {
+            dispatch({
+                type: SCHEDULE.DELETE_COURSE_STAGE_FAIL,
                 payload: e,
             });
         }

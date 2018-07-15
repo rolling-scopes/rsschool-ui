@@ -20,7 +20,8 @@ export function scheduleReducer(state = initialState, action: IScheduleAction): 
     switch (action.type) {
         case SCHEDULE.FETCH_COURSE_EVENTS_AND_STAGES:
         case SCHEDULE.ADD_COURSE_STAGE:
-        case SCHEDULE.UPDATE_COURSE_STAGE: {
+        case SCHEDULE.UPDATE_COURSE_STAGE:
+        case SCHEDULE.DELETE_COURSE_STAGE: {
             return {
                 ...state,
                 isLoading: true,
@@ -32,15 +33,6 @@ export function scheduleReducer(state = initialState, action: IScheduleAction): 
                 events: action.payload.events,
                 stages: action.payload.stages,
                 isLoading: false,
-            };
-        }
-        case SCHEDULE.FETCH_COURSE_EVENTS_AND_STAGES_FAIL:
-        case SCHEDULE.ADD_COURSE_STAGE_FAIL:
-        case SCHEDULE.UPDATE_COURSE_STAGE_FAIL: {
-            return {
-                ...state,
-                isLoading: false,
-                error: action.payload,
             };
         }
         case SCHEDULE.ADD_COURSE_STAGE_OK: {
@@ -56,6 +48,24 @@ export function scheduleReducer(state = initialState, action: IScheduleAction): 
                 ...state,
                 stages: state.stages.map(stage => (stageId === stage._id ? action.payload : stage)),
                 isLoading: false,
+            };
+        }
+        case SCHEDULE.DELETE_COURSE_STAGE_OK: {
+            const stageId = action.payload;
+            return {
+                ...state,
+                stages: state.stages.filter(stage => stageId !== stage._id),
+                isLoading: false,
+            };
+        }
+        case SCHEDULE.FETCH_COURSE_EVENTS_AND_STAGES_FAIL:
+        case SCHEDULE.ADD_COURSE_STAGE_FAIL:
+        case SCHEDULE.UPDATE_COURSE_STAGE_FAIL:
+        case SCHEDULE.DELETE_COURSE_STAGE_FAIL: {
+            return {
+                ...state,
+                isLoading: false,
+                error: action.payload,
             };
         }
 

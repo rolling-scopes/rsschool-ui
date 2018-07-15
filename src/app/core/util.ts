@@ -48,6 +48,20 @@ interface IUpdateCourseStageFailAction {
     payload: Error;
 }
 
+interface IDeleteCourseStageAction {
+    type: SCHEDULE.DELETE_COURSE_STAGE;
+}
+
+interface IDeleteCourseStageOkAction {
+    type: SCHEDULE.DELETE_COURSE_STAGE_OK;
+    payload: string;
+}
+
+interface IDeleteCourseStageFailAction {
+    type: SCHEDULE.DELETE_COURSE_STAGE_FAIL;
+    payload: Error;
+}
+
 export type IScheduleAction =
     | IFetchCourseEventsAndStagesAction
     | IFetchCourseEventsAndStagesOkAction
@@ -57,7 +71,10 @@ export type IScheduleAction =
     | IAddCourseStageFailAction
     | IUpdateCourseStageAction
     | IUpdateCourseStageOkAction
-    | IUpdateCourseStageFailAction;
+    | IUpdateCourseStageFailAction
+    | IDeleteCourseStageAction
+    | IDeleteCourseStageOkAction
+    | IDeleteCourseStageFailAction;
 
 export interface Action<T> extends AnyAction {
     type: string;

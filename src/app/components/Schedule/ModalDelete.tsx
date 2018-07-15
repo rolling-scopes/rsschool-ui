@@ -4,6 +4,7 @@ import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
 type ModalDeleteProps = {
     isOpen: boolean;
     onCloseModal: () => void;
+    handleDelete: () => void;
     title: string;
     body: string;
     isError: boolean;
@@ -11,7 +12,7 @@ type ModalDeleteProps = {
 
 class ModalDelete extends React.PureComponent<ModalDeleteProps> {
     render() {
-        const { isOpen, onCloseModal, title, body, isError } = this.props;
+        const { isOpen, onCloseModal, handleDelete, title, body, isError } = this.props;
         return (
             <Modal fade={true} centered={true} isOpen={isOpen} toggle={onCloseModal}>
                 <ModalHeader toggle={onCloseModal}>{title}</ModalHeader>
@@ -23,7 +24,7 @@ class ModalDelete extends React.PureComponent<ModalDeleteProps> {
                         </Button>
                     ) : (
                         <React.Fragment>
-                            <Button color="secondary" onClick={onCloseModal}>
+                            <Button color="secondary" onClick={handleDelete}>
                                 Yes
                             </Button>{' '}
                             <Button color="primary" onClick={onCloseModal}>

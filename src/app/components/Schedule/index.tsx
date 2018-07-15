@@ -17,6 +17,7 @@ type ScheduleProps = {
     isAdmin: boolean;
     addStage: (stage: IStage) => void;
     updateStage: (stage: IStageDocument) => void;
+    deleteStage: (id: string) => void;
 };
 
 type DeleteContext = {
@@ -93,6 +94,13 @@ class Schedule extends React.PureComponent<ScheduleProps, ScheduleState> {
         this.setState({ stage: undefined });
     };
 
+    handleDelete = () => {
+        const { stage } = this.state;
+        if (stage != null) {
+            this.props.deleteStage(stage._id);
+        }
+    };
+
     render() {
         const { isAdmin, stages } = this.props;
         const { stage, isOpenModalStage, isOpenModalDelete, deleteContext } = this.state;
@@ -145,7 +153,12 @@ class Schedule extends React.PureComponent<ScheduleProps, ScheduleState> {
                     onSubmit={this.handleSubmitStage}
                 />
                 {deleteContext ? (
-                    <ModalDelete {...deleteContext} isOpen={isOpenModalDelete} onCloseModal={this.onCloseModalDelete} />
+                    <ModalDelete
+                        {...deleteContext}
+                        isOpen={isOpenModalDelete}
+                        onCloseModal={this.onCloseModalDelete}
+                        handleDelete={this.handleDelete}
+                    />
                 ) : null}
             </React.Fragment>
         );
