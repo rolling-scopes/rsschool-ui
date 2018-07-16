@@ -4,11 +4,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { Button, FormGroup, Row } from 'reactstrap';
 
-import { IEventDocument, IStageDocument, IStage } from 'core/models';
+import { IEventDocument, IStageDocument, IStage, EventType } from 'core/models';
 import ScheduleStage from './ScheduleStage';
 import ModalStage, { StageFormData } from './ModalStage';
+import ModalEvent, { EventFormData } from './ModalEvent';
 import ModalDelete from './ModalDelete';
-import { INPUT_DATE_FORMAT, DELETE_STAGE_CONTEXT } from './constants';
+import { INPUT_DATE_FORMAT, DELETE_STAGE_CONTEXT } from 'core/constants';
 
 type ScheduleProps = {
     courseId: string;
@@ -30,8 +31,10 @@ type ScheduleState = {
     stage: IStageDocument | undefined;
     event: IEventDocument | undefined;
     isOpenModalStage: boolean;
+    isOpenModalEvent: boolean;
     isOpenModalDelete: boolean;
     deleteContext: DeleteContext | undefined;
+    eventType: EventType | undefined;
 };
 
 class Schedule extends React.PureComponent<ScheduleProps, ScheduleState> {
@@ -42,8 +45,10 @@ class Schedule extends React.PureComponent<ScheduleProps, ScheduleState> {
             stage: undefined,
             event: undefined,
             isOpenModalStage: false,
+            isOpenModalEvent: false,
             isOpenModalDelete: false,
             deleteContext: undefined,
+            eventType: undefined,
         };
     }
 
@@ -51,10 +56,21 @@ class Schedule extends React.PureComponent<ScheduleProps, ScheduleState> {
         this.setState({ stage, isOpenModalStage: !this.state.isOpenModalStage });
     };
 
+    toggleOpenModalEvent = (eventType: EventType, event?: IEventDocument) => () => {
+        this.setState({ eventType, event, isOpenModalEvent: !this.state.isOpenModalEvent });
+    };
+
     onCloseModalStage = () => {
         this.setState({
             stage: undefined,
             isOpenModalStage: false,
+        });
+    };
+
+    onCloseModalEvent = () => {
+        this.setState({
+            event: undefined,
+            isOpenModalEvent: false,
         });
     };
 
@@ -94,6 +110,8 @@ class Schedule extends React.PureComponent<ScheduleProps, ScheduleState> {
         this.setState({ stage: undefined });
     };
 
+    handleSubmitEvent = (_: EventFormData) => {};
+
     handleDelete = () => {
         const { stage } = this.state;
         if (stage != null) {
@@ -103,17 +121,25 @@ class Schedule extends React.PureComponent<ScheduleProps, ScheduleState> {
 
     render() {
         const { isAdmin, stages } = this.props;
-        const { stage, isOpenModalStage, isOpenModalDelete, deleteContext } = this.state;
+        const {
+            stage,
+            event,
+            isOpenModalStage,
+            isOpenModalEvent,
+            isOpenModalDelete,
+            deleteContext,
+            eventType,
+        } = this.state;
 
         return (
             <React.Fragment>
                 {isAdmin ? (
                     <Row className="text-right mb-4 mt-3">
                         <FormGroup className="col-md-12">
-                            <Button color="success" onClick={console.log}>
+                            <Button color="success" onClick={this.toggleOpenModalEvent(EventType.Session)}>
                                 <FontAwesomeIcon icon={faPlus} /> Add Session
                             </Button>{' '}
-                            <Button color="success" onClick={console.log}>
+                            <Button color="success" onClick={this.toggleOpenModalEvent(EventType.Task)}>
                                 <FontAwesomeIcon icon={faPlus} /> Add Task
                             </Button>
                         </FormGroup>
@@ -152,6 +178,16 @@ class Schedule extends React.PureComponent<ScheduleProps, ScheduleState> {
                     }
                     onSubmit={this.handleSubmitStage}
                 />
+                {eventType ? (
+                    <ModalEvent
+                        isOpen={isOpenModalEvent}
+                        event={event}
+                        eventType={eventType}
+                        onCloseModal={this.onCloseModalEvent}
+                        initialValues={undefined}
+                        onSubmit={this.handleSubmitEvent}
+                    />
+                ) : null}
                 {deleteContext ? (
                     <ModalDelete
                         {...deleteContext}

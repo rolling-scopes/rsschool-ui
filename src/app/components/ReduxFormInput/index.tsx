@@ -2,7 +2,7 @@ import * as React from 'react';
 import { WrappedFieldProps } from 'redux-form';
 import { Label, Input, FormFeedback } from 'reactstrap';
 
-type InputType = 'text' | 'tel' | 'email' | 'date' | 'select';
+type InputType = 'text' | 'tel' | 'email' | 'date' | 'datetime-local' | 'select';
 
 class ReduxFormInput extends React.PureComponent<React.InputHTMLAttributes<HTMLInputElement> & WrappedFieldProps> {
     render() {

@@ -5,7 +5,7 @@ import { faPencilAlt, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { Button, Badge } from 'reactstrap';
 
 import { IStageDocument } from 'core/models';
-import { DATE_FORMAT } from './constants';
+import { DATE_FORMAT } from 'core/constants';
 
 type ScheduleStageProps = {
     stage: IStageDocument;

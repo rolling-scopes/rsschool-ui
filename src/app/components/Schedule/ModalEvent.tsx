@@ -4,43 +4,44 @@ import { connect } from 'react-redux';
 import { InjectedFormProps, reduxForm, Field } from 'redux-form';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Row, Form, FormGroup, Button } from 'reactstrap';
 
-import { IStageDocument } from 'core/models';
+import { IEventDocument, EventType } from 'core/models';
 import { requiredFieldError, requiredFieldSuccess } from 'core/validation';
 import ReduxFormInput from 'components/ReduxFormInput';
-import { INPUT_DATE_FORMAT } from 'core/constants';
+import { INPUT_DATE_TIME_FORMAT } from 'core/constants';
 
-type ModalStageProps = {
-    stage: IStageDocument | undefined;
+type ModalEventProps = {
+    event: IEventDocument | undefined;
+    eventType: EventType;
     isOpen: boolean;
     onCloseModal: () => void;
-    startDate?: string;
-    endDate?: string;
+    startDateTime?: string;
+    endDateTime?: string;
 };
 
-export type StageFormData = {
+export type EventFormData = {
     title: string;
-    startDate: string;
-    endDate: string;
+    startDateTime: string;
+    endDateTime: string;
 };
 
-class ModalStage extends React.PureComponent<ModalStageProps & InjectedFormProps<StageFormData, ModalStageProps>> {
+class ModalEvent extends React.PureComponent<ModalEventProps & InjectedFormProps<EventFormData, ModalEventProps>> {
     onCloseModal = () => {
         this.props.reset();
         this.props.onCloseModal();
     };
 
     render() {
-        const { isOpen, stage, handleSubmit, pristine, submitting, startDate, endDate } = this.props;
+        const { isOpen, handleSubmit, pristine, submitting, startDateTime, endDateTime } = this.props;
         return (
-            <Modal fade={true} centered={true} isOpen={isOpen} toggle={this.onCloseModal}>
+            <Modal fade={true} centered={true} isOpen={isOpen} toggle={this.onCloseModal} size="lg">
                 <Form onSubmit={handleSubmit}>
-                    <ModalHeader toggle={this.onCloseModal}>{stage ? 'Edit Stage' : 'New Stage'}</ModalHeader>
+                    <ModalHeader toggle={this.onCloseModal}>New Task</ModalHeader>
                     <ModalBody>
                         <FormGroup>
                             <Field
                                 name="title"
                                 label="Title"
-                                placeholder="Stage #1"
+                                placeholder="Task Title"
                                 component={ReduxFormInput}
                                 required={true}
                                 type="text"
@@ -51,26 +52,26 @@ class ModalStage extends React.PureComponent<ModalStageProps & InjectedFormProps
                         <FormGroup row={true}>
                             <FormGroup className="col-md-6">
                                 <Field
-                                    name="startDate"
-                                    label="Start Date"
-                                    placeholder="17-01-2018"
+                                    name="startDateTime"
+                                    label="Start Date Time"
                                     component={ReduxFormInput}
                                     required={true}
-                                    type="date"
-                                    max={endDate ? moment(endDate).format(INPUT_DATE_FORMAT) : undefined}
+                                    type="datetime-local"
+                                    max={endDateTime ? moment(endDateTime).format(INPUT_DATE_TIME_FORMAT) : undefined}
                                     validate={[requiredFieldError]}
                                     warn={requiredFieldSuccess}
                                 />
                             </FormGroup>
                             <FormGroup className="col-md-6">
                                 <Field
-                                    name="endDate"
-                                    label="End Date"
-                                    placeholder="17-04-2018"
+                                    name="endDateTime"
+                                    label="End Date Time"
                                     component={ReduxFormInput}
                                     required={true}
-                                    type="date"
-                                    min={startDate ? moment(startDate).format(INPUT_DATE_FORMAT) : undefined}
+                                    type="datetime-local"
+                                    min={
+                                        startDateTime ? moment(startDateTime).format(INPUT_DATE_TIME_FORMAT) : undefined
+                                    }
                                     validate={[requiredFieldError]}
                                     warn={requiredFieldSuccess}
                                 />
@@ -95,20 +96,20 @@ class ModalStage extends React.PureComponent<ModalStageProps & InjectedFormProps
     }
 }
 
-function mapStateToProps(state: any, props: any): ModalStageProps {
+function mapStateToProps(state: any, props: any): ModalEventProps {
     return {
         ...props,
-        startDate: (state.form.stageForm || {}).values ? state.form.stageForm.values.startDate : undefined,
-        endDate: (state.form.stageForm || {}).values ? state.form.stageForm.values.endDate : undefined,
+        startDateTime: (state.form.eventForm || {}).values ? state.form.eventForm.values.startDateTime : undefined,
+        endDateTime: (state.form.eventForm || {}).values ? state.form.eventForm.values.endDateTime : undefined,
     };
 }
 
-export default reduxForm<StageFormData, ModalStageProps>({
-    form: 'stageForm',
+export default reduxForm<EventFormData, ModalEventProps>({
+    form: 'eventForm',
     enableReinitialize: true,
 })(
     connect(
         mapStateToProps,
         null,
-    )(ModalStage),
+    )(ModalEvent),
 );
