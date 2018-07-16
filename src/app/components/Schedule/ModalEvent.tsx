@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { InjectedFormProps, reduxForm, Field } from 'redux-form';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Row, Form, FormGroup, Button } from 'reactstrap';
 
-import { IEventDocument, EventType } from 'core/models';
+import { IEventDocument, EventType, TaskType, SessionType } from 'core/models';
 import { requiredFieldError, requiredFieldSuccess } from 'core/validation';
 import ReduxFormInput from 'components/ReduxFormInput';
 import { INPUT_DATE_TIME_FORMAT } from 'core/constants';
@@ -12,6 +12,7 @@ import { INPUT_DATE_TIME_FORMAT } from 'core/constants';
 type ModalEventProps = {
     event: IEventDocument | undefined;
     eventType: EventType;
+    isCopy: boolean;
     isOpen: boolean;
     onCloseModal: () => void;
     startDateTime?: string;
@@ -20,8 +21,10 @@ type ModalEventProps = {
 
 export type EventFormData = {
     title: string;
+    taskType?: TaskType;
+    sessionType?: SessionType;
     startDateTime: string;
-    endDateTime: string;
+    endDateTime?: string;
 };
 
 class ModalEvent extends React.PureComponent<ModalEventProps & InjectedFormProps<EventFormData, ModalEventProps>> {
@@ -30,12 +33,34 @@ class ModalEvent extends React.PureComponent<ModalEventProps & InjectedFormProps
         this.props.onCloseModal();
     };
 
+    getModalTitle = () => {
+        const { eventType, event, isCopy } = this.props;
+        switch (eventType) {
+            case EventType.Session: {
+                if (isCopy) {
+                    return 'Copy Session';
+                }
+                return event ? 'Edit Session' : 'New Session';
+            }
+            case EventType.Task: {
+                if (isCopy) {
+                    return 'Copy Task';
+                }
+                return event ? 'Edit Task' : 'New Task';
+            }
+
+            default: {
+                return 'Event';
+            }
+        }
+    };
+
     render() {
-        const { isOpen, handleSubmit, pristine, submitting, startDateTime, endDateTime } = this.props;
+        const { isOpen, handleSubmit, pristine, submitting, eventType, startDateTime, endDateTime } = this.props;
         return (
             <Modal fade={true} centered={true} isOpen={isOpen} toggle={this.onCloseModal} size="lg">
                 <Form onSubmit={handleSubmit}>
-                    <ModalHeader toggle={this.onCloseModal}>New Task</ModalHeader>
+                    <ModalHeader toggle={this.onCloseModal}>{this.getModalTitle()}</ModalHeader>
                     <ModalBody>
                         <FormGroup>
                             <Field
@@ -49,6 +74,46 @@ class ModalEvent extends React.PureComponent<ModalEventProps & InjectedFormProps
                                 warn={requiredFieldSuccess}
                             />
                         </FormGroup>
+                        {eventType === EventType.Task ? (
+                            <FormGroup>
+                                <Field
+                                    label="Task Type"
+                                    name="taskType"
+                                    placeholder="Task Type"
+                                    component={ReduxFormInput}
+                                    type="select"
+                                    required={true}
+                                    validate={[requiredFieldError]}
+                                    warn={requiredFieldSuccess}
+                                >
+                                    {Object.values(TaskType).map(taskType => (
+                                        <option key={taskType} value={taskType}>
+                                            {taskType}
+                                        </option>
+                                    ))}
+                                </Field>
+                            </FormGroup>
+                        ) : null}
+                        {eventType === EventType.Session ? (
+                            <FormGroup>
+                                <Field
+                                    label="Session Type"
+                                    name="sessionType"
+                                    placeholder="Session Type"
+                                    component={ReduxFormInput}
+                                    type="select"
+                                    required={true}
+                                    validate={[requiredFieldError]}
+                                    warn={requiredFieldSuccess}
+                                >
+                                    {Object.values(SessionType).map(sessionType => (
+                                        <option key={sessionType} value={sessionType}>
+                                            {sessionType}
+                                        </option>
+                                    ))}
+                                </Field>
+                            </FormGroup>
+                        ) : null}
                         <FormGroup row={true}>
                             <FormGroup className="col-md-6">
                                 <Field
@@ -62,21 +127,27 @@ class ModalEvent extends React.PureComponent<ModalEventProps & InjectedFormProps
                                     warn={requiredFieldSuccess}
                                 />
                             </FormGroup>
-                            <FormGroup className="col-md-6">
-                                <Field
-                                    name="endDateTime"
-                                    label="End Date Time"
-                                    component={ReduxFormInput}
-                                    required={true}
-                                    type="datetime-local"
-                                    min={
-                                        startDateTime ? moment(startDateTime).format(INPUT_DATE_TIME_FORMAT) : undefined
-                                    }
-                                    validate={[requiredFieldError]}
-                                    warn={requiredFieldSuccess}
-                                />
-                            </FormGroup>
                         </FormGroup>
+                        {eventType === EventType.Task ? (
+                            <FormGroup row={true}>
+                                <FormGroup className="col-md-6">
+                                    <Field
+                                        name="endDateTime"
+                                        label="End Date Time"
+                                        component={ReduxFormInput}
+                                        required={true}
+                                        type="datetime-local"
+                                        min={
+                                            startDateTime
+                                                ? moment(startDateTime).format(INPUT_DATE_TIME_FORMAT)
+                                                : undefined
+                                        }
+                                        validate={[requiredFieldError]}
+                                        warn={requiredFieldSuccess}
+                                    />
+                                </FormGroup>
+                            </FormGroup>
+                        ) : null}
                     </ModalBody>
                     <ModalFooter>
                         <Row className="text-right">

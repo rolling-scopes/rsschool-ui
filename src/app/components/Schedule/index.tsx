@@ -181,6 +181,7 @@ class Schedule extends React.PureComponent<ScheduleProps, ScheduleState> {
                 {eventType ? (
                     <ModalEvent
                         isOpen={isOpenModalEvent}
+                        isCopy={false} // TODO
                         event={event}
                         eventType={eventType}
                         onCloseModal={this.onCloseModalEvent}
