@@ -2,9 +2,9 @@ import * as React from 'react';
 import * as moment from 'moment';
 import { connect } from 'react-redux';
 import { InjectedFormProps, reduxForm, Field } from 'redux-form';
-import { Modal, ModalHeader, ModalBody, ModalFooter, Row, Form, FormGroup, Button } from 'reactstrap';
+import { Modal, ModalHeader, ModalBody, ModalFooter, Row, Form, FormGroup, Button, FormText } from 'reactstrap';
 
-import { IEventDocument, EventType, TaskType, SessionType } from 'core/models';
+import { IEventDocument, EventType, TaskType, SessionType, WhoChecks } from 'core/models';
 import { requiredFieldError, requiredFieldSuccess } from 'core/validation';
 import ReduxFormInput from 'components/ReduxFormInput';
 import { INPUT_DATE_TIME_FORMAT } from 'core/constants';
@@ -25,6 +25,10 @@ export type EventFormData = {
     sessionType?: SessionType;
     startDateTime: string;
     endDateTime?: string;
+    location?: string;
+    trainer?: string;
+    whoChecks?: WhoChecks;
+    descriptionFileUrl?: string;
 };
 
 class ModalEvent extends React.PureComponent<ModalEventProps & InjectedFormProps<EventFormData, ModalEventProps>> {
@@ -129,25 +133,94 @@ class ModalEvent extends React.PureComponent<ModalEventProps & InjectedFormProps
                             </FormGroup>
                         </FormGroup>
                         {eventType === EventType.Task ? (
-                            <FormGroup row={true}>
-                                <FormGroup className="col-md-6">
+                            <React.Fragment>
+                                <FormGroup row={true}>
+                                    <FormGroup className="col-md-6">
+                                        <Field
+                                            name="endDateTime"
+                                            label="End Date Time"
+                                            component={ReduxFormInput}
+                                            required={true}
+                                            type="datetime-local"
+                                            min={
+                                                startDateTime
+                                                    ? moment(startDateTime).format(INPUT_DATE_TIME_FORMAT)
+                                                    : undefined
+                                            }
+                                            validate={[requiredFieldError]}
+                                            warn={requiredFieldSuccess}
+                                        />
+                                    </FormGroup>
+                                </FormGroup>
+                                <FormGroup>
                                     <Field
-                                        name="endDateTime"
-                                        label="End Date Time"
+                                        label="Who checks"
+                                        name="whoChecks"
+                                        placeholder="Who checks"
+                                        component={ReduxFormInput}
+                                        type="select"
+                                        required={true}
+                                        validate={[requiredFieldError]}
+                                        warn={requiredFieldSuccess}
+                                    >
+                                        {Object.values(WhoChecks).map(whoCheck => (
+                                            <option key={whoCheck} value={whoCheck}>
+                                                {whoCheck}
+                                            </option>
+                                        ))}
+                                    </Field>
+                                </FormGroup>
+                            </React.Fragment>
+                        ) : null}
+                        {eventType === EventType.Session ? (
+                            <React.Fragment>
+                                <FormGroup>
+                                    <Field
+                                        name="location"
+                                        label="Location"
+                                        placeholder={
+                                            "like: 'Str. Akadеmіka Kup...' or 'https://attendee.gototraining.com...'"
+                                        }
                                         component={ReduxFormInput}
                                         required={true}
-                                        type="datetime-local"
-                                        min={
-                                            startDateTime
-                                                ? moment(startDateTime).format(INPUT_DATE_TIME_FORMAT)
-                                                : undefined
-                                        }
+                                        type="text"
                                         validate={[requiredFieldError]}
                                         warn={requiredFieldSuccess}
                                     />
                                 </FormGroup>
-                            </FormGroup>
+                                <FormGroup>
+                                    <Field
+                                        name="trainer"
+                                        label="Trainer"
+                                        placeholder="Trainer"
+                                        component={ReduxFormInput}
+                                        required={true}
+                                        type="text"
+                                        validate={[requiredFieldError]}
+                                        warn={requiredFieldSuccess}
+                                    />
+                                </FormGroup>
+                            </React.Fragment>
                         ) : null}
+                        <FormGroup>
+                            <Field
+                                name="descriptionFileUrl"
+                                label="URL to GitHub Markdown File with session description"
+                                placeholder="http://..."
+                                component={ReduxFormInput}
+                                required={eventType === EventType.Task}
+                                type="text"
+                                validate={eventType === EventType.Task ? [requiredFieldError] : undefined}
+                                warn={eventType === EventType.Task ? requiredFieldSuccess : undefined}
+                            />
+                            <FormText color="muted">
+                                Please create markdown file with session description in the following directory{' '}
+                                <a href="https://github.com/rolling-scopes-school/lectures">
+                                    https://github.com/rolling-scopes-school/lectures
+                                </a>{' '}
+                                and provide URL link to that file.
+                            </FormText>
+                        </FormGroup>
                     </ModalBody>
                     <ModalFooter>
                         <Row className="text-right">

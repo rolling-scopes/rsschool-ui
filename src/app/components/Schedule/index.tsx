@@ -4,12 +4,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { Button, FormGroup, Row } from 'reactstrap';
 
-import { IEventDocument, IStageDocument, IStage, EventType } from 'core/models';
+import { IEventDocument, IEvent, IStageDocument, IStage, EventType } from 'core/models';
 import ScheduleStage from './ScheduleStage';
 import ModalStage, { StageFormData } from './ModalStage';
 import ModalEvent, { EventFormData } from './ModalEvent';
 import ModalDelete from './ModalDelete';
-import { INPUT_DATE_FORMAT, DELETE_STAGE_CONTEXT } from 'core/constants';
+import { INPUT_DATE_FORMAT, DELETE_STAGE_CONTEXT, INPUT_DATE_TIME_FORMAT } from 'core/constants';
 
 type ScheduleProps = {
     courseId: string;
@@ -19,6 +19,9 @@ type ScheduleProps = {
     addStage: (stage: IStage) => void;
     updateStage: (stage: IStageDocument) => void;
     deleteStage: (id: string) => void;
+    addEvent: (event: IEvent) => void;
+    updateEvent: (event: IEventDocument) => void;
+    deleteEvent: (id: string) => void;
 };
 
 type DeleteContext = {
@@ -35,6 +38,7 @@ type ScheduleState = {
     isOpenModalDelete: boolean;
     deleteContext: DeleteContext | undefined;
     eventType: EventType | undefined;
+    isCopyEvent: boolean;
 };
 
 class Schedule extends React.PureComponent<ScheduleProps, ScheduleState> {
@@ -49,6 +53,7 @@ class Schedule extends React.PureComponent<ScheduleProps, ScheduleState> {
             isOpenModalDelete: false,
             deleteContext: undefined,
             eventType: undefined,
+            isCopyEvent: false,
         };
     }
 
@@ -56,8 +61,12 @@ class Schedule extends React.PureComponent<ScheduleProps, ScheduleState> {
         this.setState({ stage, isOpenModalStage: !this.state.isOpenModalStage });
     };
 
-    toggleOpenModalEvent = (eventType: EventType, event?: IEventDocument) => () => {
-        this.setState({ eventType, event, isOpenModalEvent: !this.state.isOpenModalEvent });
+    toggleOpenModalEvent = (
+        eventType: EventType,
+        event: IEventDocument | undefined = undefined,
+        isCopyEvent: boolean = false,
+    ) => () => {
+        this.setState({ eventType, event, isCopyEvent, isOpenModalEvent: !this.state.isOpenModalEvent });
     };
 
     onCloseModalStage = () => {
@@ -71,6 +80,8 @@ class Schedule extends React.PureComponent<ScheduleProps, ScheduleState> {
         this.setState({
             event: undefined,
             isOpenModalEvent: false,
+            eventType: undefined,
+            isCopyEvent: false,
         });
     };
 
@@ -90,33 +101,99 @@ class Schedule extends React.PureComponent<ScheduleProps, ScheduleState> {
     handleSubmitStage = ({ title, startDate, endDate }: StageFormData) => {
         const { stage } = this.state;
         const { courseId } = this.props;
+        const data = {
+            title: title.trim(),
+            startDate: Number(moment(startDate)),
+            endDate: Number(moment(endDate)),
+            courseId,
+        };
         if (stage != null) {
-            const data = {
-                ...stage,
-                title: title.trim(),
-                startDate: Number(moment(startDate)),
-                endDate: Number(moment(endDate)),
-            };
-            this.props.updateStage(data);
+            this.props.updateStage({ ...stage, ...data });
         } else {
-            const data = {
-                title: title.trim(),
-                startDate: Number(moment(startDate)),
-                endDate: Number(moment(endDate)),
-                courseId,
-            };
             this.props.addStage(data);
         }
-        this.setState({ stage: undefined });
+        this.onCloseModalStage();
     };
 
-    handleSubmitEvent = (_: EventFormData) => {};
+    handleSubmitEvent = ({
+        title,
+        taskType,
+        sessionType,
+        startDateTime,
+        endDateTime,
+        location,
+        trainer,
+        whoChecks,
+        descriptionFileUrl,
+    }: EventFormData) => {
+        const { event, eventType, isCopyEvent } = this.state;
+        const { courseId } = this.props;
+
+        if (!eventType) {
+            return;
+        }
+
+        const data = {
+            courseId,
+            type: eventType,
+            title: title.trim(),
+            taskType: taskType,
+            sessionType: sessionType,
+            startDateTime: Number(moment(startDateTime)),
+            endDateTime: endDateTime ? Number(moment(endDateTime)) : undefined,
+            location: location && location.trim(),
+            trainer: trainer && trainer.trim(),
+            whoChecks: whoChecks,
+            descriptionFileUrl: descriptionFileUrl && descriptionFileUrl.trim(),
+        };
+
+        if (event != null) {
+            if (isCopyEvent) {
+                this.props.addEvent(data);
+            } else {
+                this.props.updateEvent({ ...event, ...data });
+            }
+        } else {
+            this.props.addEvent(data);
+        }
+        this.onCloseModalEvent();
+    };
 
     handleDelete = () => {
-        const { stage } = this.state;
+        const { stage, event } = this.state;
         if (stage != null) {
             this.props.deleteStage(stage._id);
+        } else if (event != null) {
+            this.props.deleteEvent(event._id);
         }
+    };
+
+    getInitialStage = (): StageFormData | undefined => {
+        const { stage } = this.state;
+        return (
+            stage && {
+                title: stage.title,
+                startDate: moment(stage.startDate).format(INPUT_DATE_FORMAT),
+                endDate: moment(stage.endDate).format(INPUT_DATE_FORMAT),
+            }
+        );
+    };
+
+    getInitialEvent = (): EventFormData | undefined => {
+        const { event } = this.state;
+        return (
+            event && {
+                title: event.title,
+                taskType: event.taskType,
+                sessionType: event.sessionType,
+                startDateTime: moment(event.startDateTime).format(INPUT_DATE_TIME_FORMAT),
+                endDateTime: event.endDateTime ? moment(event.endDateTime).format(INPUT_DATE_TIME_FORMAT) : undefined,
+                location: event.location,
+                trainer: event.trainer,
+                whoChecks: event.whoChecks,
+                descriptionFileUrl: event.descriptionFileUrl,
+            }
+        );
     };
 
     render() {
@@ -129,6 +206,7 @@ class Schedule extends React.PureComponent<ScheduleProps, ScheduleState> {
             isOpenModalDelete,
             deleteContext,
             eventType,
+            isCopyEvent,
         } = this.state;
 
         return (
@@ -169,23 +247,17 @@ class Schedule extends React.PureComponent<ScheduleProps, ScheduleState> {
                     isOpen={isOpenModalStage}
                     stage={stage}
                     onCloseModal={this.onCloseModalStage}
-                    initialValues={
-                        stage && {
-                            title: stage.title,
-                            startDate: moment(stage.startDate).format(INPUT_DATE_FORMAT),
-                            endDate: moment(stage.endDate).format(INPUT_DATE_FORMAT),
-                        }
-                    }
+                    initialValues={this.getInitialStage()}
                     onSubmit={this.handleSubmitStage}
                 />
                 {eventType ? (
                     <ModalEvent
                         isOpen={isOpenModalEvent}
-                        isCopy={false} // TODO
+                        isCopy={isCopyEvent}
                         event={event}
                         eventType={eventType}
                         onCloseModal={this.onCloseModalEvent}
-                        initialValues={undefined}
+                        initialValues={this.getInitialEvent()}
                         onSubmit={this.handleSubmitEvent}
                     />
                 ) : null}

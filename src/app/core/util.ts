@@ -3,8 +3,8 @@ import { AnyAction } from 'redux';
 import { SCHEDULE } from './constants';
 import { IEventDocument, IStageDocument } from './models';
 
-interface IFetchCourseEventsAndStagesAction {
-    type: SCHEDULE.FETCH_COURSE_EVENTS_AND_STAGES;
+interface ILoadingAction {
+    type: SCHEDULE.LOADING;
 }
 
 interface IFetchCourseEventsAndStagesOkAction {
@@ -15,13 +15,9 @@ interface IFetchCourseEventsAndStagesOkAction {
     };
 }
 
-interface IFetchCourseEventsAndStagesFailAction {
-    type: SCHEDULE.FETCH_COURSE_EVENTS_AND_STAGES_FAIL;
+interface IFailAction {
+    type: SCHEDULE.FAIL;
     payload: Error;
-}
-
-interface IAddCourseStageAction {
-    type: SCHEDULE.ADD_COURSE_STAGE;
 }
 
 interface IAddCourseStageOkAction {
@@ -29,27 +25,9 @@ interface IAddCourseStageOkAction {
     payload: IStageDocument;
 }
 
-interface IAddCourseStageFailAction {
-    type: SCHEDULE.ADD_COURSE_STAGE_FAIL;
-    payload: Error;
-}
-
-interface IUpdateCourseStageAction {
-    type: SCHEDULE.UPDATE_COURSE_STAGE;
-}
-
 interface IUpdateCourseStageOkAction {
     type: SCHEDULE.UPDATE_COURSE_STAGE_OK;
     payload: IStageDocument;
-}
-
-interface IUpdateCourseStageFailAction {
-    type: SCHEDULE.UPDATE_COURSE_STAGE_FAIL;
-    payload: Error;
-}
-
-interface IDeleteCourseStageAction {
-    type: SCHEDULE.DELETE_COURSE_STAGE;
 }
 
 interface IDeleteCourseStageOkAction {
@@ -57,24 +35,31 @@ interface IDeleteCourseStageOkAction {
     payload: string;
 }
 
-interface IDeleteCourseStageFailAction {
-    type: SCHEDULE.DELETE_COURSE_STAGE_FAIL;
-    payload: Error;
+interface IAddCourseEventOkAction {
+    type: SCHEDULE.ADD_COURSE_EVENT_OK;
+    payload: IEventDocument;
+}
+
+interface IUpdateCourseEventOkAction {
+    type: SCHEDULE.UPDATE_COURSE_EVENT_OK;
+    payload: IEventDocument;
+}
+
+interface IDeleteCourseEventOkAction {
+    type: SCHEDULE.DELETE_COURSE_EVENT_OK;
+    payload: string;
 }
 
 export type IScheduleAction =
-    | IFetchCourseEventsAndStagesAction
+    | ILoadingAction
+    | IFailAction
     | IFetchCourseEventsAndStagesOkAction
-    | IFetchCourseEventsAndStagesFailAction
-    | IAddCourseStageAction
     | IAddCourseStageOkAction
-    | IAddCourseStageFailAction
-    | IUpdateCourseStageAction
     | IUpdateCourseStageOkAction
-    | IUpdateCourseStageFailAction
-    | IDeleteCourseStageAction
     | IDeleteCourseStageOkAction
-    | IDeleteCourseStageFailAction;
+    | IAddCourseEventOkAction
+    | IUpdateCourseEventOkAction
+    | IDeleteCourseEventOkAction;
 
 export interface Action<T> extends AnyAction {
     type: string;

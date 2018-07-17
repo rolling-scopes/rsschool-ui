@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { IEventDocument, IStageDocument, IStage } from '../models';
+import { IEvent, IEventDocument, IStageDocument, IStage } from '../models';
 
 type EventsResponse = {
     data: IEventDocument[];
@@ -14,6 +14,12 @@ type StagePostResponse = IStageDocument;
 
 type StagePatchResponse = {
     data: IStageDocument;
+};
+
+type EventPostResponse = IEventDocument;
+
+type EventPatchResponse = {
+    data: IEventDocument;
 };
 
 function getEventsByCourseId(courseId: string) {
@@ -41,4 +47,16 @@ export function updateStageApi(stage: IStageDocument) {
 
 export function deleteStageApi(id: string) {
     return axios.delete(`/api/stage/${id}`);
+}
+
+export function addEventApi(event: IEvent) {
+    return axios.post<EventPostResponse>(`/api/event`, event).then(response => response.data);
+}
+
+export function updateEventApi(event: IEventDocument) {
+    return axios.patch<EventPatchResponse>(`/api/event`, event).then(response => response.data.data);
+}
+
+export function deleteEventApi(id: string) {
+    return axios.delete(`/api/event/${id}`);
 }

@@ -2,8 +2,16 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 
 import Schedule from 'components/Schedule';
-import { fetchEventsAndStages, addStage, updateStage, deleteStage } from 'core/actions';
-import { IEventDocument, IStage, IStageDocument } from 'core/models';
+import {
+    fetchEventsAndStages,
+    addStage,
+    updateStage,
+    deleteStage,
+    addEvent,
+    updateEvent,
+    deleteEvent,
+} from 'core/actions';
+import { IEvent, IEventDocument, IStage, IStageDocument } from 'core/models';
 import './index.scss';
 
 const mapStateToProps = (state: any, props: any): ScheduleContainerProps => {
@@ -32,6 +40,15 @@ const mapDispatchToProps = (dispatch: any, props: any): ScheduleContainerProps =
         deleteStage: (id: string) => {
             dispatch(deleteStage(id));
         },
+        addEvent: (event: IEvent) => {
+            dispatch(addEvent(event));
+        },
+        updateEvent: (event: IEventDocument) => {
+            dispatch(updateEvent(event));
+        },
+        deleteEvent: (id: string) => {
+            dispatch(deleteEvent(id));
+        },
     };
 };
 
@@ -42,6 +59,9 @@ type ScheduleContainerProps = {
     addStage: (stage: IStage) => void;
     updateStage: (stage: IStageDocument) => void;
     deleteStage: (id: string) => void;
+    addEvent: (event: IEvent) => void;
+    updateEvent: (event: IEventDocument) => void;
+    deleteEvent: (id: string) => void;
     courseId: string;
     isLoading: boolean;
     isAdmin: boolean;
@@ -68,6 +88,9 @@ class ScheduleContainer extends React.Component<ScheduleContainerProps, any> {
                         addStage={this.props.addStage}
                         updateStage={this.props.updateStage}
                         deleteStage={this.props.deleteStage}
+                        addEvent={this.props.addEvent}
+                        updateEvent={this.props.updateEvent}
+                        deleteEvent={this.props.deleteEvent}
                     />
                 )}
             </div>
