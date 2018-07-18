@@ -6,6 +6,7 @@ import { Button, FormGroup, Row } from 'reactstrap';
 
 import { IEventDocument, IEvent, IStageDocument, IStage, EventType } from 'core/models';
 import ScheduleStage from './ScheduleStage';
+import ScheduleEvent from './ScheduleEvent';
 import ModalStage, { StageFormData } from './ModalStage';
 import ModalEvent, { EventFormData } from './ModalEvent';
 import ModalDelete from './ModalDelete';
@@ -197,7 +198,7 @@ class Schedule extends React.PureComponent<ScheduleProps, ScheduleState> {
     };
 
     render() {
-        const { isAdmin, stages } = this.props;
+        const { isAdmin, stages, events } = this.props;
         const {
             stage,
             event,
@@ -234,6 +235,20 @@ class Schedule extends React.PureComponent<ScheduleProps, ScheduleState> {
                         />
                     );
                 })}
+                <div className="schedule-desc">
+                    {events.map((evnt, index) => {
+                        return (
+                            <ScheduleEvent
+                                key={index}
+                                event={evnt}
+                                isAdmin={isAdmin}
+                                onEditEvent={console.log}
+                                onCopyEvent={console.log}
+                                onDeleteEvent={console.log}
+                            />
+                        );
+                    })}
+                </div>
                 {isAdmin ? (
                     <Row className="text-center mt-5">
                         <FormGroup className="col-md-12">

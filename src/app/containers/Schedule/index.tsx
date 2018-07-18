@@ -76,7 +76,7 @@ class ScheduleContainer extends React.Component<ScheduleContainerProps, any> {
         const { events, stages, isAdmin, isLoading, courseId } = this.props;
         return (
             <div className="schedule">
-                <h1 className="schedule-title">Schedule</h1>
+                <h2>Schedule</h2>
                 {isLoading ? (
                     <h3>Loading...</h3>
                 ) : (

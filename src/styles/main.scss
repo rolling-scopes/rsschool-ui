@@ -36,7 +36,88 @@ html, body, #root {
     color: $white;
 }
 
+/*------------------------------------*\
+   COMMON Styles
+\*------------------------------------*/
+
 .field-required:after {
     content: "*";
     color: #f00;
+}
+
+main.container {
+    padding: 80px 15px;
+}
+
+h4.badge-info {
+    line-height: 1rem;
+}
+
+.badge-secondary-gray {
+    color: #1a1a1a;
+    background-color: #eee;
+}
+
+.badge-secondary-gray[href]:hover, .badge-secondary-gray[href]:focus {
+    color: #1a1a1a;
+    text-decoration: none;
+    background-color: #e6e5e5;
+}
+
+.badge-primary a {
+    color: #fff;
+}
+
+
+// TODO remove
+/*------------------------------------*\
+   SCHEDULE Styles
+\*------------------------------------*/
+
+.schedule-desc {
+    padding: 0.5rem 0 3rem;
+
+    .card {
+         margin-top: -2px;
+    }
+
+    .card.past {
+        .card-header .btn-link {
+            color: #bbb;
+        }
+    }
+
+    & > .card > .card-header {
+        padding: 0;
+
+        .btn.btn-link {
+            position: relative;
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 1rem 1.25rem;
+            text-transform: capitalize;
+            text-decoration: none;
+            white-space: normal;
+
+            .row div:last-child {
+                text-align: right;
+            }
+
+            @media (max-width: $screen-tablet) {
+                div[class^="col"] {
+                    max-width: 100%;
+                }
+            }
+        }
+
+        .badge {
+            font-weight: normal;
+            font-size: .8rem;
+
+            &.badge-pill {
+                line-height: 1rem;
+            }
+        }
+    }
 }
