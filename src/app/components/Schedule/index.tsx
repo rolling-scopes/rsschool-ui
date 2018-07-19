@@ -5,12 +5,15 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { Button, FormGroup, Row } from 'reactstrap';
 
 import { IEventDocument, IEvent, IStageDocument, IStage, EventType } from 'core/models';
+import { classNames } from 'core/styles';
 import ScheduleStage from './ScheduleStage';
 import ScheduleEvent from './ScheduleEvent';
 import ModalStage, { StageFormData } from './ModalStage';
 import ModalEvent, { EventFormData } from './ModalEvent';
 import ModalDelete from './ModalDelete';
 import { INPUT_DATE_FORMAT, DELETE_STAGE_CONTEXT, INPUT_DATE_TIME_FORMAT } from 'core/constants';
+
+const cn = classNames(require('./index.scss'));
 
 type ScheduleProps = {
     courseId: string;
@@ -235,7 +238,7 @@ class Schedule extends React.PureComponent<ScheduleProps, ScheduleState> {
                         />
                     );
                 })}
-                <div className="schedule-desc">
+                <div className={cn('schedule-desc')}>
                     {events.map((evnt, index) => {
                         return (
                             <ScheduleEvent

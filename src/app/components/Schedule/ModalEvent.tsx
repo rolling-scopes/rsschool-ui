@@ -5,7 +5,7 @@ import { InjectedFormProps, reduxForm, Field } from 'redux-form';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Row, Form, FormGroup, Button, FormText } from 'reactstrap';
 
 import { IEventDocument, EventType, TaskType, SessionType, WhoChecks } from 'core/models';
-import { requiredFieldError, requiredFieldSuccess } from 'core/validation';
+import { requiredFieldError, requiredFieldSuccess, urlFieldError } from 'core/validation';
 import ReduxFormInput from 'components/ReduxFormInput';
 import { INPUT_DATE_TIME_FORMAT } from 'core/constants';
 
@@ -210,7 +210,9 @@ class ModalEvent extends React.PureComponent<ModalEventProps & InjectedFormProps
                                 component={ReduxFormInput}
                                 required={eventType === EventType.Task}
                                 type="text"
-                                validate={eventType === EventType.Task ? [requiredFieldError] : undefined}
+                                validate={
+                                    eventType === EventType.Task ? [requiredFieldError, urlFieldError] : urlFieldError
+                                }
                                 warn={eventType === EventType.Task ? requiredFieldSuccess : undefined}
                             />
                             <FormText color="muted">

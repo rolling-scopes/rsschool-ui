@@ -40,7 +40,7 @@ class ReduxFormInput extends React.PureComponent<React.InputHTMLAttributes<HTMLI
                 {touched ? (
                     <React.Fragment>
                         {error ? <FormFeedback>{error}</FormFeedback> : null}
-                        {warning ? <FormFeedback valid={valid}>{warning}</FormFeedback> : null}
+                        {valid && warning ? <FormFeedback valid={valid}>{warning}</FormFeedback> : null}
                     </React.Fragment>
                 ) : null}
             </React.Fragment>

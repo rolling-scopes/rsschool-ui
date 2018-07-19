@@ -12,7 +12,10 @@ export enum SCHEDULE {
 
 export const INPUT_DATE_FORMAT = 'YYYY-MM-DD';
 export const INPUT_DATE_TIME_FORMAT = 'YYYY-MM-DDTHH:mm';
-export const DATE_FORMAT = 'DD.MM.YYYY';
+export const STAGE_DATE_FORMAT = 'DD.MM.YYYY';
+export const EVENT_DATE_FORMAT = 'MMMM DD, YYYY';
+export const EVENT_DAY_FORMAT = 'ddd';
+export const EVENT_TIME_FORMAT = 'HH:mm';
 
 export const DELETE_STAGE_CONTEXT = {
     title: 'Delete a Stage?',
