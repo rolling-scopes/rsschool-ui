@@ -28,3 +28,9 @@ export const DELETE_STAGE_ERROR_CONTEXT = {
     body: 'This Stage cannot be deleted because it is not empty.',
     isError: true,
 };
+
+export const DELETE_EVENT_CONTEXT = {
+    title: 'Delete a Task/Session?',
+    body: 'Do you really want to delete this task/session?',
+    isError: false,
+};

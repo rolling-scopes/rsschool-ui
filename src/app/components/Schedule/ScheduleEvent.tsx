@@ -16,6 +16,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { faHotjar } from '@fortawesome/free-brands-svg-icons';
 import { Card, CardHeader, CardBody, Row, Col, Button, Badge, Collapse } from 'reactstrap';
+import isUrl = require('is-url');
 
 import { IEventDocument, EventType, SessionType, TaskType } from 'core/models';
 import { classNames } from 'core/styles';
@@ -125,7 +126,14 @@ class ScheduleEvent extends React.PureComponent<ScheduleEventProps, ScheduleEven
                         <h4>{title}</h4>
                         {location ? (
                             <p>
-                                <FontAwesomeIcon icon={faMapMarkerAlt} /> Location: <a href="#">{location}</a>
+                                <FontAwesomeIcon icon={faMapMarkerAlt} /> Location:{' '}
+                                {isUrl(location) ? (
+                                    <a target="_blank" href={location}>
+                                        {location}
+                                    </a>
+                                ) : (
+                                    location
+                                )}
                             </p>
                         ) : null}
                         {descriptionFileUrl ? (

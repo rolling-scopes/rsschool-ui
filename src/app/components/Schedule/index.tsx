@@ -11,7 +11,7 @@ import ScheduleEvent from './ScheduleEvent';
 import ModalStage, { StageFormData } from './ModalStage';
 import ModalEvent, { EventFormData } from './ModalEvent';
 import ModalDelete from './ModalDelete';
-import { INPUT_DATE_FORMAT, DELETE_STAGE_CONTEXT, INPUT_DATE_TIME_FORMAT } from 'core/constants';
+import { INPUT_DATE_FORMAT, DELETE_STAGE_CONTEXT, INPUT_DATE_TIME_FORMAT, DELETE_EVENT_CONTEXT } from 'core/constants';
 
 const cn = classNames(require('./index.scss'));
 
@@ -61,11 +61,11 @@ class Schedule extends React.PureComponent<ScheduleProps, ScheduleState> {
         };
     }
 
-    toggleOpenModalStage = (stage?: IStageDocument) => () => {
+    toggleModalStage = (stage?: IStageDocument) => () => {
         this.setState({ stage, isOpenModalStage: !this.state.isOpenModalStage });
     };
 
-    toggleOpenModalEvent = (
+    toggleModalEvent = (
         eventType: EventType,
         event: IEventDocument | undefined = undefined,
         isCopyEvent: boolean = false,
@@ -98,8 +98,12 @@ class Schedule extends React.PureComponent<ScheduleProps, ScheduleState> {
         });
     };
 
-    toggleOpenModalDeleteStage = (deleteContext?: DeleteContext, stage?: IStageDocument) => () => {
+    toggleModalDeleteStage = (deleteContext: DeleteContext, stage: IStageDocument) => () => {
         this.setState({ stage, deleteContext, isOpenModalDelete: !this.state.isOpenModalDelete });
+    };
+
+    toggleModalDeleteEvent = (deleteContext: DeleteContext, event: IEventDocument) => () => {
+        this.setState({ event, deleteContext, isOpenModalDelete: !this.state.isOpenModalDelete });
     };
 
     handleSubmitStage = ({ title, startDate, endDate }: StageFormData) => {
@@ -218,10 +222,10 @@ class Schedule extends React.PureComponent<ScheduleProps, ScheduleState> {
                 {isAdmin ? (
                     <Row className="text-right mb-4 mt-3">
                         <FormGroup className="col-md-12">
-                            <Button color="success" onClick={this.toggleOpenModalEvent(EventType.Session)}>
+                            <Button color="success" onClick={this.toggleModalEvent(EventType.Session)}>
                                 <FontAwesomeIcon icon={faPlus} /> Add Session
                             </Button>{' '}
-                            <Button color="success" onClick={this.toggleOpenModalEvent(EventType.Task)}>
+                            <Button color="success" onClick={this.toggleModalEvent(EventType.Task)}>
                                 <FontAwesomeIcon icon={faPlus} /> Add Task
                             </Button>
                         </FormGroup>
@@ -233,8 +237,8 @@ class Schedule extends React.PureComponent<ScheduleProps, ScheduleState> {
                             key={index}
                             stage={stg}
                             isAdmin={isAdmin}
-                            onEditStage={this.toggleOpenModalStage(stg)}
-                            onDeleteStage={this.toggleOpenModalDeleteStage(DELETE_STAGE_CONTEXT, stg)}
+                            onEditStage={this.toggleModalStage(stg)}
+                            onDeleteStage={this.toggleModalDeleteStage(DELETE_STAGE_CONTEXT, stg)}
                         />
                     );
                 })}
@@ -245,9 +249,9 @@ class Schedule extends React.PureComponent<ScheduleProps, ScheduleState> {
                                 key={index}
                                 event={evnt}
                                 isAdmin={isAdmin}
-                                onEditEvent={console.log}
-                                onCopyEvent={console.log}
-                                onDeleteEvent={console.log}
+                                onEditEvent={this.toggleModalEvent(evnt.type, evnt)}
+                                onCopyEvent={this.toggleModalEvent(evnt.type, evnt, true)}
+                                onDeleteEvent={this.toggleModalDeleteEvent(DELETE_EVENT_CONTEXT, evnt)}
                             />
                         );
                     })}
@@ -255,7 +259,7 @@ class Schedule extends React.PureComponent<ScheduleProps, ScheduleState> {
                 {isAdmin ? (
                     <Row className="text-center mt-5">
                         <FormGroup className="col-md-12">
-                            <Button outline={true} color="secondary" onClick={this.toggleOpenModalStage()}>
+                            <Button outline={true} color="secondary" onClick={this.toggleModalStage()}>
                                 <FontAwesomeIcon icon={faPlus} /> Add Stage
                             </Button>
                         </FormGroup>

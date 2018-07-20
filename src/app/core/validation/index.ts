@@ -1,4 +1,4 @@
-const isUrl = require('is-url');
+import isUrl = require('is-url');
 
 export const requiredFieldError = (value?: string) => {
     return value && value.trim() ? undefined : 'Please fill in this field';
