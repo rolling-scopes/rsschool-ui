@@ -28,7 +28,7 @@ export type EventFormData = {
     location?: string;
     trainer?: string;
     whoChecks?: WhoChecks;
-    descriptionFileUrl?: string;
+    urlToDescription?: string;
 };
 
 class ModalEvent extends React.PureComponent<ModalEventProps & InjectedFormProps<EventFormData, ModalEventProps>> {
@@ -204,7 +204,7 @@ class ModalEvent extends React.PureComponent<ModalEventProps & InjectedFormProps
                         ) : null}
                         <FormGroup>
                             <Field
-                                name="descriptionFileUrl"
+                                name="urlToDescription"
                                 label="URL to GitHub Markdown File with session description"
                                 placeholder="http://..."
                                 component={ReduxFormInput}

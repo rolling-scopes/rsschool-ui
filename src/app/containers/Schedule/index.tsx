@@ -11,6 +11,7 @@ import {
     updateEvent,
     deleteEvent,
 } from 'core/actions';
+import { NormalizeScheduleData } from 'core/helpers';
 import { IEvent, IEventDocument, IStage, IStageDocument } from 'core/models';
 import './index.scss';
 
@@ -18,10 +19,9 @@ const mapStateToProps = (state: any, props: any): ScheduleContainerProps => {
     return {
         ...props,
         isLoading: state.schedule.isLoading,
-        stages: state.schedule.stages,
-        events: state.schedule.events,
         courseId: props.match.params.id,
         isAdmin: state.user.isAdmin,
+        normalizeData: state.schedule.normalizeData,
     };
 };
 
@@ -53,8 +53,7 @@ const mapDispatchToProps = (dispatch: any, props: any): ScheduleContainerProps =
 };
 
 type ScheduleContainerProps = {
-    stages: IStageDocument[];
-    events: IEventDocument[];
+    normalizeData: NormalizeScheduleData[];
     onLoad: (id: string) => void;
     addStage: (stage: IStage) => void;
     updateStage: (stage: IStageDocument) => void;
@@ -73,7 +72,7 @@ class ScheduleContainer extends React.Component<ScheduleContainerProps, any> {
     }
 
     render() {
-        const { events, stages, isAdmin, isLoading, courseId } = this.props;
+        const { normalizeData, isAdmin, isLoading, courseId } = this.props;
         return (
             <div className="schedule">
                 <h2>Schedule</h2>
@@ -82,9 +81,8 @@ class ScheduleContainer extends React.Component<ScheduleContainerProps, any> {
                 ) : (
                     <Schedule
                         courseId={courseId}
-                        stages={stages}
+                        normalizeData={normalizeData}
                         isAdmin={isAdmin}
-                        events={events}
                         addStage={this.props.addStage}
                         updateStage={this.props.updateStage}
                         deleteStage={this.props.deleteStage}

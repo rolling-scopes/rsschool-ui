@@ -6,19 +6,25 @@ import { Button, FormGroup, Row } from 'reactstrap';
 
 import { IEventDocument, IEvent, IStageDocument, IStage, EventType } from 'core/models';
 import { classNames } from 'core/styles';
+import { NormalizeScheduleData } from 'core/helpers';
 import ScheduleStage from './ScheduleStage';
 import ScheduleEvent from './ScheduleEvent';
 import ModalStage, { StageFormData } from './ModalStage';
 import ModalEvent, { EventFormData } from './ModalEvent';
 import ModalDelete from './ModalDelete';
-import { INPUT_DATE_FORMAT, DELETE_STAGE_CONTEXT, INPUT_DATE_TIME_FORMAT, DELETE_EVENT_CONTEXT } from 'core/constants';
+import {
+    INPUT_DATE_FORMAT,
+    DELETE_STAGE_CONTEXT,
+    DELETE_STAGE_ERROR_CONTEXT,
+    INPUT_DATE_TIME_FORMAT,
+    DELETE_EVENT_CONTEXT,
+} from 'core/constants';
 
 const cn = classNames(require('./index.scss'));
 
 type ScheduleProps = {
     courseId: string;
-    stages: IStageDocument[];
-    events: IEventDocument[];
+    normalizeData: NormalizeScheduleData[];
     isAdmin: boolean;
     addStage: (stage: IStage) => void;
     updateStage: (stage: IStageDocument) => void;
@@ -132,7 +138,7 @@ class Schedule extends React.PureComponent<ScheduleProps, ScheduleState> {
         location,
         trainer,
         whoChecks,
-        descriptionFileUrl,
+        urlToDescription,
     }: EventFormData) => {
         const { event, eventType, isCopyEvent } = this.state;
         const { courseId } = this.props;
@@ -152,7 +158,7 @@ class Schedule extends React.PureComponent<ScheduleProps, ScheduleState> {
             location: location && location.trim(),
             trainer: trainer && trainer.trim(),
             whoChecks: whoChecks,
-            descriptionFileUrl: descriptionFileUrl && descriptionFileUrl.trim(),
+            urlToDescription: urlToDescription && urlToDescription.trim(),
         };
 
         if (event != null) {
@@ -199,13 +205,13 @@ class Schedule extends React.PureComponent<ScheduleProps, ScheduleState> {
                 location: event.location,
                 trainer: event.trainer,
                 whoChecks: event.whoChecks,
-                descriptionFileUrl: event.descriptionFileUrl,
+                urlToDescription: event.urlToDescription,
             }
         );
     };
 
     render() {
-        const { isAdmin, stages, events } = this.props;
+        const { isAdmin, normalizeData } = this.props;
         const {
             stage,
             event,
@@ -231,31 +237,40 @@ class Schedule extends React.PureComponent<ScheduleProps, ScheduleState> {
                         </FormGroup>
                     </Row>
                 ) : null}
-                {stages.map((stg, index) => {
+                {normalizeData.map((data, index) => {
                     return (
-                        <ScheduleStage
-                            key={index}
-                            stage={stg}
-                            isAdmin={isAdmin}
-                            onEditStage={this.toggleModalStage(stg)}
-                            onDeleteStage={this.toggleModalDeleteStage(DELETE_STAGE_CONTEXT, stg)}
-                        />
+                        <React.Fragment key={index}>
+                            {data.stage ? (
+                                <ScheduleStage
+                                    stage={data.stage}
+                                    isAdmin={isAdmin}
+                                    onEditStage={this.toggleModalStage(data.stage)}
+                                    onDeleteStage={this.toggleModalDeleteStage(
+                                        data.events.length > 0 ? DELETE_STAGE_ERROR_CONTEXT : DELETE_STAGE_CONTEXT,
+                                        data.stage,
+                                    )}
+                                />
+                            ) : null}
+                            {data.events && data.events.length > 0 ? (
+                                <div className={cn('schedule-desc')}>
+                                    {data.events.map(({ isEndTask, event: evnt }, index) => {
+                                        return (
+                                            <ScheduleEvent
+                                                key={index}
+                                                event={evnt}
+                                                isEndTask={isEndTask}
+                                                isAdmin={isAdmin}
+                                                onEditEvent={this.toggleModalEvent(evnt.type, evnt)}
+                                                onCopyEvent={this.toggleModalEvent(evnt.type, evnt, true)}
+                                                onDeleteEvent={this.toggleModalDeleteEvent(DELETE_EVENT_CONTEXT, evnt)}
+                                            />
+                                        );
+                                    })}
+                                </div>
+                            ) : null}
+                        </React.Fragment>
                     );
                 })}
-                <div className={cn('schedule-desc')}>
-                    {events.map((evnt, index) => {
-                        return (
-                            <ScheduleEvent
-                                key={index}
-                                event={evnt}
-                                isAdmin={isAdmin}
-                                onEditEvent={this.toggleModalEvent(evnt.type, evnt)}
-                                onCopyEvent={this.toggleModalEvent(evnt.type, evnt, true)}
-                                onDeleteEvent={this.toggleModalDeleteEvent(DELETE_EVENT_CONTEXT, evnt)}
-                            />
-                        );
-                    })}
-                </div>
                 {isAdmin ? (
                     <Row className="text-center mt-5">
                         <FormGroup className="col-md-12">

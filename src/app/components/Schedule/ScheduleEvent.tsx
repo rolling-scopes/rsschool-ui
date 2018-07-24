@@ -29,6 +29,8 @@ const BADGE_COLOR_MAP = {
     [EventType.Task]: 'warning',
 };
 
+const DEFAULT = 'default';
+
 const BADGE_ICON_MAP = {
     [SessionType.Online]: faGlobe,
     [SessionType.Offline]: faMapMarker,
@@ -38,11 +40,12 @@ const BADGE_ICON_MAP = {
     [TaskType.Test]: faListOl,
     [TaskType.Interview]: faMicrophoneAlt,
     [TaskType.Task]: faHourglassStart,
-    default: faGlobe,
+    [DEFAULT]: faGlobe,
 };
 
 type ScheduleEventProps = {
     event: IEventDocument;
+    isEndTask: boolean;
     isAdmin: boolean;
     onEditEvent: () => void;
     onCopyEvent: () => void;
@@ -69,22 +72,24 @@ class ScheduleEvent extends React.PureComponent<ScheduleEventProps, ScheduleEven
     render() {
         const {
             isAdmin,
+            isEndTask,
             event: {
                 type,
                 title,
                 trainer,
                 startDateTime,
+                endDateTime,
                 taskType,
                 sessionType,
                 whoChecks,
                 location,
-                descriptionFileUrl,
+                urlToDescription,
             },
         } = this.props;
         const { collapse } = this.state;
-
+        const dateTime = isEndTask ? endDateTime : startDateTime;
         return (
-            <Card className={cn('card', { past: true })}>
+            <Card className={cn('card', { past: moment().isAfter(dateTime, 'day') })}>
                 <CardHeader className={cn('card-header')}>
                     <h5 className="mb-0">
                         <Button className={cn('btn', 'btn-link')} color="link" onClick={this.toggle}>
@@ -92,16 +97,16 @@ class ScheduleEvent extends React.PureComponent<ScheduleEventProps, ScheduleEven
                                 <Col xs="2">
                                     <Badge
                                         className={cn('badge', 'badge-pill')}
-                                        color={BADGE_COLOR_MAP[type]}
+                                        color={isEndTask ? 'danger' : BADGE_COLOR_MAP[type]}
                                         pill={true}
                                     >
-                                        <FontAwesomeIcon icon={BADGE_ICON_MAP[taskType || sessionType || 'default']} />
+                                        <FontAwesomeIcon icon={BADGE_ICON_MAP[taskType || sessionType || DEFAULT]} />
                                         {` ${taskType || sessionType}`}
                                     </Badge>
                                 </Col>
-                                <Col xs="2">{moment(startDateTime).format(EVENT_DATE_FORMAT)}</Col>
-                                <Col xs="1">{moment(startDateTime).format(EVENT_DAY_FORMAT)}</Col>
-                                <Col xs="1">{moment(startDateTime).format(EVENT_TIME_FORMAT)}</Col>
+                                <Col xs="2">{moment(dateTime).format(EVENT_DATE_FORMAT)}</Col>
+                                <Col xs="1">{moment(dateTime).format(EVENT_DAY_FORMAT)}</Col>
+                                <Col xs="1">{moment(dateTime).format(EVENT_TIME_FORMAT)}</Col>
                                 <Col xs="4">{title}</Col>
                                 <Col xs="2">{trainer || whoChecks}</Col>
                             </Row>
@@ -136,9 +141,11 @@ class ScheduleEvent extends React.PureComponent<ScheduleEventProps, ScheduleEven
                                 )}
                             </p>
                         ) : null}
-                        {descriptionFileUrl ? (
+                        {urlToDescription ? (
                             <p>
-                                <a href={descriptionFileUrl}>{descriptionFileUrl}</a>
+                                <a target="_blank" href={urlToDescription}>
+                                    {urlToDescription}
+                                </a>
                             </p>
                         ) : null}
                     </CardBody>

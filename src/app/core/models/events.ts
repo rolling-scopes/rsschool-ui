@@ -33,7 +33,7 @@ export interface IEvent {
     courseId: string;
     endDateTime?: number;
     location?: string;
-    descriptionFileUrl?: string;
+    urlToDescription?: string;
     startDateTime: number;
     sessionType?: SessionType;
     trainer?: string;
