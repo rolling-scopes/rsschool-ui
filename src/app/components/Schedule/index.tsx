@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as moment from 'moment';
+import { DateTime } from 'luxon';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { Button, FormGroup, Row } from 'reactstrap';
@@ -52,20 +52,16 @@ type ScheduleState = {
 };
 
 class Schedule extends React.PureComponent<ScheduleProps, ScheduleState> {
-    constructor(props: ScheduleProps) {
-        super(props);
-
-        this.state = {
-            stage: undefined,
-            event: undefined,
-            isOpenModalStage: false,
-            isOpenModalEvent: false,
-            isOpenModalDelete: false,
-            deleteContext: undefined,
-            eventType: undefined,
-            isCopyEvent: false,
-        };
-    }
+    state: ScheduleState = {
+        stage: undefined,
+        event: undefined,
+        isOpenModalStage: false,
+        isOpenModalEvent: false,
+        isOpenModalDelete: false,
+        deleteContext: undefined,
+        eventType: undefined,
+        isCopyEvent: false,
+    };
 
     toggleModalStage = (stage?: IStageDocument) => () => {
         this.setState({ stage, isOpenModalStage: !this.state.isOpenModalStage });
@@ -117,8 +113,8 @@ class Schedule extends React.PureComponent<ScheduleProps, ScheduleState> {
         const { courseId } = this.props;
         const data = {
             title: title.trim(),
-            startDate: Number(moment(startDate)),
-            endDate: Number(moment(endDate)),
+            startDate: DateTime.fromISO(startDate).toMillis(),
+            endDate: DateTime.fromISO(endDate).toMillis(),
             courseId,
         };
         if (stage != null) {
@@ -153,8 +149,8 @@ class Schedule extends React.PureComponent<ScheduleProps, ScheduleState> {
             title: title.trim(),
             taskType: taskType,
             sessionType: sessionType,
-            startDateTime: Number(moment(startDateTime)),
-            endDateTime: endDateTime ? Number(moment(endDateTime)) : undefined,
+            startDateTime: DateTime.fromISO(startDateTime).toMillis(),
+            endDateTime: endDateTime ? DateTime.fromISO(endDateTime).toMillis() : undefined,
             location: location && location.trim(),
             trainer: trainer && trainer.trim(),
             whoChecks: whoChecks,
@@ -187,8 +183,8 @@ class Schedule extends React.PureComponent<ScheduleProps, ScheduleState> {
         return (
             stage && {
                 title: stage.title,
-                startDate: moment(stage.startDate).format(INPUT_DATE_FORMAT),
-                endDate: moment(stage.endDate).format(INPUT_DATE_FORMAT),
+                startDate: DateTime.fromMillis(stage.startDate).toFormat(INPUT_DATE_FORMAT),
+                endDate: DateTime.fromMillis(stage.endDate).toFormat(INPUT_DATE_FORMAT),
             }
         );
     };
@@ -200,8 +196,10 @@ class Schedule extends React.PureComponent<ScheduleProps, ScheduleState> {
                 title: event.title,
                 taskType: event.taskType,
                 sessionType: event.sessionType,
-                startDateTime: moment(event.startDateTime).format(INPUT_DATE_TIME_FORMAT),
-                endDateTime: event.endDateTime ? moment(event.endDateTime).format(INPUT_DATE_TIME_FORMAT) : undefined,
+                startDateTime: DateTime.fromMillis(event.startDateTime).toFormat(INPUT_DATE_TIME_FORMAT),
+                endDateTime: event.endDateTime
+                    ? DateTime.fromMillis(event.endDateTime).toFormat(INPUT_DATE_TIME_FORMAT)
+                    : undefined,
                 location: event.location,
                 trainer: event.trainer,
                 whoChecks: event.whoChecks,

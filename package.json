@@ -101,7 +101,6 @@
         "history": "4.7.2",
         "is-url": "1.2.4",
         "luxon": "1.3.1",
-        "moment": "2.22.2",
         "react": "16.4.1",
         "react-dom": "16.4.1",
         "react-hot-loader": "3.1.1",
@@ -115,6 +114,8 @@
         "redux-thunk": "2.3.0"
     },
     "jest": {
+        "verbose": true,
+        "testURL": "http://localhost/",
         "globals": {
             "DEBUG": false,
             "userAgent": "nodejs",

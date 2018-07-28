@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as moment from 'moment';
+import { DateTime } from 'luxon';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencilAlt, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { Button, Badge } from 'reactstrap';
@@ -7,7 +7,7 @@ import { Button, Badge } from 'reactstrap';
 import { IStageDocument } from 'core/models';
 import { STAGE_DATE_FORMAT } from 'core/constants';
 
-const formatDate = (date: number) => moment(date).format(STAGE_DATE_FORMAT);
+const formatDate = (date: number) => DateTime.fromMillis(date).toFormat(STAGE_DATE_FORMAT);
 
 type ScheduleStageProps = {
     stage: IStageDocument;

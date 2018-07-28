@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as moment from 'moment';
+import { DateTime } from 'luxon';
 import { connect } from 'react-redux';
 import { InjectedFormProps, reduxForm, Field } from 'redux-form';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Row, Form, FormGroup, Button, FormText } from 'reactstrap';
@@ -126,7 +126,11 @@ class ModalEvent extends React.PureComponent<ModalEventProps & InjectedFormProps
                                     component={ReduxFormInput}
                                     required={true}
                                     type="datetime-local"
-                                    max={endDateTime ? moment(endDateTime).format(INPUT_DATE_TIME_FORMAT) : undefined}
+                                    max={
+                                        endDateTime
+                                            ? DateTime.fromISO(endDateTime).toFormat(INPUT_DATE_TIME_FORMAT)
+                                            : undefined
+                                    }
                                     validate={[requiredFieldError]}
                                     warn={requiredFieldSuccess}
                                 />
@@ -144,7 +148,7 @@ class ModalEvent extends React.PureComponent<ModalEventProps & InjectedFormProps
                                             type="datetime-local"
                                             min={
                                                 startDateTime
-                                                    ? moment(startDateTime).format(INPUT_DATE_TIME_FORMAT)
+                                                    ? DateTime.fromISO(startDateTime).toFormat(INPUT_DATE_TIME_FORMAT)
                                                     : undefined
                                             }
                                             validate={[requiredFieldError]}

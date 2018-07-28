@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+import { DateTime, Interval } from 'luxon';
 
 import { IEventDocument, EventType, IStageDocument } from '../models';
 
@@ -52,17 +52,26 @@ export const getNormalizeScheduleData = (
     const data = sortedEvents.reduce<NormalizeScheduleData[]>((res, normalizeEvent) => {
         for (let index = 0; index < res.length; index++) {
             const item = res[index];
-            const dateTime = normalizeEvent.isEndTask
-                ? normalizeEvent.event.endDateTime
+            const dateTime: number = normalizeEvent.isEndTask
+                ? normalizeEvent.event.endDateTime!
                 : normalizeEvent.event.startDateTime;
             if (item.stage) {
-                if (moment(dateTime).isBetween(item.stage.startDate, item.stage.endDate)) {
+                if (
+                    Interval.fromDateTimes(
+                        DateTime.fromMillis(item.stage.startDate),
+                        DateTime.fromMillis(item.stage.endDate).endOf('day'),
+                    ).contains(DateTime.fromMillis(dateTime))
+                ) {
                     item.events.push(normalizeEvent);
                     break;
                 }
             } else {
                 const nextItem = res[index + 1];
-                if (nextItem && nextItem.stage && moment(dateTime).isBefore(nextItem.stage.startDate)) {
+                if (
+                    nextItem &&
+                    nextItem.stage &&
+                    DateTime.fromMillis(dateTime) < DateTime.fromMillis(nextItem.stage.startDate)
+                ) {
                     item.events.push(normalizeEvent);
                     break;
                 }

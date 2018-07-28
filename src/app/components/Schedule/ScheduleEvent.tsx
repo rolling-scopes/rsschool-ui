@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as moment from 'moment';
+import { DateTime } from 'luxon';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faGlobe,
@@ -57,13 +57,9 @@ type ScheduleEventState = {
 };
 
 class ScheduleEvent extends React.PureComponent<ScheduleEventProps, ScheduleEventState> {
-    constructor(props: ScheduleEventProps) {
-        super(props);
-
-        this.state = {
-            collapse: false,
-        };
-    }
+    state: ScheduleEventState = {
+        collapse: false,
+    };
 
     toggle = () => {
         this.setState({ collapse: !this.state.collapse });
@@ -87,9 +83,13 @@ class ScheduleEvent extends React.PureComponent<ScheduleEventProps, ScheduleEven
             },
         } = this.props;
         const { collapse } = this.state;
-        const dateTime = isEndTask ? endDateTime : startDateTime;
+        const dateTime: number = isEndTask ? endDateTime! : startDateTime;
         return (
-            <Card className={cn('card', { past: moment().isAfter(dateTime, 'day') })}>
+            <Card
+                className={cn('card', {
+                    past: DateTime.local().startOf('day') > DateTime.fromMillis(dateTime).startOf('day'),
+                })}
+            >
                 <CardHeader className={cn('card-header')}>
                     <h5 className="mb-0">
                         <Button className={cn('btn', 'btn-link')} color="link" onClick={this.toggle}>
@@ -104,9 +104,9 @@ class ScheduleEvent extends React.PureComponent<ScheduleEventProps, ScheduleEven
                                         {` ${taskType || sessionType}`}
                                     </Badge>
                                 </Col>
-                                <Col xs="2">{moment(dateTime).format(EVENT_DATE_FORMAT)}</Col>
-                                <Col xs="1">{moment(dateTime).format(EVENT_DAY_FORMAT)}</Col>
-                                <Col xs="1">{moment(dateTime).format(EVENT_TIME_FORMAT)}</Col>
+                                <Col xs="2">{DateTime.fromMillis(dateTime).toFormat(EVENT_DATE_FORMAT)}</Col>
+                                <Col xs="1">{DateTime.fromMillis(dateTime).toFormat(EVENT_DAY_FORMAT)}</Col>
+                                <Col xs="1">{DateTime.fromMillis(dateTime).toFormat(EVENT_TIME_FORMAT)}</Col>
                                 <Col xs="4">{title}</Col>
                                 <Col xs="2">{trainer || whoChecks}</Col>
                             </Row>
