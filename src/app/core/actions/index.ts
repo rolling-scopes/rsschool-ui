@@ -1,3 +1,3 @@
-export * from './events';
+export * from './schedule';
 export * from './user';
 export * from './courses';
