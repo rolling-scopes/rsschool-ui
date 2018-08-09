@@ -12,6 +12,7 @@ pipeline:
   docker:
     when:
       branch: [master]
+      event: [push]
     image: plugins/docker
     secrets: [ docker_username, docker_password ]
     repo: rsschool/ui
@@ -19,6 +20,7 @@ pipeline:
   deploy:
     when:
       branch: [master]
+      event: [push]
     image: appleboy/drone-ssh
     host: 172.31.2.208
     secrets: [ ssh_key, ssh_username ]
