@@ -1,0 +1,23 @@
+.loading-screen {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+:local {
+    @keyframes :local(rotate-spinner) {
+        from {
+            transform: rotate(0);
+        }
+        to {
+            transform: rotate(720deg);
+        }
+    }
+    .loading-screen .spinner {
+        animation: rotate-spinner 4s linear infinite ;
+    }
+}
+
