@@ -4,7 +4,9 @@ import { RootState } from 'core/reducers';
 import { classNames } from 'core/styles';
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import Header from '../Header';
+import { WithLoader } from '../../components/HOCS';
 
 const cn = classNames(require('./index.scss'));
 
@@ -37,17 +39,7 @@ class Layout extends React.Component<Props, any> {
         super(props);
     }
 
-    componentDidMount() {
-        if (this.props.onLoad) {
-            this.props.onLoad();
-        }
-    }
-
     render() {
-        if (this.props.isLoading) {
-            return <div>Loading...</div>;
-        }
-
         if (this.props.isLoggedIn) {
             return [
                 <Header key="header" />,
@@ -61,7 +53,10 @@ class Layout extends React.Component<Props, any> {
     }
 }
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps,
-)(Layout);
+export default compose(
+    connect(
+        mapStateToProps,
+        mapDispatchToProps,
+    ),
+    WithLoader('onLoad'),
+)(Layout) as React.ComponentType;
