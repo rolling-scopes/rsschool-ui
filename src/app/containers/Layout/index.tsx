@@ -19,6 +19,7 @@ const mapStateToProps = (state: RootState, props: Props): Partial<Props> => {
     return {
         ...props,
         isLoggedIn: state.user.isLoggedIn,
+        isLoading: state.user.isLoading,
     };
 };
 

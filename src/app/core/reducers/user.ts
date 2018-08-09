@@ -9,6 +9,7 @@ export type UserState = {
     username: string;
     isAdmin: boolean;
     isLoggedIn: boolean;
+    isLoading: boolean;
 };
 
 const initialState: UserState = {
@@ -18,6 +19,7 @@ const initialState: UserState = {
     username: '',
     isAdmin: false,
     isLoggedIn: false,
+    isLoading: false,
 };
 
 export function userReducer(state = initialState, action: Action<any>): UserState {
@@ -46,12 +48,25 @@ export function userReducer(state = initialState, action: Action<any>): UserStat
                 feed: action.payload,
             };
         }
+        case USER.FETCH_SESSION: {
+            return {
+                ...state,
+                isLoading: true,
+            };
+        }
         case USER.FETCH_SESSION_OK: {
             return {
                 ...state,
                 username: action.payload._id,
                 isAdmin: action.payload.isAdmin,
                 isLoggedIn: true,
+                isLoading: false,
+            };
+        }
+        case USER.FETCH_SESSION_FAIL: {
+            return {
+                ...state,
+                isLoading: false,
             };
         }
     }
