@@ -72,13 +72,11 @@ class ScheduleContainer extends React.Component<ScheduleContainerProps, any> {
     }
 
     render() {
-        const { normalizeData, isAdmin, isLoading, courseId } = this.props;
+        const { normalizeData, isAdmin, courseId } = this.props;
         return (
             <div className="schedule">
                 <h2>Schedule</h2>
-                {isLoading ? (
-                    <h3>Loading...</h3>
-                ) : (
+                {
                     <Schedule
                         courseId={courseId}
                         normalizeData={normalizeData}
@@ -90,7 +88,7 @@ class ScheduleContainer extends React.Component<ScheduleContainerProps, any> {
                         updateEvent={this.props.updateEvent}
                         deleteEvent={this.props.deleteEvent}
                     />
-                )}
+                }
             </div>
         );
     }

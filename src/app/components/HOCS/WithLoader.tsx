@@ -2,17 +2,17 @@ import * as React from 'react';
 
 import LoadingScreen from '../LoadingScreen';
 
-const WithLoader = (loadingFunctionName: string | null) => (WrappedComponent: React.ComponentType) =>
-    class extends React.Component<any, any> {
-        componentDidMount() {
-            if (loadingFunctionName) {
-                this.props[loadingFunctionName]();
-            }
-        }
-
-        render() {
-            return this.props.isLoading ? <LoadingScreen /> : <WrappedComponent {...this.props} />;
-        }
-    };
+const WithLoader = ({ type }: any) => (WrappedComponent: React.ComponentType) => (props: any) => {
+    if (type === 'display') {
+        return (
+            <React.Fragment>
+                <LoadingScreen show={props.isLoading} />
+                <WrappedComponent {...props} />
+            </React.Fragment>
+        );
+    } else if (type === 'replace') {
+        return props.isLoading ? <LoadingScreen show={props.isLoading} /> : <WrappedComponent {...props} />;
+    }
+};
 
 export default WithLoader;

@@ -1,12 +1,15 @@
-import Login from 'components/Login';
-import { fetchSession } from 'core/actions';
-import { RootState } from 'core/reducers';
-import { classNames } from 'core/styles';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
+
+import { fetchSession } from 'core/actions';
+import { RootState } from 'core/reducers';
+import { classNames } from 'core/styles';
+import { isAnyPartLoaded } from 'core/selectors';
+
 import Header from '../Header';
-import { WithLoader } from '../../components/HOCS';
+import Login from 'components/Login';
+import { WithLoader } from 'components/HOCS';
 
 const cn = classNames(require('./index.scss'));
 
@@ -21,7 +24,7 @@ const mapStateToProps = (state: RootState, props: Props): Partial<Props> => {
     return {
         ...props,
         isLoggedIn: state.user.isLoggedIn,
-        isLoading: state.user.isLoading,
+        isLoading: isAnyPartLoaded(state),
     };
 };
 
@@ -37,6 +40,12 @@ const mapDispatchToProps = (dispatch: any, props: Props): Partial<Props> => {
 class Layout extends React.Component<Props, any> {
     constructor(props: Props) {
         super(props);
+    }
+
+    componentDidMount() {
+        if (this.props.onLoad) {
+            this.props.onLoad();
+        }
     }
 
     render() {
@@ -58,5 +67,5 @@ export default compose(
         mapStateToProps,
         mapDispatchToProps,
     ),
-    WithLoader('onLoad'),
+    WithLoader({ type: 'display' }),
 )(Layout) as React.ComponentType;

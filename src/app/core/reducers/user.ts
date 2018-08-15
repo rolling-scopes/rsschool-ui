@@ -36,18 +36,47 @@ export function userReducer(state = initialState, action: Action<any>): UserStat
                 profile: action.payload,
             };
         }
+
+        case USER.PARTICIPATIONS_FETCH: {
+            return {
+                ...state,
+                isLoading: true,
+            };
+        }
         case USER.PARTICIPATIONS_FETCH_OK: {
             return {
                 ...state,
                 participations: action.payload,
+                isLoading: false,
+            };
+        }
+        case USER.PARTICIPATIONS_FETCH_FAIL: {
+            return {
+                ...state,
+                isLoading: false,
+            };
+        }
+
+        case USER.FEED_FETCH: {
+            return {
+                ...state,
+                isLoading: true,
             };
         }
         case USER.FEED_FETCH_OK: {
             return {
                 ...state,
                 feed: action.payload,
+                isLoading: false,
             };
         }
+        case USER.FEED_FETCH_FAIL: {
+            return {
+                ...state,
+                isLoading: false,
+            };
+        }
+
         case USER.FETCH_SESSION: {
             return {
                 ...state,
