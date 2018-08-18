@@ -9,6 +9,7 @@ export type UserState = {
     username: string;
     isAdmin: boolean;
     isLoggedIn: boolean;
+    isLoading: boolean;
 };
 
 const initialState: UserState = {
@@ -18,6 +19,7 @@ const initialState: UserState = {
     username: '',
     isAdmin: false,
     isLoggedIn: false,
+    isLoading: false,
 };
 
 export function userReducer(state = initialState, action: Action<any>): UserState {
@@ -34,16 +36,51 @@ export function userReducer(state = initialState, action: Action<any>): UserStat
                 profile: action.payload,
             };
         }
+
+        case USER.PARTICIPATIONS_FETCH: {
+            return {
+                ...state,
+                isLoading: true,
+            };
+        }
         case USER.PARTICIPATIONS_FETCH_OK: {
             return {
                 ...state,
                 participations: action.payload,
+                isLoading: false,
+            };
+        }
+        case USER.PARTICIPATIONS_FETCH_FAIL: {
+            return {
+                ...state,
+                isLoading: false,
+            };
+        }
+
+        case USER.FEED_FETCH: {
+            return {
+                ...state,
+                isLoading: true,
             };
         }
         case USER.FEED_FETCH_OK: {
             return {
                 ...state,
                 feed: action.payload,
+                isLoading: false,
+            };
+        }
+        case USER.FEED_FETCH_FAIL: {
+            return {
+                ...state,
+                isLoading: false,
+            };
+        }
+
+        case USER.FETCH_SESSION: {
+            return {
+                ...state,
+                isLoading: true,
             };
         }
         case USER.FETCH_SESSION_OK: {
@@ -52,6 +89,13 @@ export function userReducer(state = initialState, action: Action<any>): UserStat
                 username: action.payload._id,
                 isAdmin: action.payload.isAdmin,
                 isLoggedIn: true,
+                isLoading: false,
+            };
+        }
+        case USER.FETCH_SESSION_FAIL: {
+            return {
+                ...state,
+                isLoading: false,
             };
         }
     }

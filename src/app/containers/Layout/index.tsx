@@ -1,10 +1,15 @@
-import Login from 'components/Login';
+import * as React from 'react';
+import { connect } from 'react-redux';
+import { compose } from 'redux';
+
 import { fetchSession } from 'core/actions';
 import { RootState } from 'core/reducers';
 import { classNames } from 'core/styles';
-import * as React from 'react';
-import { connect } from 'react-redux';
+import { isAnyPartLoaded } from 'core/selectors';
+
 import Header from '../Header';
+import Login from 'components/Login';
+import { WithLoader } from 'components/HOCS';
 
 const cn = classNames(require('./index.scss'));
 
@@ -19,6 +24,7 @@ const mapStateToProps = (state: RootState, props: Props): Partial<Props> => {
     return {
         ...props,
         isLoggedIn: state.user.isLoggedIn,
+        isLoading: isAnyPartLoaded(state),
     };
 };
 
@@ -43,10 +49,6 @@ class Layout extends React.Component<Props, any> {
     }
 
     render() {
-        if (this.props.isLoading) {
-            return <div>Loading...</div>;
-        }
-
         if (this.props.isLoggedIn) {
             return [
                 <Header key="header" />,
@@ -60,7 +62,10 @@ class Layout extends React.Component<Props, any> {
     }
 }
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps,
-)(Layout);
+export default compose(
+    connect(
+        mapStateToProps,
+        mapDispatchToProps,
+    ),
+    WithLoader({ type: 'display' }),
+)(Layout) as React.ComponentType;
