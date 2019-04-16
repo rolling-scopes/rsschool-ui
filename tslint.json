@@ -1,7 +1,7 @@
 {
   "defaultSeverity": "error",
   "extends": [
-    "tslint:latest",
+    "tslint:recommended",
     "tslint-react"
   ],
   "jsRules": {},
@@ -14,12 +14,14 @@
     "jsx-no-multiline-js": false,
     "jsx-wrap-multiline": false,
     "member-access": false,
-    "no-console": [true, "log"],
+    "no-console": [
+      true,
+      "log"
+    ],
     "no-empty": false,
     "no-implicit-dependencies": false,
     "no-shadowed-variable": false,
     "no-submodule-imports": false,
-    "no-unused-variable": true,
     "no-var-requires": false,
     "object-literal-shorthand": false,
     "object-literal-sort-keys": false,

@@ -13,6 +13,8 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "forceConsistentCasingInFileNames": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "lib": [
       "dom",
       "es2015",
@@ -20,5 +22,9 @@
       "es2017"
     ],
     "jsx": "react"
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }
