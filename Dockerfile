@@ -1,12 +1,17 @@
-FROM nginx:1.14-alpine
-
-COPY docker/nginx.conf /etc/nginx/nginx.conf
-COPY docker/mime.types /etc/nginx/mime.types
-COPY docker/default.conf /etc/nginx/conf.d/default.conf
-
-RUN mkdir -p /srv/www
-COPY dist /srv/www
+FROM node:lts-alpine
 
 EXPOSE 8080
 
-CMD ["nginx", "-g", "daemon off;"]
+ENV NODE_ENV production
+ENV NODE_PORT 8080
+ENV RS_HOST http://localhost:3000
+
+WORKDIR /client
+
+COPY package.json /client
+COPY src/.next /client/.next
+COPY src/static /client/static
+
+RUN npm install --no-optional
+
+CMD [ "npm", "run", "prod" ]
