@@ -13,7 +13,6 @@ type Props = {
 };
 
 type State = {
-    // githubId?: string;
     profile: any,
     isLoading: boolean;
 };
