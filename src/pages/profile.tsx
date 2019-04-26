@@ -1,47 +1,59 @@
 import * as React from 'react';
 import Header from '../components/Header';
-// import * as fetch from 'isomorphic-fetch';
+import * as fetch from 'isomorphic-fetch';
 import Login from '../components/Login';
 import LoadingScreen from '../components/LoadingScreen';
-// import Router from 'next/router';
+import Router from 'next/router';
+import { withRouter } from 'next/router';
 
 import '../index.scss';
 
 type Props = {
-    githubId: string;
+    router: any,
 };
 
 type State = {
     // githubId?: string;
+    profile: any,
     isLoading: boolean;
 };
 
 class ProfilePage extends React.Component<Props, State> {
     state: State = {
         isLoading: true,
+        profile: null,
     };
 
-    // async componentDidMount() {
-    //     await fetch(`/api/users?githubId=${this.props.githubId}`);
+    async componentDidMount() {
+        const { router } = this.props;
 
-    //     // if (!response.ok) {
-    //     //   Router.push('/login');
-    //     //   return;
-    //     // }
+        const response = await fetch(`api/profile?githubId=${router.query.githubId}`);
 
-    //     // const json = await response.json();
+        if (!response.ok) {
+          Router.push('/login');
+          return;
+        }
 
-    //     this.setState({
-    //       isLoading: false,
-    //     });
-    // }
+        const json = await response.json();
+
+        this.setState({
+          isLoading: false,
+          profile: json.data,
+        });
+    }
 
     renderProfile() {
-        if (this.props.githubId) {
+        if (this.state.profile) {
           return (
             <div>
-              <Header username={this.props.githubId} />
-              <div>Hey, I'm noname</div>
+              <Header username={this.state.profile.githubId} />
+              <div>{this.state.profile.githubId}</div>
+              <div>{this.state.profile.firstName} {this.state.profile.lastName}</div>
+              <div>{this.state.profile.firstNameNative} {this.state.profile.lastNameNative}</div>
+              <div>{this.state.profile.englishLevel}</div>
+              <div>{this.state.profile.contactsPhone}</div>
+              <div>{this.state.profile.contactsEmail}</div>
+              <div>{this.state.profile.locationName}</div>
             </div>
           );
         }
@@ -49,7 +61,7 @@ class ProfilePage extends React.Component<Props, State> {
     }
 
     renderLogin() {
-        if (!this.props.githubId && !this.state.isLoading) {
+        if (!this.state.profile && !this.state.isLoading) {
             return <Login />;
         }
         return null;
@@ -65,12 +77,12 @@ class ProfilePage extends React.Component<Props, State> {
     render() {
         return (
             <>
-                {/* {this.renderLoading()}
-                {this.renderLogin()} */}
+                {this.renderLoading()}
+                {this.renderLogin()}
                 {this.renderProfile()}
             </>
         )
     }
 }
 
-export default ProfilePage;
+export default withRouter(ProfilePage);
