@@ -49,7 +49,7 @@ class TaskScoreForm extends React.Component<Props, State> {
 
   async componentDidMount() {
     const [meResponse, tasksResponse] = await Promise.all([
-      fetch(`/api/course/${this.props.courseId}/me`),
+      fetch(`/api/course/${this.props.courseId}/mentor/students`),
       fetch(`/api/course/${this.props.courseId}/tasks`),
     ]);
     if (!meResponse.ok || !tasksResponse.ok) {
