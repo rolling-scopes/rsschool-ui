@@ -22,12 +22,9 @@ type LinkInfo = {
 
 class IndexPage extends React.Component<Props, State> {
   static async getInitialProps() {
-    console.log('1111');
     const coursesResponse = await fetch(`${process.env.RS_HOST}/api/courses`);
-    console.log(coursesResponse.ok);
     if (coursesResponse.ok) {
       const courses = (await coursesResponse.json()).data;
-      console.log(courses);
       return { courses };
     }
     return { courses: [] };
