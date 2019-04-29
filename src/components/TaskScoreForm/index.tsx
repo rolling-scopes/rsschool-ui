@@ -2,11 +2,12 @@ import * as React from 'react';
 import { FormGroup, Label, Button, Input, Alert } from 'reactstrap';
 import * as fetch from 'isomorphic-fetch';
 import { Form, Field } from 'react-final-form';
+import { Course } from '../withCourseData';
 
 import './index.scss';
 
 type Props = {
-  courseId: number;
+  course: Course;
 };
 
 type State = {
@@ -49,8 +50,8 @@ class TaskScoreForm extends React.Component<Props, State> {
 
   async componentDidMount() {
     const [meResponse, tasksResponse] = await Promise.all([
-      fetch(`/api/course/${this.props.courseId}/mentor/students`),
-      fetch(`/api/course/${this.props.courseId}/tasks`),
+      fetch(`/api/course/${this.props.course.id}/mentor/students`),
+      fetch(`/api/course/${this.props.course.id}/tasks`),
     ]);
 
     if (!meResponse.ok || !tasksResponse.ok) {
@@ -59,11 +60,6 @@ class TaskScoreForm extends React.Component<Props, State> {
 
     const [json, tasksJson] = await Promise.all([meResponse.json(), tasksResponse.json()]);
 
-    console.info({
-      json,
-      tasksJson,
-    });
-
     this.setState({
       students: json.data.students,
       tasks: tasksJson.data,
@@ -71,7 +67,7 @@ class TaskScoreForm extends React.Component<Props, State> {
   }
 
   handleSubmit = async (values: any) => {
-    const result = await fetch(`/api/course/${this.props.courseId}/score`, {
+    const result = await fetch(`/api/course/${this.props.course.id}/score`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(values),
@@ -86,7 +82,7 @@ class TaskScoreForm extends React.Component<Props, State> {
   render() {
     return (
       <div className="m-3">
-        <h3 className="mb-3">Task Score</h3>
+        <h3 className="mb-3">{this.props.course.name}</h3>
         {this.state.submitted && <Alert color="info">Score has been submitted</Alert>}
         <Form
           onSubmit={this.handleSubmit}

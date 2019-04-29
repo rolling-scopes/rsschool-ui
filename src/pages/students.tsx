@@ -2,8 +2,10 @@ import * as React from 'react';
 import Header from '../components/Header';
 import * as fetch from 'isomorphic-fetch';
 import LoadingScreen from '../components/LoadingScreen';
+import withCourseData, { Course } from '../components/withCourseData';
+import withSession from '../components/withSession';
+
 import ReactTable from 'react-table';
-import Router from 'next/router';
 import Link from 'next/link';
 
 import 'react-table/react-table.css';
@@ -11,6 +13,7 @@ import '../index.scss';
 
 type Props = {
   githubId: string;
+  course: Course;
 };
 
 type State = {
@@ -24,13 +27,7 @@ class StudentsPage extends React.Component<Props, State> {
   };
 
   async componentDidMount() {
-    const response = await fetch(`/api/course/1/students`);
-
-    if (!response.ok) {
-      Router.push('/login');
-      return;
-    }
-
+    const response = await fetch(`/api/course/${this.props.course.id}/students`);
     const json = await response.json();
     this.setState({
       students: json.data,
@@ -45,7 +42,7 @@ class StudentsPage extends React.Component<Props, State> {
     return (
       <>
         <Header username={''} />
-        <h2>2019 Q1 Course</h2>
+        <h2>{this.props.course.name}</h2>
         <ReactTable
           filterable={true}
           defaultPageSize={100}
@@ -69,16 +66,20 @@ class StudentsPage extends React.Component<Props, State> {
                 (row[filter.id] || '').toLowerCase().startsWith(filter.value.toLowerCase()),
             },
             {
-                Header: 'Github Id',
-                accessor: 'githubId',
-                filterMethod: (filter: any, row: any) =>
-                  (row[filter.id] || '').toLowerCase().startsWith(filter.value.toLowerCase()),
+              Header: 'Github Id',
+              accessor: 'githubId',
+              filterMethod: (filter: any, row: any) =>
+                (row[filter.id] || '').toLowerCase().startsWith(filter.value.toLowerCase()),
             },
             {
               Header: 'Profile',
               accessor: 'githubId',
               // tslint:disable-next-line:max-line-length
-              Cell: props => <Link href={{ pathname: '/profile', query: { githubId: props.value }}}><a>Show profile</a></Link> ,
+              Cell: props => (
+                <Link href={{ pathname: '/profile', query: { githubId: props.value } }}>
+                  <a>Show profile</a>
+                </Link>
+              ),
               filterMethod: (filter: any, row: any) =>
                 (row[filter.id] || '').toLowerCase().startsWith(filter.value.toLowerCase()),
             },
@@ -89,4 +90,4 @@ class StudentsPage extends React.Component<Props, State> {
   }
 }
 
-export default StudentsPage;
+export default withCourseData(withSession(StudentsPage));

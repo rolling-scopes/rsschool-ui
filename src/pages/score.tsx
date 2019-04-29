@@ -5,12 +5,14 @@ import LoadingScreen from '../components/LoadingScreen';
 import ReactTable from 'react-table';
 import Link from 'next/link';
 import withSession, { Session } from '../components/withSession';
+import withCourseData, { Course } from '../components/withCourseData';
 
 import 'react-table/react-table.css';
 import '../index.scss';
 
 type Props = {
   session?: Session;
+  course: Course;
 };
 
 type State = {
@@ -28,8 +30,8 @@ class ScoresPage extends React.Component<Props, State> {
 
   async componentDidMount() {
     const [scoreResponse, tasksResponse] = await Promise.all([
-      fetch(`/api/course/1/score`),
-      fetch(`/api/course/1/tasks`),
+      fetch(`/api/course/${this.props.course.id}/score`),
+      fetch(`/api/course/${this.props.course.id}/tasks`),
     ]);
 
     const [score, tasks] = await Promise.all([scoreResponse.json(), tasksResponse.json()]);
@@ -47,9 +49,6 @@ class ScoresPage extends React.Component<Props, State> {
       Header: task.name,
       sortMethod: undefined,
       accessor: (d: any) => {
-        if (!task) {
-          return 0;
-        }
         const currentTask = d.taskResults.find((taskResult: any) => taskResult.courseTaskId === task.courseTaskId);
         return currentTask ? <div>{currentTask.score}</div> : 0;
       },
@@ -67,7 +66,7 @@ class ScoresPage extends React.Component<Props, State> {
     return (
       <>
         <Header username={this.props.session.githubId} />
-        <h2>2019 Q1 Score</h2>
+        <h2>{this.props.course.name}</h2>
         <ReactTable
           filterable={true}
           defaultPageSize={100}
@@ -122,4 +121,4 @@ class ScoresPage extends React.Component<Props, State> {
   }
 }
 
-export default withSession(ScoresPage);
+export default withCourseData(withSession(ScoresPage));
