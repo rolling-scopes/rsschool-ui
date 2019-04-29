@@ -23,19 +23,25 @@ type State = {
 
 class ScoresPage extends React.Component<Props, State> {
   state: State = {
-    isLoading: true,
+    isLoading: false,
     students: [],
     tasks: [],
   };
 
   async componentDidMount() {
+    this.setState({ isLoading: true });
     const [scoreResponse, tasksResponse] = await Promise.all([
       fetch(`/api/course/${this.props.course.id}/score`),
       fetch(`/api/course/${this.props.course.id}/tasks`),
     ]);
 
-    const [score, tasks] = await Promise.all([scoreResponse.json(), tasksResponse.json()]);
+    if (!scoreResponse.ok || !tasksResponse.ok) {
+      this.setState({ isLoading: false });
 
+      return;
+    }
+
+    const [score, tasks] = await Promise.all([scoreResponse.json(), tasksResponse.json()]);
     this.setState({
       students: score.data,
       tasks: tasks.data,
@@ -69,7 +75,6 @@ class ScoresPage extends React.Component<Props, State> {
         <h2>{this.props.course.name}</h2>
         <ReactTable
           filterable={true}
-          defaultPageSize={100}
           defaultSorted={[
             {
               id: 'total',
