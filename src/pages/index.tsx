@@ -20,6 +20,10 @@ class IndexPage extends React.Component<Props> {
         link: '/students',
       },
       {
+        name: '2019-Q1: Score',
+        link: '/score',
+      },
+      {
         name: 'All Tasks',
         link: '/tasks',
       },
