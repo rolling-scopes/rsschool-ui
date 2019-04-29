@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import LoadingScreen from 'components/LoadingScreen';
+import LoadingScreen from './LoadingScreen';
 
 const WithLoader = ({ type }: any) => (WrappedComponent: React.ComponentType) => (props: any) => {
   if (type === 'display') {

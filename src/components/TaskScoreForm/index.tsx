@@ -52,6 +52,7 @@ class TaskScoreForm extends React.Component<Props, State> {
       fetch(`/api/course/${this.props.courseId}/mentor/students`),
       fetch(`/api/course/${this.props.courseId}/tasks`),
     ]);
+
     if (!meResponse.ok || !tasksResponse.ok) {
       return;
     }

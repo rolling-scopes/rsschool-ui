@@ -5,7 +5,7 @@ steps:
     name: build
     image: node:10
     commands:
-      - npm install --prefer-offline
+      - npm ci
       - npm run lint
       - npm run test
       - npm run build
