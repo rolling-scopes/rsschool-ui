@@ -4,18 +4,13 @@ import withSession, { Session } from '../components/withSession';
 import withCourses from '../components/withCourses';
 import { Course } from '../components/withCourseData';
 import { ListGroup, ListGroupItem } from 'reactstrap';
-import * as fetch from 'isomorphic-fetch';
 import Header from '../components/Header';
 
 import '../index.scss';
 
 type Props = {
-  courses: Course[];
+  courses?: Course[];
   session?: Session;
-};
-
-type State = {
-  courses: Course[];
 };
 
 type LinkInfo = {
@@ -23,20 +18,7 @@ type LinkInfo = {
   link: string;
 };
 
-class IndexPage extends React.Component<Props, State> {
-  static async getInitialProps() {
-    const coursesResponse = await fetch(`${process.env.RS_HOST}/api/courses`);
-    if (coursesResponse.ok) {
-      const courses = (await coursesResponse.json()).data;
-      return { courses };
-    }
-    return { courses: [] };
-  }
-
-  state: State = {
-    courses: [],
-  };
-
+class IndexPage extends React.Component<Props> {
   getLinks() {
     const courseLinks = (this.props.courses || []).reduce(
       (acc, course) => {
