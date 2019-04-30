@@ -8,6 +8,7 @@ ENV NODE_PORT 8080
 WORKDIR /client
 
 COPY package.json /client
+COPY src/next.config.js /client
 COPY src/.next /client/.next
 COPY src/static /client/static
 
