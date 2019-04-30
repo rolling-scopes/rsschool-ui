@@ -8,8 +8,8 @@ export interface Course {
   alias: string;
 }
 
-function withCourseAlias(WrappedComponent: React.ComponentType<any>) {
-  return class extends React.Component<{ course?: Course }> {
+function withCourseData(WrappedComponent: React.ComponentType<any>) {
+  return class extends React.PureComponent<{ course?: Course }> {
     static async getInitialProps(context: NextContext) {
       const alias = context.query.course;
       const courses = await fetch(`${process.env.RS_HOST}/api/courses`);
@@ -29,4 +29,4 @@ function withCourseAlias(WrappedComponent: React.ComponentType<any>) {
   };
 }
 
-export default withCourseAlias;
+export default withCourseData;

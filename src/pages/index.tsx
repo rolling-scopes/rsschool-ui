@@ -1,6 +1,7 @@
 import * as React from 'react';
 import Router from 'next/router';
 import withSession, { Session } from '../components/withSession';
+import withCourses from '../components/withCourses';
 import { Course } from '../components/withCourseData';
 import { ListGroup, ListGroupItem } from 'reactstrap';
 import * as fetch from 'isomorphic-fetch';
@@ -36,16 +37,8 @@ class IndexPage extends React.Component<Props, State> {
     courses: [],
   };
 
-  async componentDidMount() {
-    const coursesResponse = await fetch(`${process.env.RS_HOST}/api/courses`);
-    if (coursesResponse.ok) {
-      const courses = (await coursesResponse.json()).data;
-      this.setState({ courses });
-    }
-  }
-
   getLinks() {
-    const courseLinks = (this.state.courses || []).reduce(
+    const courseLinks = (this.props.courses || []).reduce(
       (acc, course) => {
         return acc.concat([
           {
@@ -101,4 +94,4 @@ class IndexPage extends React.Component<Props, State> {
   }
 }
 
-export default withSession(IndexPage);
+export default withCourses(withSession(IndexPage));
