@@ -1,10 +1,12 @@
 import * as React from 'react';
 import * as fetch from 'isomorphic-fetch';
+import getConfig from 'next/config';
+const { serverRuntimeConfig } = getConfig();
 
 function withCourses(WrappedComponent: React.ComponentType<any>) {
   return class extends React.PureComponent {
     static async getInitialProps() {
-      const coursesResponse = await fetch(`${process.env.RS_HOST}/api/courses`);
+      const coursesResponse = await fetch(`${serverRuntimeConfig.RS_HOST}/api/courses`);
       if (coursesResponse.ok) {
         const courses = (await coursesResponse.json()).data;
         return { courses };
