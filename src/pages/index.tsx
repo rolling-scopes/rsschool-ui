@@ -6,6 +6,8 @@ import { ListGroup, ListGroupItem } from 'reactstrap';
 import * as fetch from 'isomorphic-fetch';
 import Header from '../components/Header';
 
+import '../index.scss';
+
 type Props = {
   courses: Course[];
   session?: Session;

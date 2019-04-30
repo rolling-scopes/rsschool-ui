@@ -5,8 +5,6 @@ import { Field } from 'react-final-form';
 import ReactTable from 'react-table';
 import { TaskEditModal } from './TaskEditModal';
 
-import 'react-table/react-table.css';
-
 type Props = {};
 
 type State = {

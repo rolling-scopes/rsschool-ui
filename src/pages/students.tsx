@@ -1,14 +1,13 @@
 import * as React from 'react';
+import ReactTable from 'react-table';
+import Link from 'next/link';
+
 import Header from '../components/Header';
 import * as fetch from 'isomorphic-fetch';
 import LoadingScreen from '../components/LoadingScreen';
 import withCourseData, { Course } from '../components/withCourseData';
 import withSession from '../components/withSession';
 
-import ReactTable from 'react-table';
-import Link from 'next/link';
-
-import 'react-table/react-table.css';
 import '../index.scss';
 
 type Props = {

@@ -2,7 +2,6 @@ import * as React from 'react';
 
 import Header from '../components/Header';
 import { TasksForm } from '../components/TasksForm';
-
 import withSession, { Session } from '../components/withSession';
 
 import '../index.scss';

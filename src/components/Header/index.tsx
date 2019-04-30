@@ -11,7 +11,7 @@ class Header extends React.Component<Props, any> {
     return (
       <nav className="navbar navbar-light header-nav">
         <div className="container">
-          <a className="navbar-brand" href="index.html">
+          <a className="navbar-brand" href="/">
             <img className="header-logo" src="/static/images/logo-rsschool.svg" alt="Rolling Scopes School Logo" />
           </a>
           <p className="header-logged-user">Hello, {this.props.username}</p>

@@ -7,7 +7,6 @@ import Link from 'next/link';
 import withSession, { Session } from '../components/withSession';
 import withCourseData, { Course } from '../components/withCourseData';
 
-import 'react-table/react-table.css';
 import '../index.scss';
 
 type Props = {
