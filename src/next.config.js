@@ -6,10 +6,9 @@ const withCSS = require('@zeit/next-css');
 
 const nextConfig = {
   serverRuntimeConfig: {
-    RS_HOST: process.env.RS_HOST,
+    RS_HOST: process.env.RS_HOST || 'http://localhost:3000',
   },
   env: {
-    RS_HOST: process.env.RS_HOST || 'http://localhost:3000',
     BUILD_VERSION: process.env.BUILD_VERSION || '0.0.0.0.0',
     APP_VERSION: process.env.APP_VERSION,
   },

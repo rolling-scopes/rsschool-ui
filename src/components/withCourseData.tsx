@@ -14,7 +14,7 @@ function withCourseData(WrappedComponent: React.ComponentType<any>) {
   return class extends React.PureComponent<{ course?: Course }> {
     static async getInitialProps(context: NextContext) {
       const alias = context.query.course;
-      const courses = await fetch(`${serverRuntimeConfig.RS_HOST}/api/courses`);
+      const courses = await fetch(`${serverRuntimeConfig.RS_HOST || ''}/api/courses`);
       if (courses.ok) {
         const course = (await courses.json()).data.find((c: any) => c.alias === alias);
         return { course };
