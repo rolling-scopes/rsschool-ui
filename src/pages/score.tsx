@@ -20,7 +20,12 @@ type State = {
   tasks: any[];
 };
 
-class ScoresPage extends React.Component<Props, State> {
+interface CourseTask {
+  id: number;
+  studentEndDate: string | null;
+}
+
+class ScorePage extends React.Component<Props, State> {
   state: State = {
     isLoading: false,
     students: [],
@@ -36,14 +41,25 @@ class ScoresPage extends React.Component<Props, State> {
 
     if (!scoreResponse.ok || !tasksResponse.ok) {
       this.setState({ isLoading: false });
-
       return;
     }
 
-    const [score, tasks] = await Promise.all([scoreResponse.json(), tasksResponse.json()]);
+    const [score, tasks] = await Promise.all<any, { data: CourseTask[] }>([scoreResponse.json(), tasksResponse.json()]);
+    const sortedTasks = tasks.data.sort((a: CourseTask, b: CourseTask) => {
+      if (!b.studentEndDate && a.studentEndDate) {
+        return -1;
+      }
+      if (!a.studentEndDate && b.studentEndDate) {
+        return 1;
+      }
+      if (!a.studentEndDate && !b.studentEndDate) {
+        return 0;
+      }
+      return new Date(a.studentEndDate!).getTime() - new Date(b.studentEndDate!).getTime();
+    });
     this.setState({
       students: score.data,
-      tasks: tasks.data,
+      tasks: sortedTasks,
       isLoading: false,
     });
   }
@@ -51,8 +67,16 @@ class ScoresPage extends React.Component<Props, State> {
   getColumns() {
     const columns = this.state.tasks.map(task => ({
       id: task.courseTaskId,
-      Header: task.name,
-      sortMethod: undefined,
+      Header: () => {
+        return task.descriptionUrl ? (
+          <a className="table-header-link" href={task.descriptionUrl}>
+            {task.name}
+          </a>
+        ) : (
+          <div>{task.name}</div>
+        );
+      },
+      sortMethod: this.numberSort,
       accessor: (d: any) => {
         const currentTask = d.taskResults.find((taskResult: any) => taskResult.courseTaskId === task.courseTaskId);
         return currentTask ? <div>{currentTask.score}</div> : 0;
@@ -60,6 +84,10 @@ class ScoresPage extends React.Component<Props, State> {
     }));
     return columns;
   }
+
+  stringFilter = (filter: any, row: any) => (row[filter.id] || '').toLowerCase().startsWith(filter.value.toLowerCase());
+
+  numberSort = (a: number, b: number) => b - a;
 
   render() {
     if (!this.props.session) {
@@ -92,22 +120,19 @@ class ScoresPage extends React.Component<Props, State> {
                   <a>{props.value}</a>
                 </Link>
               ),
-              filterMethod: (filter: any, row: any) =>
-                (row[filter.id] || '').toLowerCase().startsWith(filter.value.toLowerCase()),
+              filterMethod: this.stringFilter,
             },
             {
               Header: 'First Name',
               accessor: 'firstName',
               maxWidth: 160,
-              filterMethod: (filter: any, row: any) =>
-                (row[filter.id] || '').toLowerCase().startsWith(filter.value.toLowerCase()),
+              filterMethod: this.stringFilter,
             },
             {
               Header: 'Last Name',
               accessor: 'lastName',
               maxWidth: 160,
-              filterMethod: (filter: any, row: any) =>
-                (row[filter.id] || '').toLowerCase().startsWith(filter.value.toLowerCase()),
+              filterMethod: this.stringFilter,
             },
             ...this.getColumns(),
             {
@@ -116,7 +141,7 @@ class ScoresPage extends React.Component<Props, State> {
               accessor: (d: any) => {
                 return d.taskResults.reduce((acc: number, value: any) => acc + value.score, 0);
               },
-              sortMethod: (a: number, b: number) => b - a,
+              sortMethod: this.numberSort,
             },
           ]}
         />
@@ -125,4 +150,4 @@ class ScoresPage extends React.Component<Props, State> {
   }
 }
 
-export default withCourseData(withSession(ScoresPage));
+export default withCourseData(withSession(ScorePage));
