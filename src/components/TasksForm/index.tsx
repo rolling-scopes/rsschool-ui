@@ -31,7 +31,9 @@ export class TasksForm extends React.Component<Props, State> {
   };
 
   async loadTasks() {
-    const tasksResponse = await fetch(`/api/tasks`);
+    const tasksResponse = await fetch(`/api/tasks`, {
+      credentials: 'same-origin',
+    });
     if (!tasksResponse.ok) {
       return;
     }
@@ -52,6 +54,7 @@ export class TasksForm extends React.Component<Props, State> {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify([values]),
+      credentials: 'same-origin',
     });
 
     if (!result.ok) {
