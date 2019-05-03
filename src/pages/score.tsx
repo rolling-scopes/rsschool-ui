@@ -35,8 +35,12 @@ class ScorePage extends React.Component<Props, State> {
   async componentDidMount() {
     this.setState({ isLoading: true });
     const [scoreResponse, tasksResponse] = await Promise.all([
-      fetch(`/api/course/${this.props.course.id}/score`),
-      fetch(`/api/course/${this.props.course.id}/tasks`),
+      fetch(`/api/course/${this.props.course.id}/score`, {
+        credentials: 'same-origin',
+      }),
+      fetch(`/api/course/${this.props.course.id}/tasks`, {
+        credentials: 'same-origin',
+      }),
     ]);
 
     if (!scoreResponse.ok || !tasksResponse.ok) {

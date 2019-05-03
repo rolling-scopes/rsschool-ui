@@ -34,7 +34,9 @@ function withSession(WrappedComponent: React.ComponentType<any>) {
         return;
       }
       this.setState({ isLoading: true });
-      const response = await fetch(`/api/session`);
+      const response = await fetch(`/api/session`, {
+        credentials: 'same-origin',
+      });
       this.setState({ isLoading: false });
       if (!response.ok) {
         Router.push('/login');

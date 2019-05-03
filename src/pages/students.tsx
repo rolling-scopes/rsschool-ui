@@ -26,7 +26,9 @@ class StudentsPage extends React.Component<Props, State> {
   };
 
   async componentDidMount() {
-    const response = await fetch(`/api/course/${this.props.course.id}/students`);
+    const response = await fetch(`/api/course/${this.props.course.id}/students`, {
+      credentials: 'same-origin',
+    });
     const json = await response.json();
     this.setState({
       students: json.data,

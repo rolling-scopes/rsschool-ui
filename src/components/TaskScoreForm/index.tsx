@@ -50,8 +50,12 @@ class TaskScoreForm extends React.Component<Props, State> {
 
   async componentDidMount() {
     const [meResponse, tasksResponse] = await Promise.all([
-      fetch(`/api/course/${this.props.course.id}/mentor/students`),
-      fetch(`/api/course/${this.props.course.id}/tasks`),
+      fetch(`/api/course/${this.props.course.id}/mentor/students`, {
+        credentials: 'same-origin',
+      }),
+      fetch(`/api/course/${this.props.course.id}/tasks`, {
+        credentials: 'same-origin',
+      }),
     ]);
 
     if (!meResponse.ok || !tasksResponse.ok) {
@@ -71,6 +75,7 @@ class TaskScoreForm extends React.Component<Props, State> {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(values),
+      credentials: 'same-origin',
     });
     if (result.ok) {
       this.setState({
