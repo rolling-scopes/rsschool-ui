@@ -6,6 +6,7 @@ import ReactTable from 'react-table';
 import Link from 'next/link';
 import withSession, { Session } from '../components/withSession';
 import withCourseData, { Course } from '../components/withCourseData';
+import { sortTasksByEndDate } from '../services/rules';
 
 import '../index.scss';
 
@@ -49,18 +50,7 @@ class ScorePage extends React.Component<Props, State> {
     }
 
     const [score, tasks] = await Promise.all<any, { data: CourseTask[] }>([scoreResponse.json(), tasksResponse.json()]);
-    const sortedTasks = tasks.data.sort((a: CourseTask, b: CourseTask) => {
-      if (!b.studentEndDate && a.studentEndDate) {
-        return -1;
-      }
-      if (!a.studentEndDate && b.studentEndDate) {
-        return 1;
-      }
-      if (!a.studentEndDate && !b.studentEndDate) {
-        return 0;
-      }
-      return new Date(a.studentEndDate!).getTime() - new Date(b.studentEndDate!).getTime();
-    });
+    const sortedTasks = tasks.data.sort(sortTasksByEndDate);
     this.setState({
       students: score.data,
       tasks: sortedTasks,

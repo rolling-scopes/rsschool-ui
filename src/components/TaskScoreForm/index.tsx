@@ -2,6 +2,7 @@ import * as React from 'react';
 import { FormGroup, Label, Button, Input, Alert } from 'reactstrap';
 import * as fetch from 'isomorphic-fetch';
 import { Form, Field } from 'react-final-form';
+import { sortTasksByEndDate } from '../../services/rules';
 import { Course } from '../withCourseData';
 
 import './index.scss';
@@ -58,16 +59,16 @@ class TaskScoreForm extends React.Component<Props, State> {
       }),
     ]);
 
-    if (!meResponse.ok || !tasksResponse.ok) {
-      return;
+    let students = [];
+    let tasks = [];
+
+    if (meResponse.ok) {
+      students = (await meResponse.json()).data.students;
     }
-
-    const [json, tasksJson] = await Promise.all([meResponse.json(), tasksResponse.json()]);
-
-    this.setState({
-      students: json.data.students,
-      tasks: tasksJson.data,
-    });
+    if (tasksResponse.ok) {
+      tasks = (await tasksResponse.json()).data.sort(sortTasksByEndDate).filter((task: any) => task.studentEndDate);
+    }
+    this.setState({ students, tasks });
   }
 
   handleSubmit = async (values: any) => {
@@ -78,9 +79,7 @@ class TaskScoreForm extends React.Component<Props, State> {
       credentials: 'same-origin',
     });
     if (result.ok) {
-      this.setState({
-        submitted: true,
-      });
+      this.setState({ submitted: true });
     }
   };
 
