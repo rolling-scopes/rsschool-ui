@@ -50,7 +50,7 @@ class ScorePage extends React.Component<Props, State> {
     }
 
     const [score, tasks] = await Promise.all<any, { data: CourseTask[] }>([scoreResponse.json(), tasksResponse.json()]);
-    const sortedTasks = tasks.data.sort(sortTasksByEndDate);
+    const sortedTasks = tasks.data.filter(task => task.studentEndDate).sort(sortTasksByEndDate);
     this.setState({
       students: score.data,
       tasks: sortedTasks,
