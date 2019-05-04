@@ -6,6 +6,10 @@ body, html {
   padding: 0;
 }
 
-.rt-th a {
+
+.ReactTable .rt-td {
+  padding: 5px 5px;
+}
+.ReactTable .rt-th a {
   color: white;
 }
