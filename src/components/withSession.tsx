@@ -8,6 +8,7 @@ import '../index.scss';
 export interface Session {
   id: number;
   githubId: string;
+  roles: { [key: number]: 'student' | 'mentor' };
 }
 
 type State = {

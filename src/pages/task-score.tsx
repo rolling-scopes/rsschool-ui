@@ -12,10 +12,17 @@ type Props = {
 };
 
 class TaskScorePage extends React.Component<Props> {
+  componentDidMount() {}
+
   render() {
-    if (!this.props.session) {
+    if (!this.props.session || !this.props.session.roles || !this.props.course) {
       return null;
     }
+    const { roles } = this.props.session;
+    if (roles[this.props.course.id] !== 'mentor') {
+      return `You are not mentor in ${this.props.course.alias}`;
+    }
+
     return (
       <>
         <div>
