@@ -151,12 +151,11 @@ class TaskScoreForm extends React.Component<Props, State> {
                 </Field>
               </FormGroup>
               <FormGroup className="col-md-6">
-                <Field name="comment" validate={required}>
-                  {({ input, meta }) => (
+                <Field name="comment">
+                  {({ input }) => (
                     <>
                       <Label>Comment</Label>
                       <Input {...input} name="comment" type="textarea" />
-                      <ValidationError meta={meta} />{' '}
                     </>
                   )}
                 </Field>
