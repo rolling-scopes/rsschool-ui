@@ -44,6 +44,8 @@ class ProfilePage extends React.Component<Props, State> {
 
   renderProfile() {
     if (this.state.profile) {
+      const studentCourses = this.state.profile.students.map((data: any) => data.course.name);
+      const mentorCourses = this.state.profile.mentors.map((data: any) => data.course.name);
       return (
         <div>
           <Header username={this.state.profile.firstName} />
@@ -78,8 +80,11 @@ class ProfilePage extends React.Component<Props, State> {
                         {this.state.profile.contactsPhone}
                     </a>
                     <br/>
-                    <a href={`malito:${this.state.profile.contactsEmail}`} >
+                    <a href={`mailto:${this.state.profile.contactsEmail}`} >
                         {this.state.profile.contactsEmail}
+                    </a>
+                    <a href={`mailto:${this.state.profile.contactsEpamEmail}`} >
+                        {this.state.profile.contactsEpamEmail}
                     </a>
                 </div>
             </div>
@@ -90,11 +95,13 @@ class ProfilePage extends React.Component<Props, State> {
             <div className="profile_header">Mentee Information</div>
             <div className="profile_section">
                 <div className="profile_label">Courses</div>
-                <div className="profile_value"/>
+                <div className="profile_value">{studentCourses.join(', ')}</div>
             </div>
             <div className="profile_section">
-                <div className="profile_label">Estimated English level</div>
-                <div className="profile_value">{this.state.profile.englishLevel}</div>
+                <div className="profile_label">Estimated english level</div>
+                <div className="profile_value">
+                    {this.state.profile.englishLevel ? this.state.profile.englishLevel.toUpperCase() : null}
+                </div>
             </div>
             <div className="profile_section">
                 <div className="profile_label">Mentors</div>
@@ -103,7 +110,7 @@ class ProfilePage extends React.Component<Props, State> {
             <div className="profile_header">Mentor Information</div>
             <div className="profile_section">
                 <div className="profile_label">Courses</div>
-                <div className="profile_value" />
+                <div className="profile_value" >{mentorCourses.join(', ')}</div>
             </div>
             <div className="profile_section">
                 <div className="profile_label">Students</div>
