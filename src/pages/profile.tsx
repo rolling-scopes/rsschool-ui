@@ -10,6 +10,7 @@ import '../index.scss';
 
 type Props = {
   router: any;
+  session: any;
 };
 
 type State = {
@@ -45,20 +46,38 @@ class ProfilePage extends React.Component<Props, State> {
     if (this.state.profile) {
       return (
         <div>
-          <Header username={this.state.profile.githubId} />
-          <div>{this.state.profile.githubId}</div>
-          <div>
-            {this.state.profile.firstName} {this.state.profile.lastName}
-          </div>
-          <div>
-            {this.state.profile.firstNameNative} {this.state.profile.lastNameNative}
-          </div>
-          <div>{this.state.profile.englishLevel}</div>
-          <div>{this.state.profile.contactsPhone}</div>
-          <div>{this.state.profile.contactsEmail}</div>
-          <div>{this.state.profile.locationName}</div>
+          <Header username={this.state.profile.firstName} />
+          <div className="profile_container">
+            <div className="profile_section">
+                <div className="profile_label">Name and Surname</div>
+                <div className="profile_value">
+                    {this.state.profile.firstNameNative} {this.state.profile.lastNameNative}
+                </div>
+            </div>
+            <div className="profile_section">
+                <div className="profile_label">Name and Surname as in passport</div>
+                <div className="profile_value">{this.state.profile.firstName} {this.state.profile.lastName}</div>
+            </div>
+            <div className="profile_section">
+                <div className="profile_label">Location</div>
+                <div className="profile_value">{this.state.profile.locationName}</div>
+            </div>
+            <div className="profile_section">
+                <div className="profile_label">Github</div>
+                <div className="profile_value">{`https://github.com/${this.state.profile.githubId}`}</div>
+            </div>
+            <div className="profile_section">
+                <div className="profile_label">Contacts</div>
+                <div className="profile_value">
+                    {this.state.profile.contactsPhone}, {this.state.profile.contactsEmail}
+                </div>
+            </div>
+            <div className="profile_section">
+                <div className="profile_label">English level</div>
+                <div className="profile_value">{this.state.profile.englishLevel}</div>
+            </div>
         </div>
-      );
+    </div>);
     }
     return null;
   }
