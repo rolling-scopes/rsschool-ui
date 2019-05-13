@@ -9,13 +9,15 @@ import ValidationError from '../components/ValidationError';
 
 import '../index.scss';
 
+type Student = { firstName: string; lastName: string; studentId: number; isExpelled: boolean };
+
 type Props = {
   session?: Session;
   course: Course;
 };
 
 type State = {
-  students: { firstName: string; lastName: string; studentId: number }[];
+  students: Student[];
   submitted: boolean;
   resultMessage: string | undefined;
   isLoading: boolean;
@@ -102,7 +104,7 @@ class ExpelPage extends React.Component<Props, State> {
                               <option value="">(Empty)</option>
                               {this.state.students.map((student, i) => (
                                 <option value={student.studentId} key={i}>
-                                  {student.firstName} {student.lastName}
+                                  {student.isExpelled ? '(EXPELLED) ' : ''} {student.firstName} {student.lastName}
                                 </option>
                               ))}
                             </Input>

@@ -2,7 +2,7 @@ import * as React from 'react';
 import Header from '../components/Header';
 import * as fetch from 'isomorphic-fetch';
 import { LoadingScreen } from '../components/LoadingScreen';
-import ReactTable from 'react-table';
+import ReactTable, { RowInfo } from 'react-table';
 import Link from 'next/link';
 import withSession, { Session } from '../components/withSession';
 import withCourseData, { Course } from '../components/withCourseData';
@@ -99,7 +99,10 @@ class ScorePage extends React.Component<Props, State> {
               desc: false,
             },
           ]}
-          getTrProps={(_: any, rowInfo: any) => {
+          getTrProps={(_: any, rowInfo?: RowInfo) => {
+            if (!rowInfo || rowInfo.original) {
+              return {};
+            }
             return {
               className: rowInfo.original.isExpelled ? 'rt-expelled' : '',
             };

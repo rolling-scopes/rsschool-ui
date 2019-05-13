@@ -9,14 +9,15 @@ import { LoadingScreen } from '../LoadingScreen';
 
 import './index.scss';
 
+type Student = { firstName: string; lastName: string; studentId: number; isExpelled: boolean };
+
 type Props = {
   course: Course;
 };
 
 type State = {
-  students: { firstName: string; lastName: string; studentId: number }[];
+  students: Student[];
   tasks: any[];
-  mentorData?: { students: any[] };
   isLoading: boolean;
   submitted: boolean;
 };
@@ -40,7 +41,6 @@ class TaskScoreForm extends React.Component<Props, State> {
     isLoading: false,
     students: [],
     tasks: [],
-    mentorData: undefined,
     submitted: false,
   };
 
@@ -104,7 +104,7 @@ class TaskScoreForm extends React.Component<Props, State> {
                           <option value="">(Empty)</option>
                           {this.state.students.map((student, i) => (
                             <option value={student.studentId} key={i}>
-                              {student.firstName} {student.lastName}
+                              {student.isExpelled ? '(EXPELLED) ' : ''} {student.firstName} {student.lastName}
                             </option>
                           ))}
                         </Input>
