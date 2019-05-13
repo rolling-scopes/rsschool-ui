@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 import Header from '../components/Header';
 import * as fetch from 'isomorphic-fetch';
-import LoadingScreen from '../components/LoadingScreen';
+import { LoadingScreen } from '../components/LoadingScreen';
 import withCourseData, { Course } from '../components/withCourseData';
 import withSession from '../components/withSession';
 
@@ -37,11 +37,8 @@ class StudentsPage extends React.Component<Props, State> {
   }
 
   render() {
-    if (this.state.isLoading) {
-      return <LoadingScreen show={true} />;
-    }
     return (
-      <>
+      <LoadingScreen show={this.state.isLoading}>
         <Header username={''} />
         <h2>{this.props.course.name}</h2>
         <ReactTable
@@ -86,7 +83,7 @@ class StudentsPage extends React.Component<Props, State> {
             },
           ]}
         />
-      </>
+      </LoadingScreen>
     );
   }
 }

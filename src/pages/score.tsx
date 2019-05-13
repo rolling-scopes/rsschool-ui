@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Header from '../components/Header';
 import * as fetch from 'isomorphic-fetch';
-import LoadingScreen from '../components/LoadingScreen';
+import { LoadingScreen } from '../components/LoadingScreen';
 import ReactTable from 'react-table';
 import Link from 'next/link';
 import withSession, { Session } from '../components/withSession';
@@ -87,11 +87,8 @@ class ScorePage extends React.Component<Props, State> {
     if (!this.props.session) {
       return null;
     }
-    if (this.state.isLoading) {
-      return <LoadingScreen show={true} />;
-    }
     return (
-      <>
+      <LoadingScreen show={this.state.isLoading}>
         <Header username={this.props.session.githubId} />
         <h2>{this.props.course.name}</h2>
         <ReactTable
@@ -102,6 +99,11 @@ class ScorePage extends React.Component<Props, State> {
               desc: false,
             },
           ]}
+          getTrProps={(_: any, rowInfo: any) => {
+            return {
+              className: rowInfo.original.isExpelled ? 'rt-expelled' : '',
+            };
+          }}
           defaultFilterMethod={(filter, row) => String(row[filter.id]) === filter.value}
           data={this.state.students}
           columns={[
@@ -139,7 +141,7 @@ class ScorePage extends React.Component<Props, State> {
             },
           ]}
         />
-      </>
+      </LoadingScreen>
     );
   }
 }

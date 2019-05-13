@@ -1,8 +1,8 @@
 import * as React from 'react';
 
-import LoadingScreen from './LoadingScreen';
+import { LoadingScreen } from './LoadingScreen';
 
-const WithLoader = ({ type }: any) => (WrappedComponent: React.ComponentType) => (props: any) => {
+export const withLoader = ({ type }: any) => (WrappedComponent: React.ComponentType) => (props: any) => {
   if (type === 'display') {
     return (
       <React.Fragment>
@@ -14,5 +14,3 @@ const WithLoader = ({ type }: any) => (WrappedComponent: React.ComponentType) =>
     return props.isLoading ? <LoadingScreen show={props.isLoading} /> : <WrappedComponent {...props} />;
   }
 };
-
-export default WithLoader;

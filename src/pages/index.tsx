@@ -19,58 +19,78 @@ type LinkInfo = {
 };
 
 class IndexPage extends React.Component<Props> {
-  getLinks() {
-    const courseLinks = (this.props.courses || []).reduce(
-      (acc, course) => {
-        return acc.concat([
-          {
-            name: `${course.name}: Students`,
-            link: `/students?course=${course.alias}`,
-          },
-          {
-            name: `${course.name}: Score`,
-            link: `/score?course=${course.alias}`,
-          },
-          {
-            name: `${course.name}: Submit Score`,
-            link: `/task-score?course=${course.alias}`,
-          },
-        ]);
-      },
-      [] as LinkInfo[],
-    );
+  getLinks = (course: Course) => {
+    if (!this.props.session) {
+      return [];
+    }
+    const role = this.props.session.roles[course.id];
+    if (!role) {
+      return [];
+    }
 
-    return courseLinks.concat([
+    const result = [
       {
-        name: 'All Tasks',
-        link: '/tasks',
+        name: `Score`,
+        link: `/score?course=${course.alias}`,
+      },
+    ];
+    const isMentorOrAdmin = role === 'mentor' || this.props.session.isAdmin;
+    if (!isMentorOrAdmin) {
+      return result;
+    }
+    return result.concat([
+      {
+        name: `Submit Score`,
+        link: `/task-score?course=${course.alias}`,
+      },
+      {
+        name: `Students`,
+        link: `/students?course=${course.alias}`,
+      },
+      {
+        name: `Expel Student`,
+        link: `/expel?course=${course.alias}`,
       },
     ]);
+  };
+
+  renderLinks() {
+    return (this.props.courses || []).map(course => {
+      return (
+        <div className="m-2 mt-4" key={course.id}>
+          <h3>{course.name}</h3>
+          <ListGroup>{this.getLinks(course).map(this.renderLink)}</ListGroup>
+        </div>
+      );
+    });
   }
 
+  renderLink = (linkInfo: LinkInfo) => {
+    return (
+      <ListGroupItem key={linkInfo.link}>
+        <a
+          href={linkInfo.link}
+          onClick={evt => {
+            evt.preventDefault();
+            Router.push(linkInfo.link);
+          }}
+        >
+          {linkInfo.name}
+        </a>
+      </ListGroupItem>
+    );
+  };
+
   render() {
-    const links = this.getLinks();
+    const links = this.renderLinks();
     if (!this.props.session) {
       return null;
     }
     return (
       <div>
         <Header username={this.props.session.githubId} />
-        <ListGroup>
-          {links.map((linkInfo: LinkInfo) => (
-            <ListGroupItem key={linkInfo.link}>
-              <a
-                href={linkInfo.link}
-                onClick={evt => {
-                  evt.preventDefault();
-                  Router.push(linkInfo.link);
-                }}
-              >
-                {linkInfo.name}
-              </a>
-            </ListGroupItem>
-          ))}
-        </ListGroup>
+        {links}
+        <div className="m-2 mt-4">{this.renderLink({ name: 'All Tasks', link: '/tasks' })}</div>
       </div>
     );
   }

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as fetch from 'isomorphic-fetch';
-import LoadingScreen from './LoadingScreen';
+import { LoadingScreen } from './LoadingScreen';
 import Router from 'next/router';
 
 import '../index.scss';
@@ -8,6 +8,7 @@ import '../index.scss';
 export interface Session {
   id: number;
   githubId: string;
+  isAdmin: boolean;
   roles: { [key: number]: 'student' | 'mentor' };
 }
 
@@ -49,10 +50,11 @@ function withSession(WrappedComponent: React.ComponentType<any>) {
     }
 
     render() {
-      if (this.state.isLoading) {
-        return <LoadingScreen />;
-      }
-      return <WrappedComponent session={this.state.session} {...this.props} />;
+      return (
+        <LoadingScreen show={this.state.isLoading}>
+          <WrappedComponent session={this.state.session} {...this.props} />;
+        </LoadingScreen>
+      );
     }
   };
 }

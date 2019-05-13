@@ -2,7 +2,7 @@ import * as React from 'react';
 import Header from '../components/Header';
 import * as fetch from 'isomorphic-fetch';
 import Login from '../components/Login';
-import LoadingScreen from '../components/LoadingScreen';
+import { LoadingScreen } from '../components/LoadingScreen';
 import Router from 'next/router';
 import { withRouter } from 'next/router';
 
@@ -70,19 +70,13 @@ class ProfilePage extends React.Component<Props, State> {
     return null;
   }
 
-  renderLoading() {
-    if (this.state.isLoading) {
-      return <LoadingScreen show={true} />;
-    }
-    return null;
-  }
-
   render() {
     return (
       <>
-        {this.renderLoading()}
-        {this.renderLogin()}
-        {this.renderProfile()}
+        <LoadingScreen show={this.state.isLoading}>
+          {this.renderLogin()}
+          {this.renderProfile()}
+        </LoadingScreen>
       </>
     );
   }
