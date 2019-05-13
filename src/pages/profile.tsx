@@ -47,6 +47,7 @@ class ProfilePage extends React.Component<Props, State> {
       const { profile } =  this.state;
       const studentCourses = profile.students.map((data: any) => data.course.name);
       const mentorCourses = profile.mentors.map((data: any) => data.course.name);
+      const mentorStudents = profile.mentors.map((data: any) => `${data.user.firstName} ${data.user.lastName}`);
       return (
         <div>
           <Header username={profile.firstName} />
@@ -135,7 +136,7 @@ class ProfilePage extends React.Component<Props, State> {
             </div>
             <div className="profile_section">
                 <div className="profile_label">Students</div>
-                <div className="profile_value" />
+                <div className="profile_value">{mentorStudents.join(', ')}</div>
             </div>
         </div>
     </div>);
