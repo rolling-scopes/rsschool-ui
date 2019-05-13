@@ -5,16 +5,25 @@
     margin: 10px;
 }
 
+.profile_header {
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 15px;
+    padding: 5px;
+}
+
 .profile_section {
     display: flex;
+    border-bottom: 1px solid #919aa1;
 }
 
 .profile_label {
     padding: 5px;
-    flex: 1 10px;
+    flex: 1;
 }
 
 .profile_value {
     padding: 5px;
     flex: 1;
+    color: #1a1a1a;
 }

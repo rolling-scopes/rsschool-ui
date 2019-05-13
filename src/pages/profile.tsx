@@ -48,6 +48,7 @@ class ProfilePage extends React.Component<Props, State> {
         <div>
           <Header username={this.state.profile.firstName} />
           <div className="profile_container">
+            <div className="profile_header">General Information</div>
             <div className="profile_section">
                 <div className="profile_label">Name and Surname</div>
                 <div className="profile_value">
@@ -83,8 +84,30 @@ class ProfilePage extends React.Component<Props, State> {
                 </div>
             </div>
             <div className="profile_section">
-                <div className="profile_label">English level</div>
+                <div className="profile_label">Accounts</div>
+                <div className="profile_value" />
+            </div>
+            <div className="profile_header">Mentee Information</div>
+            <div className="profile_section">
+                <div className="profile_label">Courses</div>
+                <div className="profile_value"/>
+            </div>
+            <div className="profile_section">
+                <div className="profile_label">Estimated English level</div>
                 <div className="profile_value">{this.state.profile.englishLevel}</div>
+            </div>
+            <div className="profile_section">
+                <div className="profile_label">Mentors</div>
+                <div className="profile_value" />
+            </div>
+            <div className="profile_header">Mentor Information</div>
+            <div className="profile_section">
+                <div className="profile_label">Courses</div>
+                <div className="profile_value" />
+            </div>
+            <div className="profile_section">
+                <div className="profile_label">Students</div>
+                <div className="profile_value" />
             </div>
         </div>
     </div>);
