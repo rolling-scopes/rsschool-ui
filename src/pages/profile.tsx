@@ -64,12 +64,22 @@ class ProfilePage extends React.Component<Props, State> {
             </div>
             <div className="profile_section">
                 <div className="profile_label">Github</div>
-                <div className="profile_value">{`https://github.com/${this.state.profile.githubId}`}</div>
+                <div className="profile_value">
+                <a href={`https://github.com/${this.state.profile.githubId}`} >
+                    {`https://github.com/${this.state.profile.githubId}`}
+                </a>
+                </div>
             </div>
             <div className="profile_section">
                 <div className="profile_label">Contacts</div>
                 <div className="profile_value">
-                    {this.state.profile.contactsPhone}, {this.state.profile.contactsEmail}
+                    <a href={`tel:${this.state.profile.contactsPhone}`} >
+                        {this.state.profile.contactsPhone}
+                    </a>
+                    <br/>
+                    <a href={`malito:${this.state.profile.contactsEmail}`} >
+                        {this.state.profile.contactsEmail}
+                    </a>
                 </div>
             </div>
             <div className="profile_section">
