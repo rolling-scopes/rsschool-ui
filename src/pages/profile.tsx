@@ -7,6 +7,7 @@ import Router from 'next/router';
 import { withRouter } from 'next/router';
 
 import '../index.scss';
+import Link from 'next/link';
 
 type Props = {
   router: any;
@@ -24,7 +25,16 @@ class ProfilePage extends React.Component<Props, State> {
     profile: null,
   };
 
-  async componentDidMount() {
+  constructor(props: Readonly<Props>) {
+    super(props);
+    this.fetchData = this.fetchData.bind(this);
+  }
+
+  async fetchData() {
+    this.setState({
+        isLoading: true,
+    });
+
     const { router } = this.props;
 
     const response = await fetch(`api/profile?githubId=${router.query.githubId}`, { credentials: 'same-origin' });
@@ -37,9 +47,19 @@ class ProfilePage extends React.Component<Props, State> {
     const json = await response.json();
 
     this.setState({
-      isLoading: false,
-      profile: json.data,
-    });
+        isLoading: false,
+        profile: json.data,
+      });
+  }
+
+  async componentDidMount() {
+    await this.fetchData();
+  }
+
+  async componentDidUpdate(prevProps: { router: { query: { githubId: any; }; }; }) {
+    if (prevProps.router.query.githubId !== this.props.router.query.githubId) {
+        await this.fetchData();
+    }
   }
 
   renderProfile() {
@@ -47,7 +67,20 @@ class ProfilePage extends React.Component<Props, State> {
       const { profile } =  this.state;
       const studentCourses = profile.students.map((data: any) => data.course.name);
       const mentorCourses = profile.mentors.map((data: any) => data.course.name);
-      const mentorStudents = profile.mentors.map((data: any) => `${data.user.firstName} ${data.user.lastName}`);
+      const studentMentor = profile.students.filter((f: any) => !!f.mentor)
+        .map(
+        (data: any) => ({
+          githubId: data.mentor.user.githubId,
+          name: `${data.mentor.user.firstName} ${data.mentor.user.lastName}`,
+        }))
+      // tslint:disable-next-line:max-line-length
+      const mentorStudents = profile.mentors
+        .map((data: any) => data.students.map((s: any) => ({
+          githubId: s.user.githubId,
+          name: `${s.user.firstName} ${s.user.lastName}`,
+        })))
+        .reduce((acc: any, v: any) => acc.concat(v), []);
+
       return (
         <div>
           <Header username={profile.firstName} />
@@ -127,7 +160,16 @@ class ProfilePage extends React.Component<Props, State> {
             </div>
             <div className="profile_section">
                 <div className="profile_label">Mentor</div>
-                <div className="profile_value" />
+                <div className="profile_value">
+                    {studentMentor.map((st: any, i: any) => (
+                        <span key={st.githubId} >
+                            <Link key={st.githubId} href={{ pathname: '/profile', query: { githubId: st.githubId } }}>
+                                <a>{st.name}</a>
+                            </Link>
+                            {i !== studentMentor.length - 1 ? <span>{', '}</span> : null}
+                        </span>
+                    ))}
+                </div>
             </div>
             <div className="profile_header">Mentor Information</div>
             <div className="profile_section">
@@ -136,7 +178,16 @@ class ProfilePage extends React.Component<Props, State> {
             </div>
             <div className="profile_section">
                 <div className="profile_label">Students</div>
-                <div className="profile_value">{mentorStudents.join(', ')}</div>
+                <div className="profile_value">
+                    {mentorStudents.map((st: any, i: any) => (
+                        <span key={st.githubId} >
+                            <Link href={{ pathname: '/profile', query: { githubId: st.githubId } }}>
+                                <a>{st.name}</a>
+                            </Link>
+                            {i !== mentorStudents.length - 1 ? <span>{', '}</span> : null}
+                        </span>
+                    ))}
+                </div>
             </div>
         </div>
     </div>);
