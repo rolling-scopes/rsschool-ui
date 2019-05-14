@@ -26,22 +26,30 @@ const githubPrRegExp = /https:\/\/github.com\/(\w|\d|\-)+\/(\w|\d|\-)+\/pull\/(\
 
 const required = (value: any) => (value ? undefined : 'Required');
 
-const isGithubPr = (value: string) => {
-  if (!value) {
-    return 'Required';
-  }
-  if (!value.match(githubPrRegExp)) {
-    return 'URL is not Github Pull Request';
-  }
-  return undefined;
-};
-
 class TaskScoreForm extends React.Component<Props, State> {
   state: State = {
     isLoading: false,
     students: [],
     tasks: [],
     submitted: false,
+  };
+
+  validateGithubPr = (value: string, allValues: any) => {
+    if (!allValues.courseTaskId) {
+      return;
+    }
+    const courseTaskId = Number(allValues.courseTaskId);
+    const task = this.state.tasks.find(task => task.courseTaskId === courseTaskId);
+    if (task == null || !task.githubPrRequired) {
+      return;
+    }
+    if (!value) {
+      return 'Required';
+    }
+    if (!value.match(githubPrRegExp)) {
+      return 'URL is not Github Pull Request';
+    }
+    return;
   };
 
   async componentDidMount() {
@@ -132,7 +140,7 @@ class TaskScoreForm extends React.Component<Props, State> {
                   </Field>
                 </FormGroup>
                 <FormGroup className="col-md-6">
-                  <Field name="githubPrUrl" validate={isGithubPr}>
+                  <Field name="githubPrUrl" validate={this.validateGithubPr}>
                     {({ input, meta }) => (
                       <>
                         <Label>Github PR</Label>
