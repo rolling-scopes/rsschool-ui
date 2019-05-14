@@ -76,8 +76,8 @@ class ExpelPage extends React.Component<Props, State> {
     if (!this.props.session || !this.props.session.roles || !this.props.course) {
       return null;
     }
-    const { roles } = this.props.session;
-    if (roles[this.props.course.id] !== 'mentor') {
+    const { roles, isAdmin } = this.props.session;
+    if (roles[this.props.course.id] !== 'mentor' && !isAdmin) {
       return `You are not mentor in ${this.props.course.alias}`;
     }
 
@@ -103,8 +103,8 @@ class ExpelPage extends React.Component<Props, State> {
                             <Input {...input} type="select" placeholder="Student">
                               <option value="">(Empty)</option>
                               {this.state.students.map((student, i) => (
-                                <option value={student.studentId} key={i}>
-                                  {student.isExpelled ? '(EXPELLED) ' : ''} {student.firstName} {student.lastName}
+                                <option disabled={!!student.isExpelled} value={student.studentId} key={i}>
+                                  {student.firstName} {student.lastName}
                                 </option>
                               ))}
                             </Input>

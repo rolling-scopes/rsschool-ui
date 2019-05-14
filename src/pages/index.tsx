@@ -24,7 +24,7 @@ class IndexPage extends React.Component<Props> {
       return [];
     }
     const role = this.props.session.roles[course.id];
-    if (!role) {
+    if (!role && !this.props.session.isAdmin) {
       return [];
     }
 
