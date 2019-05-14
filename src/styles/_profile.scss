@@ -1,0 +1,29 @@
+
+.profile_container {
+    display: flex;
+    flex-direction: column;
+    margin: 10px;
+}
+
+.profile_header {
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 15px;
+    padding: 5px;
+}
+
+.profile_section {
+    display: flex;
+    border-bottom: 1px solid #919aa1;
+}
+
+.profile_label {
+    padding: 5px;
+    flex: 0 0 450px;
+}
+
+.profile_value {
+    padding: 5px;
+    flex: 1;
+    color: #1a1a1a;
+}
