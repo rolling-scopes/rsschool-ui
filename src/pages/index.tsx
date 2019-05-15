@@ -51,6 +51,10 @@ class IndexPage extends React.Component<Props> {
         name: `Expel Student`,
         link: `/expel?course=${course.alias}`,
       },
+      {
+        name: `Leave Feedback`,
+        link: `/feedback?course=${course.alias}`,
+      },
     ]);
   };
 

@@ -54,6 +54,7 @@
     "react": "~16.8.6",
     "react-dom": "~16.8.6",
     "react-final-form": "~4.1.0",
+    "react-select": "~2.4.3",
     "react-table": "~6.10.0",
     "reactstrap": "~8.0.0"
   },
@@ -72,6 +73,7 @@
     "@types/node": "~8.0.47",
     "@types/react": "~16.8.13",
     "@types/react-dom": "~16.8.4",
+    "@types/react-select": "^2.0.17",
     "@types/react-table": "~6.8.1",
     "@types/reactstrap": "~8.0.1",
     "cross-env": "~5.2.0",
