@@ -59,14 +59,16 @@ class IndexPage extends React.Component<Props> {
   };
 
   renderLinks() {
-    return (this.props.courses || []).map(course => {
-      return (
-        <div className="m-2 mt-4" key={course.id}>
-          <h3>{course.name}</h3>
-          <ListGroup>{this.getLinks(course).map(this.renderLink)}</ListGroup>
-        </div>
-      );
-    });
+    return (this.props.courses || [])
+      .sort((a, b) => b.alias.localeCompare(a.alias))
+      .map(course => {
+        return (
+          <div className="m-2 mt-4" key={course.id}>
+            <h3>{course.name}</h3>
+            <ListGroup>{this.getLinks(course).map(this.renderLink)}</ListGroup>
+          </div>
+        );
+      });
   }
 
   renderLink = (linkInfo: LinkInfo) => {
