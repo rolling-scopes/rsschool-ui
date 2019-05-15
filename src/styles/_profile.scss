@@ -14,16 +14,32 @@
 
 .profile_section {
     display: flex;
+    flex-wrap: wrap;
     border-bottom: 1px solid #919aa1;
 }
 
 .profile_label {
     padding: 5px;
-    flex: 0 0 450px;
+    flex: 0 0 350px;
 }
 
 .profile_value {
     padding: 5px;
     flex: 1;
     color: #1a1a1a;
+}
+
+@media (min-width: 320px) and (max-width: 767px) {
+    .profile_section {
+        flex-direction: column;
+    }
+
+    .profile_label {
+        flex: 1;
+    }
+
+    .profile_value {
+        flex: 1;
+    }
+
 }
