@@ -66,21 +66,13 @@ const SingleValue = (props: any) => {
 };
 
 const badges = [
-  { id: 'Awesome_team', name: 'Awesome team' },
   { id: 'Congratulations', name: 'Congratulations' },
-  { id: 'Contribution_to_the_community', name: 'Contribution to the Community' },
   { id: 'Expert_help', name: 'Expert help' },
-  { id: 'Good_job', name: 'Good job' },
   { id: 'Great_speaker', name: 'Great speaker' },
+  { id: 'Good_job', name: 'Good job' },
   { id: 'Helping_hand', name: 'Helping hand' },
   { id: 'Hero', name: 'Hero' },
-  { id: 'Hight_mark', name: 'Hight mark' },
-  { id: 'Real_magician', name: 'Real magician' },
-  { id: 'Silent_hero', name: 'Silent hero' },
-  { id: 'Super_hero', name: 'Super hero' },
-  { id: 'Team_player', name: 'Team player' },
   { id: 'Thank_you', name: 'Thank you' },
-  { id: 'You_are_amazing', name: 'You are amazing!' },
 ];
 
 class FeedbackPage extends React.Component<Props, State> {
