@@ -32,7 +32,7 @@ class ProfilePage extends React.Component<Props, State> {
 
   async fetchData() {
     this.setState({
-        isLoading: true,
+      isLoading: true,
     });
 
     const { router } = this.props;
@@ -47,38 +47,40 @@ class ProfilePage extends React.Component<Props, State> {
     const json = await response.json();
 
     this.setState({
-        isLoading: false,
-        profile: json.data,
-      });
+      isLoading: false,
+      profile: json.data,
+    });
   }
 
   async componentDidMount() {
     await this.fetchData();
   }
 
-  async componentDidUpdate(prevProps: { router: { query: { githubId: any; }; }; }) {
+  async componentDidUpdate(prevProps: { router: { query: { githubId: any } } }) {
     if (prevProps.router.query.githubId !== this.props.router.query.githubId) {
-        await this.fetchData();
+      await this.fetchData();
     }
   }
 
   renderProfile() {
     if (this.state.profile) {
-      const { profile } =  this.state;
+      const { profile } = this.state;
       const studentCourses = profile.students.map((data: any) => data.course.name);
       const mentorCourses = profile.mentors.map((data: any) => data.course.name);
-      const studentMentor = profile.students.filter((f: any) => !!f.mentor)
-        .map(
-        (data: any) => ({
+      const studentMentor = profile.students
+        .filter((f: any) => !!f.mentor)
+        .map((data: any) => ({
           githubId: data.mentor.user.githubId,
           name: `${data.mentor.user.firstName} ${data.mentor.user.lastName}`,
-        }))
+        }));
       // tslint:disable-next-line:max-line-length
       const mentorStudents = profile.mentors
-        .map((data: any) => data.students.map((s: any) => ({
-          githubId: s.user.githubId,
-          name: `${s.user.firstName} ${s.user.lastName}`,
-        })))
+        .map((data: any) =>
+          data.students.map((s: any) => ({
+            githubId: s.user.githubId,
+            name: `${s.user.firstName} ${s.user.lastName}`,
+          })),
+        )
         .reduce((acc: any, v: any) => acc.concat(v), []);
 
       return (
@@ -87,28 +89,28 @@ class ProfilePage extends React.Component<Props, State> {
           <div className="profile_container">
             <div className="profile_header">General Information</div>
             <div className="profile_section">
-                <div className="profile_label">Name and Surname</div>
-                <div className="profile_value">
-                    {profile.firstNameNative} {profile.lastNameNative}
-                </div>
+              <div className="profile_label">Name and Surname</div>
+              <div className="profile_value">
+                {profile.firstNameNative} {profile.lastNameNative}
+              </div>
             </div>
             <div className="profile_section">
-                <div className="profile_label">Name and Surname as in passport</div>
-                <div className="profile_value">{profile.firstName} {profile.lastName}</div>
+              <div className="profile_label">Name and Surname as in passport</div>
+              <div className="profile_value">
+                {profile.firstName} {profile.lastName}
+              </div>
             </div>
             <div className="profile_section">
-                <div className="profile_label">Location</div>
-                <div className="profile_value">{profile.locationName}</div>
+              <div className="profile_label">Location</div>
+              <div className="profile_value">{profile.locationName}</div>
             </div>
             <div className="profile_section">
-                <div className="profile_label">Github</div>
-                <div className="profile_value">
-                <a href={`https://github.com/${profile.githubId}`} >
-                    {`https://github.com/${profile.githubId}`}
-                </a>
-                </div>
+              <div className="profile_label">Github</div>
+              <div className="profile_value">
+                <a href={`https://github.com/${profile.githubId}`}>{`https://github.com/${profile.githubId}`}</a>
+              </div>
             </div>
-            <div className="profile_section">
+            {/* <div className="profile_section">
                 <div className="profile_label">Contacts</div>
                 <div className="profile_value">
                     <a href={`tel:${profile.contactsPhone}`} >
@@ -122,75 +124,72 @@ class ProfilePage extends React.Component<Props, State> {
                         {profile.contactsEpamEmail}
                     </a>
                 </div>
-            </div>
+            </div> */}
             <div className="profile_section">
-                <div className="profile_label">External accounts</div>
-                <div className="profile_value">{profile.externalAccounts.join(', ')}</div>
+              <div className="profile_label">External accounts</div>
+              <div className="profile_value">{profile.externalAccounts.join(', ')}</div>
             </div>
             <div className="profile_header">Mentee Information</div>
             <div className="profile_section">
-                <div className="profile_label">Courses</div>
-                <div className="profile_value">{studentCourses.join(', ')}</div>
+              <div className="profile_label">Courses</div>
+              <div className="profile_value">{studentCourses.join(', ')}</div>
             </div>
             <div className="profile_section">
-                <div className="profile_label">Education</div>
-                <div className="profile_value">{profile.educationHistory.join(', ')}</div>
+              <div className="profile_label">Education</div>
+              <div className="profile_value">{profile.educationHistory.join(', ')}</div>
             </div>
             <div className="profile_section">
-                <div className="profile_label">Employment history</div>
-                <div className="profile_value">{profile.employmentHistory.join(', ')}</div>
+              <div className="profile_label">Employment history</div>
+              <div className="profile_value">{profile.employmentHistory.join(', ')}</div>
             </div>
             <div className="profile_section">
-                <div className="profile_label">Estimated english level</div>
-                <div className="profile_value">
-                    {profile.englishLevel ? profile.englishLevel.toUpperCase() : null}
-                </div>
+              <div className="profile_label">Estimated english level</div>
+              <div className="profile_value">{profile.englishLevel ? profile.englishLevel.toUpperCase() : null}</div>
             </div>
             <div className="profile_section">
-                <div className="profile_label">CV</div>
-                <div className="profile_value">
-                    <a href={`${profile.cvUrl}`} >
-                        {profile.cvUrl}
-                    </a>
-                </div>
+              <div className="profile_label">CV</div>
+              <div className="profile_value">
+                <a href={`${profile.cvUrl}`}>{profile.cvUrl}</a>
+              </div>
             </div>
             <div className="profile_section">
-                <div className="profile_label">Fulltime ready</div>
-                <div className="profile_value">{profile.readyFullTime}</div>
+              <div className="profile_label">Fulltime ready</div>
+              <div className="profile_value">{profile.readyFullTime}</div>
             </div>
             <div className="profile_section">
-                <div className="profile_label">Mentor</div>
-                <div className="profile_value">
-                    {studentMentor.map((st: any, i: any) => (
-                        <span key={st.githubId} >
-                            <Link key={st.githubId} href={{ pathname: '/profile', query: { githubId: st.githubId } }}>
-                                <a>{st.name}</a>
-                            </Link>
-                            {i !== studentMentor.length - 1 ? <span>{', '}</span> : null}
-                        </span>
-                    ))}
-                </div>
+              <div className="profile_label">Mentor</div>
+              <div className="profile_value">
+                {studentMentor.map((st: any, i: any) => (
+                  <span key={st.githubId}>
+                    <Link key={st.githubId} href={{ pathname: '/profile', query: { githubId: st.githubId } }}>
+                      <a>{st.name}</a>
+                    </Link>
+                    {i !== studentMentor.length - 1 ? <span>{', '}</span> : null}
+                  </span>
+                ))}
+              </div>
             </div>
             <div className="profile_header">Mentor Information</div>
             <div className="profile_section">
-                <div className="profile_label">Courses</div>
-                <div className="profile_value">{mentorCourses.join(', ')}</div>
+              <div className="profile_label">Courses</div>
+              <div className="profile_value">{mentorCourses.join(', ')}</div>
             </div>
             <div className="profile_section">
-                <div className="profile_label">Students</div>
-                <div className="profile_value">
-                    {mentorStudents.map((st: any, i: any) => (
-                        <span key={st.githubId} >
-                            <Link href={{ pathname: '/profile', query: { githubId: st.githubId } }}>
-                                <a>{st.name}</a>
-                            </Link>
-                            {i !== mentorStudents.length - 1 ? <span>{', '}</span> : null}
-                        </span>
-                    ))}
-                </div>
+              <div className="profile_label">Students</div>
+              <div className="profile_value">
+                {mentorStudents.map((st: any, i: any) => (
+                  <span key={st.githubId}>
+                    <Link href={{ pathname: '/profile', query: { githubId: st.githubId } }}>
+                      <a>{st.name}</a>
+                    </Link>
+                    {i !== mentorStudents.length - 1 ? <span>{', '}</span> : null}
+                  </span>
+                ))}
+              </div>
             </div>
+          </div>
         </div>
-    </div>);
+      );
     }
     return null;
   }
