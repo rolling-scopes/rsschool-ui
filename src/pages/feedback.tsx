@@ -30,8 +30,10 @@ type Badge = {
 
 type State = {
   badges: Badge[];
-  submitted: boolean;
-  resultMessage: string | undefined;
+  submitStatus: {
+    message: string;
+    success: boolean;
+  } | null;
   isLoading: boolean;
 };
 
@@ -85,9 +87,10 @@ class FeedbackPage extends React.Component<Props, State> {
   state: State = {
     badges,
     isLoading: false,
-    submitted: false,
-    resultMessage: undefined,
+    submitStatus: null,
   };
+
+  private timerRef: any;
 
   private loadUsers = async (searchText: any) => {
     if (!searchText) {
@@ -120,18 +123,18 @@ class FeedbackPage extends React.Component<Props, State> {
       credentials: 'same-origin',
     });
     if (result.ok) {
-      this.setState({
-        isLoading: false,
-        submitted: true,
-        resultMessage: 'Feedback has been submitted',
-      });
       form.reset();
-      return;
     }
+
+    const submitStatus = result.ok
+      ? { success: true, message: 'Feedback has been submitted' }
+      : { success: false, message: 'An error occurred' };
     this.setState({
       isLoading: false,
-      resultMessage: 'An error occurred',
+      submitStatus,
     });
+
+    this.timerRef = setTimeout(() => this.setState({ submitStatus: null }), 3000);
   };
 
   private renderForm = ({ handleSubmit }: FormRenderProps) => {
@@ -197,6 +200,10 @@ class FeedbackPage extends React.Component<Props, State> {
     );
   };
 
+  componentWillUnmount() {
+    clearTimeout(this.timerRef);
+  }
+
   render() {
     if (!this.props.session || !this.props.course) {
       return null;
@@ -207,7 +214,9 @@ class FeedbackPage extends React.Component<Props, State> {
         <Header username={this.props.session.githubId} />
         <div className="m-3">
           <h3 className="mb-3">{this.props.course.name}: Leave Feedback</h3>
-          {this.state.submitted && <Alert color="info">{this.state.resultMessage}</Alert>}
+          {this.state.submitStatus && (
+            <Alert color={this.state.submitStatus.success ? 'info' : 'danger'}>{this.state.submitStatus.message}</Alert>
+          )}
           <Form onSubmit={this.handleSubmit} render={this.renderForm} />
         </div>
       </>
