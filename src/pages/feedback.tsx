@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FormGroup, Label, Button, Input, Alert } from 'reactstrap';
-import { Form, Field, SubsetFormApi } from 'react-final-form';
+import { Form, Field, SubsetFormApi, FormRenderProps } from 'react-final-form';
 import AsyncSelect from 'react-select/lib/Async';
 import { components } from 'react-select';
 import Header from '../components/Header';
@@ -88,7 +88,6 @@ class FeedbackPage extends React.Component<Props, State> {
     submitted: false,
     resultMessage: undefined,
   };
-  formRef = React.createRef();
 
   private loadUsers = async (searchText: any) => {
     if (!searchText) {
@@ -101,7 +100,14 @@ class FeedbackPage extends React.Component<Props, State> {
       });
   };
 
-  handleSubmit = async (values: any, form: SubsetFormApi) => {
+  private validateComment = (value: string) => {
+    if (!value) {
+      return undefined;
+    }
+    return value.length < 20 ? 'Comment should be at least 20 characters' : undefined;
+  };
+
+  private handleSubmit = async (values: any, form: SubsetFormApi) => {
     this.setState({ isLoading: true });
     const result = await fetch(`/api/course/${this.props.course.id}/feedback`, {
       method: 'POST',
@@ -109,7 +115,7 @@ class FeedbackPage extends React.Component<Props, State> {
       body: JSON.stringify({
         toUserId: values.user.id,
         badgeId: values.badgeId,
-        text: values.text,
+        comment: values.comment,
       }),
       credentials: 'same-origin',
     });
@@ -128,6 +134,69 @@ class FeedbackPage extends React.Component<Props, State> {
     });
   };
 
+  private renderForm = ({ handleSubmit }: FormRenderProps) => {
+    return (
+      <LoadingScreen show={this.state.isLoading}>
+        <form onSubmit={handleSubmit}>
+          <FormGroup className="col-md-6">
+            <Field name="user" validate={required}>
+              {({ meta, input }) => (
+                <>
+                  <Label>User</Label>
+                  <AsyncSelect
+                    placeholder={'Github ID'}
+                    noOptionsMessage={() => 'Start typing...'}
+                    getOptionValue={(user: User) => user.githubId}
+                    components={{ Option, SingleValue }}
+                    cacheOptions={true}
+                    loadOptions={this.loadUsers}
+                    onChange={(value: any) => input.onChange(value)}
+                  />
+                  <ValidationError meta={meta} />
+                </>
+              )}
+            </Field>
+          </FormGroup>
+          <FormGroup className="col-md-6">
+            <Field name="badgeId">
+              {({ input }) => (
+                <>
+                  <Label>Badge</Label>
+                  <Input {...input} type="select" placeholder="Badge">
+                    <option value="">(Empty)</option>
+                    {this.state.badges.map(badge => (
+                      <option value={badge.id} key={badge.id}>
+                        {badge.name}
+                      </option>
+                    ))}
+                  </Input>
+                </>
+              )}
+            </Field>
+          </FormGroup>
+          <FormGroup className="col-md-6">
+            <Field name="comment" validate={this.validateComment}>
+              {({ input, meta }) => (
+                <>
+                  <Label>Comment</Label>
+                  <Input {...input} name="comment" type="textarea" />
+                  <ValidationError meta={meta} />
+                </>
+              )}
+            </Field>
+          </FormGroup>
+          <div className="row text-center">
+            <div className="form-group col-md-6">
+              <Button type="submit" color="success">
+                Submit
+              </Button>
+            </div>
+          </div>
+        </form>
+      </LoadingScreen>
+    );
+  };
+
   render() {
     if (!this.props.session || !this.props.course) {
       return null;
@@ -135,74 +204,11 @@ class FeedbackPage extends React.Component<Props, State> {
 
     return (
       <>
-        <div>
-          <Header username={this.props.session.githubId} />
-          <div className="m-3">
-            <h3 className="mb-3">{this.props.course.name}: Leave Feedback</h3>
-            {this.state.submitted && <Alert color="info">{this.state.resultMessage}</Alert>}
-            <Form
-              onSubmit={this.handleSubmit}
-              render={({ handleSubmit }) => (
-                <LoadingScreen show={this.state.isLoading}>
-                  <form onSubmit={handleSubmit}>
-                    <FormGroup className="col-md-6">
-                      <Field name="user" validate={required}>
-                        {({ meta, input }) => (
-                          <>
-                            <Label>User</Label>
-                            <AsyncSelect
-                              placeholder={'Github ID'}
-                              noOptionsMessage={() => 'Start typing...'}
-                              getOptionValue={(user: User) => user.githubId}
-                              components={{ Option, SingleValue }}
-                              cacheOptions={true}
-                              loadOptions={this.loadUsers}
-                              onChange={(value: any) => input.onChange(value)}
-                            />
-                            <ValidationError meta={meta} />
-                          </>
-                        )}
-                      </Field>
-                    </FormGroup>
-                    <FormGroup className="col-md-6">
-                      <Field name="badgeId">
-                        {({ input }) => (
-                          <>
-                            <Label>Badge</Label>
-                            <Input {...input} type="select" placeholder="Badge">
-                              <option value="">(Empty)</option>
-                              {this.state.badges.map(badge => (
-                                <option value={badge.id} key={badge.id}>
-                                  {badge.name}
-                                </option>
-                              ))}
-                            </Input>
-                          </>
-                        )}
-                      </Field>
-                    </FormGroup>
-                    <FormGroup className="col-md-6">
-                      <Field name="text">
-                        {({ input }) => (
-                          <>
-                            <Label>Text</Label>
-                            <Input {...input} name="text" type="textarea" />
-                          </>
-                        )}
-                      </Field>
-                    </FormGroup>
-                    <div className="row text-center">
-                      <div className="form-group col-md-6">
-                        <Button type="submit" color="success">
-                          Submit
-                        </Button>
-                      </div>
-                    </div>
-                  </form>
-                </LoadingScreen>
-              )}
-            />
-          </div>
+        <Header username={this.props.session.githubId} />
+        <div className="m-3">
+          <h3 className="mb-3">{this.props.course.name}: Leave Feedback</h3>
+          {this.state.submitted && <Alert color="info">{this.state.resultMessage}</Alert>}
+          <Form onSubmit={this.handleSubmit} render={this.renderForm} />
         </div>
       </>
     );
