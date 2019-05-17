@@ -22,20 +22,15 @@ let sessionCache: Session | undefined;
 function withSession(WrappedComponent: React.ComponentType<any>) {
   return class extends React.Component<any, State> {
     state: State = {
-      isLoading: false,
+      isLoading: true,
       session: undefined,
     };
 
-    constructor(props: any) {
-      super(props);
-    }
-
     async componentDidMount() {
       if (sessionCache != null) {
-        this.setState({ session: sessionCache });
+        this.setState({ session: sessionCache, isLoading: false });
         return;
       }
-      this.setState({ isLoading: true });
       const response = await fetch(`/api/session`, {
         credentials: 'same-origin',
       });

@@ -125,15 +125,11 @@ export class TasksForm extends React.Component<Props, State> {
   }
 
   handleRowClick(row: any) {
-    this.setState({
-      modalValues: row.original,
-    });
+    this.setState({ modalValues: row.original });
   }
 
   handleAddTaskClick = () => {
-    this.setState({
-      modalValues: {},
-    });
+    this.setState({ modalValues: {} });
   };
 
   render() {

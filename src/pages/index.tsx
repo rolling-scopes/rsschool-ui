@@ -55,6 +55,10 @@ class IndexPage extends React.Component<Props> {
         name: `Leave Feedback`,
         link: `/feedback?course=${course.alias}`,
       },
+      {
+        name: `Course Tasks`,
+        link: `/course-tasks?course=${course.alias}`,
+      },
     ]);
   };
 
@@ -95,8 +99,8 @@ class IndexPage extends React.Component<Props> {
     return (
       <div>
         <Header username={this.props.session.githubId} />
+        <div className="m-2 mb-4">{this.renderLink({ name: 'All Tasks', link: '/tasks' })}</div>
         {links}
-        <div className="m-2 mt-4">{this.renderLink({ name: 'All Tasks', link: '/tasks' })}</div>
       </div>
     );
   }

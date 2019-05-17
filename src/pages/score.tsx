@@ -18,19 +18,22 @@ type Props = {
 type State = {
   students: any[];
   isLoading: boolean;
-  tasks: any[];
+  courseTasks: any[];
+  scoreWeights: { [key: string]: number };
 };
 
 interface CourseTask {
-  id: number;
+  courseTaskId: number;
   studentEndDate: string | null;
+  scoreWeight: number | null;
 }
 
 class ScorePage extends React.Component<Props, State> {
   state: State = {
     isLoading: false,
     students: [],
-    tasks: [],
+    courseTasks: [],
+    scoreWeights: {},
   };
 
   async componentDidMount() {
@@ -51,15 +54,23 @@ class ScorePage extends React.Component<Props, State> {
 
     const [score, tasks] = await Promise.all<any, { data: CourseTask[] }>([scoreResponse.json(), tasksResponse.json()]);
     const sortedTasks = tasks.data.filter(task => task.studentEndDate).sort(sortTasksByEndDate);
+    const scoreWeights = sortedTasks.reduce(
+      (acc, courseTask) => {
+        acc[courseTask.courseTaskId] = courseTask.scoreWeight || 1;
+        return acc;
+      },
+      {} as { [key: string]: number },
+    );
     this.setState({
+      scoreWeights,
       students: score.data,
-      tasks: sortedTasks,
+      courseTasks: sortedTasks,
       isLoading: false,
     });
   }
 
   getColumns() {
-    const columns = this.state.tasks.map(task => ({
+    const columns = this.state.courseTasks.map(task => ({
       id: task.courseTaskId,
       Header: () => {
         return task.descriptionUrl ? (
@@ -138,7 +149,10 @@ class ScorePage extends React.Component<Props, State> {
               id: 'total',
               Header: 'Total',
               accessor: (d: any) => {
-                return d.taskResults.reduce((acc: number, value: any) => acc + value.score, 0);
+                return d.taskResults.reduce(
+                  (acc: number, value: any) => acc + value.score * (this.state.scoreWeights[value.courseTaskId] || 1),
+                  0,
+                );
               },
               sortMethod: this.numberSort,
             },
