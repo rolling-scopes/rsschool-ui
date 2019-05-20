@@ -10,6 +10,10 @@ body, html {
 
 .ReactTable .rt-td {
   padding: 5px 5px;
+  
+  &.align-right {
+    text-align: right;
+  }
 }
 .ReactTable .rt-th a {
   color: white;
@@ -20,4 +24,8 @@ body, html {
   a {
     color: #eee;
   }
+}
+
+.ReactTable .rt-thead.-filters input {
+  padding: 3px;
 }

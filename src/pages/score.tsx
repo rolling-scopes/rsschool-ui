@@ -81,6 +81,7 @@ class ScorePage extends React.Component<Props, State> {
           <div>{task.name}</div>
         );
       },
+      className: 'align-right',
       sortMethod: this.numberSort,
       accessor: (d: any) => {
         const currentTask = d.taskResults.find((taskResult: any) => taskResult.courseTaskId === task.courseTaskId);
@@ -103,28 +104,28 @@ class ScorePage extends React.Component<Props, State> {
         <Header username={this.props.session.githubId} />
         <h2>{this.props.course.name}</h2>
         <ReactTable
-          filterable={true}
-          defaultSorted={[
-            {
-              id: 'total',
-              desc: false,
-            },
-          ]}
+          defaultSorted={[{ id: 'total', desc: false }]}
+          defaultPageSize={100}
           getTrProps={(_: any, rowInfo?: RowInfo) => {
             if (!rowInfo || rowInfo.original) {
               return {};
             }
-            return {
-              className: rowInfo.original.isExpelled ? 'rt-expelled' : '',
-            };
+            return { className: rowInfo.original.isExpelled ? 'rt-expelled' : '' };
           }}
-          defaultFilterMethod={(filter, row) => String(row[filter.id]) === filter.value}
           data={this.state.students}
           columns={[
+            {
+              Header: '#',
+              id: 'rowNumber',
+              maxWidth: 70,
+              filterable: false,
+              Cell: (row: any) => row.page * row.pageSize + row.viewIndex + 1,
+            },
             {
               Header: 'Github Id',
               accessor: 'githubId',
               maxWidth: 160,
+              filterable: true,
               Cell: (props: any) => (
                 <Link href={{ pathname: '/profile', query: { githubId: props.value } }}>
                   <a>{props.value}</a>
@@ -136,18 +137,22 @@ class ScorePage extends React.Component<Props, State> {
               Header: 'First Name',
               accessor: 'firstName',
               maxWidth: 160,
+              filterable: true,
               filterMethod: this.stringFilter,
             },
             {
               Header: 'Last Name',
               accessor: 'lastName',
               maxWidth: 160,
+              filterable: true,
               filterMethod: this.stringFilter,
             },
             ...this.getColumns(),
             {
               id: 'total',
               Header: 'Total',
+              filterable: false,
+              className: 'align-right',
               accessor: this.calculateTotal,
               sortMethod: this.numberSort,
             },
