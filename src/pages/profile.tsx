@@ -169,6 +169,23 @@ class ProfilePage extends React.Component<Props, State> {
                 ))}
               </div>
             </div>
+            <div className="profile_header">Tasks Information</div>
+            <div className="profile_section">
+                <div className="profile_label">Description</div>
+                <div className="profile_value" />
+            </div>
+            <div className="profile_section">
+                <div className="profile_label">Score / Max score</div>
+                <div className="profile_value" />
+            </div>
+            <div className="profile_section">
+                <div className="profile_label">Comment</div>
+                <div className="profile_value" />
+            </div>
+            <div className="profile_section">
+                <div className="profile_label">Pull Request</div>
+                <div className="profile_value" />
+            </div>
             <div className="profile_header">Mentor Information</div>
             <div className="profile_section">
               <div className="profile_label">Courses</div>
