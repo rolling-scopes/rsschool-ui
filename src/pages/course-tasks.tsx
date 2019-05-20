@@ -2,12 +2,11 @@ import * as React from 'react';
 import { FormGroup, Label, Button, Input } from 'reactstrap';
 import { Field } from 'react-final-form';
 import ReactTable from 'react-table';
-
+import DatePicker from 'react-datepicker';
+import { format } from 'date-fns';
 import { CourseService, ReadCourseTask, Stage } from '../services/course';
 import { TaskService, Task } from '../services/task';
-
 import Header from '../components/Header';
-
 import withSession, { Session } from '../components/withSession';
 import withCourseData, { Course } from '../components/withCourseData';
 import { TaskEditModal } from '../components/TasksForm/TaskEditModal';
@@ -71,15 +70,29 @@ class CourseTasksPage extends React.Component<Props, State> {
           className="-striped -highlight"
           data={this.state.courseTasks}
           defaultFilterMethod={(filter, row) => String(row[filter.id]) === filter.value}
-          defaultSorted={[{ id: 'id', desc: true }]}
+          defaultSorted={[{ id: 'studentEndDate', desc: true }]}
           filterable={true}
           columns={[
             { Header: 'Course Task Id', accessor: 'courseTaskId', maxWidth: 100 },
-            { Header: 'Name', accessor: 'name' },
+            {
+              Header: 'Name',
+              accessor: 'name',
+              Cell: (props: { value?: string; original?: any }) => {
+                if (props.original && props.original.descriptionUrl) {
+                  return <a href={props.original.descriptionUrl}>{props.value}</a>;
+                }
+                return props.value;
+              },
+            },
             { Header: 'Scores Count', accessor: 'taskResultCount', maxWidth: 100 },
-            { Header: 'End Date', accessor: 'studentEndDate', maxWidth: 300 },
-            { Header: 'Max Score', accessor: 'maxScore', maxWidth: 150, sortMethod: this.sortNumber },
-            { Header: 'Score Weight', accessor: 'scoreWeight', maxWidth: 150, sortMethod: this.sortNumber },
+            {
+              Header: 'End Date',
+              accessor: 'studentEndDate',
+              maxWidth: 200,
+              Cell: (props: { value: string }) => (props.value ? format(props.value, 'YYYY-MM-DD HH:mm Z') : null),
+            },
+            { Header: 'Max Score', accessor: 'maxScore', maxWidth: 100, sortMethod: this.sortNumber },
+            { Header: 'Score Weight', accessor: 'scoreWeight', maxWidth: 100, sortMethod: this.sortNumber },
             {
               Header: 'Actions',
               filterable: false,
@@ -102,6 +115,9 @@ class CourseTasksPage extends React.Component<Props, State> {
   }
 
   renderModal() {
+    if (this.state.modalValues == null) {
+      return null;
+    }
     return (
       <TaskEditModal
         onApply={this.handleSubmit}
@@ -109,64 +125,82 @@ class CourseTasksPage extends React.Component<Props, State> {
         isOpen={this.state.modalValues != null}
         initialValues={{
           ...this.state.modalValues,
+          studentEndDate: this.state.modalValues.studentEndDate
+            ? new Date(this.state.modalValues.studentEndDate)
+            : new Date(),
         }}
       >
-        <FormGroup className="col-md-auto">
-          {this.state.modalAction === 'create' && (
-            <Field name="taskId" validate={required}>
-              {({ input, meta }) => (
-                <>
-                  <Label>Task</Label>
-                  <Input {...input} name="name" type="select">
-                    <option value="">(Empty)</option>
-                    {this.state.tasks
-                      .filter(task => !this.state.courseTasks.some(courseTask => courseTask.taskId === task.id))
-                      .map(task => (
-                        <option key={task.id} value={task.id}>
-                          {task.name}
-                        </option>
-                      ))}
-                  </Input>
-                  <ValidationError meta={meta} />
-                </>
-              )}
-            </Field>
-          )}
-          <Field name="stageId" validate={required}>
+        {this.state.modalAction === 'create' && (
+          <Field name="taskId" validate={required}>
             {({ input, meta }) => (
-              <>
-                <Label>Stage</Label>
+              <FormGroup className="col-md-auto">
+                <Label>Task</Label>
                 <Input {...input} name="name" type="select">
                   <option value="">(Empty)</option>
-                  {this.state.stages.map(stage => (
-                    <option key={stage.id} value={stage.id}>
-                      {stage.name}
-                    </option>
-                  ))}
+                  {this.state.tasks
+                    .filter(task => !this.state.courseTasks.some(courseTask => courseTask.taskId === task.id))
+                    .map(task => (
+                      <option key={task.id} value={task.id}>
+                        {task.name}
+                      </option>
+                    ))}
                 </Input>
                 <ValidationError meta={meta} />
-              </>
+              </FormGroup>
             )}
           </Field>
-          <Field name="maxScore">
-            {({ input }) => (
-              <>
-                <Label>Max Score</Label>
-                <Input {...input} name="maxScore" type="number" />
-              </>
-            )}
-          </Field>
-        </FormGroup>
-        <FormGroup className="col-md-auto">
-          <Field name="scoreWeight">
-            {({ input }) => (
-              <>
-                <Label>Score Weight</Label>
-                <Input {...input} name="scoreWeight" type="number" />
-              </>
-            )}
-          </Field>
-        </FormGroup>
+        )}
+        <Field name="stageId" validate={required}>
+          {({ input, meta }) => (
+            <FormGroup className="col-md-auto">
+              <Label>Stage</Label>
+              <Input {...input} name="name" type="select">
+                <option value="">(Empty)</option>
+                {this.state.stages.map(stage => (
+                  <option key={stage.id} value={stage.id}>
+                    {stage.name}
+                  </option>
+                ))}
+              </Input>
+              <ValidationError meta={meta} />
+            </FormGroup>
+          )}
+        </Field>
+        <Field name="studentEndDate">
+          {({ input }) => (
+            <FormGroup className="col-md-auto">
+              <Label>Student End Date</Label>
+              <div>
+                <DatePicker
+                  className="form-control"
+                  showTimeSelect={true}
+                  selected={input.value}
+                  onChange={input.onChange as any}
+                  timeFormat="HH:mm"
+                  timeIntervals={30}
+                  dateFormat="yyyy-MM-dd HH:mm"
+                  timeCaption="time"
+                />
+              </div>
+            </FormGroup>
+          )}
+        </Field>
+        <Field name="maxScore">
+          {({ input }) => (
+            <FormGroup className="col-md-auto">
+              <Label>Max Score</Label>
+              <Input {...input} name="maxScore" maxLength={5} type="number" />
+            </FormGroup>
+          )}
+        </Field>
+        <Field name="scoreWeight">
+          {({ input }) => (
+            <FormGroup className="col-md-auto">
+              <Label>Score Weight</Label>
+              <Input {...input} name="scoreWeight" type="number" />
+            </FormGroup>
+          )}
+        </Field>
       </TaskEditModal>
     );
   }
@@ -192,6 +226,7 @@ class CourseTasksPage extends React.Component<Props, State> {
       maxScore: values.maxScore ? Number(values.maxScore) : undefined,
       stageId: values.stageId,
       scoreWeight: values.scoreWeight,
+      studentEndDate: format(values.studentEndDate),
     };
     if (this.state.modalAction === 'create') {
       this.courseService.createCourseTask({
