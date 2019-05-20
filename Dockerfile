@@ -8,7 +8,8 @@ ENV NODE_PORT 8080
 WORKDIR /client
 
 COPY package.json /client
-RUN npm install --no-optional
+COPY package-lock.json /client
+RUN npm ci
 
 COPY src/next.config.js /client
 COPY src/static /client/static
