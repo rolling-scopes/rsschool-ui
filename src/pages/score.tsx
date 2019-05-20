@@ -158,10 +158,11 @@ class ScorePage extends React.Component<Props, State> {
   }
 
   private calculateTotal = (d: { taskResults: { score: number; courseTaskId: number }[] }) => {
-    return d.taskResults.reduce((acc: number, value) => {
+    const total = d.taskResults.reduce((acc: number, value) => {
       const weight = this.state.scoreWeights[value.courseTaskId];
       return acc + value.score * (weight != null ? weight : 1);
     }, 0);
+    return Math.round(total);
   };
 }
 
