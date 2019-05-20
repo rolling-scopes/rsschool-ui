@@ -148,12 +148,7 @@ class ScorePage extends React.Component<Props, State> {
             {
               id: 'total',
               Header: 'Total',
-              accessor: (d: any) => {
-                return d.taskResults.reduce(
-                  (acc: number, value: any) => acc + value.score * (this.state.scoreWeights[value.courseTaskId] || 1),
-                  0,
-                );
-              },
+              accessor: this.calculateTotal,
               sortMethod: this.numberSort,
             },
           ]}
@@ -161,6 +156,13 @@ class ScorePage extends React.Component<Props, State> {
       </LoadingScreen>
     );
   }
+
+  private calculateTotal = (d: { taskResults: { score: number; courseTaskId: number }[] }) => {
+    return d.taskResults.reduce((acc: number, value) => {
+      const weight = this.state.scoreWeights[value.courseTaskId];
+      return acc + value.score * (weight != null ? weight : 1);
+    }, 0);
+  };
 }
 
 export default withCourseData(withSession(ScorePage));
