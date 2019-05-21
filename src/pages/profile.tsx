@@ -19,6 +19,13 @@ type State = {
   isLoading: boolean;
 };
 
+const TASK_LABELS = {
+    description: 'Description',
+    score: 'Score',
+    githubPrUrl: 'Pull request',
+    comment: 'Comment',
+}
+
 class ProfilePage extends React.Component<Props, State> {
   state: State = {
     isLoading: true,
@@ -66,6 +73,12 @@ class ProfilePage extends React.Component<Props, State> {
     if (this.state.profile) {
       const { profile } = this.state;
       const studentCourses = profile.students.map((data: any) => data.course.name);
+      const studentTasks =  profile.students
+        .map((data: any) => data.taskResults)
+        .reduce((acc: any, v: any) => acc.concat(v), [])
+        .map((v: any) => Object.keys(v).map(k => ({ label: k, value: v[k]})))
+        .reduce((acc: any, v: any) => acc.concat(v), [])
+        .filter((v: { label: any; }) => TASK_LABELS.hasOwnProperty(`${v.label}`))
       const mentorCourses = profile.mentors.map((data: any) => data.course.name);
       const studentMentor = profile.students
         .filter((f: any) => !!f.mentor)
@@ -168,6 +181,25 @@ class ProfilePage extends React.Component<Props, State> {
                   </span>
                 ))}
               </div>
+            </div>
+            <div className="profile_header">Tasks Information</div>
+            {studentTasks.map((st: any, i: any) => (
+                <div key={i} className="profile_section">
+                    <div className="profile_label">{TASK_LABELS[`${st.label}` as keyof typeof TASK_LABELS]}</div>
+                    <div className="profile_value">{st.value}</div>
+                </div>
+            ))}
+            <div className="profile_section">
+                <div className="profile_label">Score</div>
+                <div className="profile_value" />
+            </div>
+            <div className="profile_section">
+                <div className="profile_label">Comment</div>
+                <div className="profile_value" />
+            </div>
+            <div className="profile_section">
+                <div className="profile_label">Pull Request</div>
+                <div className="profile_value" />
             </div>
             <div className="profile_header">Mentor Information</div>
             <div className="profile_section">
