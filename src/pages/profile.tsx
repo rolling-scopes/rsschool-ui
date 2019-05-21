@@ -184,11 +184,9 @@ class ProfilePage extends React.Component<Props, State> {
             </div>
             <div className="profile_header">Tasks Information</div>
             {studentTasks.map((st: any, i: any) => (
-                <div key={i} style={{marginTop: '15px'}}>
-                    <div className="profile_section">
-                        <div className="profile_label">{TASK_LABELS[`${st.label}` as keyof typeof TASK_LABELS]}</div>
-                        <div className="profile_value">{st.value}</div>
-                    </div>
+                <div key={i} className="profile_section">
+                    <div className="profile_label">{TASK_LABELS[`${st.label}` as keyof typeof TASK_LABELS]}</div>
+                    <div className="profile_value">{st.value}</div>
                 </div>
             ))}
             <div className="profile_section">
