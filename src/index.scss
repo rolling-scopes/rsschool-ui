@@ -10,11 +10,16 @@ body, html {
 
 .ReactTable .rt-td {
   padding: 5px 5px;
-  
+
   &.align-right {
     text-align: right;
   }
+  button.btn-link {
+    padding: 0.2rem 0.4rem;
+    line-height: 1rem;
+  }
 }
+
 .ReactTable .rt-th a {
   color: white;
 }

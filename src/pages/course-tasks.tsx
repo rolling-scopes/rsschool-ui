@@ -88,7 +88,7 @@ class CourseTasksPage extends React.Component<Props, State> {
             {
               Header: 'End Date',
               accessor: 'studentEndDate',
-              maxWidth: 200,
+              maxWidth: 220,
               Cell: (props: { value: string }) => (props.value ? format(props.value, 'YYYY-MM-DD HH:mm Z') : null),
             },
             { Header: 'Max Score', accessor: 'maxScore', maxWidth: 100, sortMethod: this.sortNumber },

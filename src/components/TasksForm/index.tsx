@@ -141,8 +141,9 @@ export class TasksForm extends React.Component<Props, State> {
         </Button>
         <ReactTable
           className="-striped -highlight"
-          defaultSorted={[{ id: 'id', desc: true }]}
+          defaultSorted={[{ id: 'name', desc: false }]}
           filterable={true}
+          defaultPageSize={50}
           defaultFilterMethod={(filter, row) => String(row[filter.id]) === filter.value}
           data={this.state.tasks}
           columns={[
@@ -155,12 +156,13 @@ export class TasksForm extends React.Component<Props, State> {
             {
               Header: 'Name',
               accessor: 'name',
-              maxWidth: 300,
+              maxWidth: 360,
               filterMethod: this.stringFilter,
             },
             {
               Header: 'Description',
               accessor: 'description',
+              maxWidth: 100,
               filterMethod: this.stringFilter,
             },
             {
@@ -171,12 +173,13 @@ export class TasksForm extends React.Component<Props, State> {
             {
               Header: 'Verification',
               accessor: 'verification',
+              maxWidth: 100,
               filterMethod: this.stringFilter,
             },
             {
               Header: 'Actions',
               filterable: false,
-              maxWidth: 200,
+              maxWidth: 100,
               Cell: row => (
                 <>
                   <Button color="link" onClick={() => this.handleRowClick(row)}>
