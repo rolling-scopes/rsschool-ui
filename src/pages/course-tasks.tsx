@@ -228,13 +228,11 @@ class CourseTasksPage extends React.Component<Props, State> {
       scoreWeight: values.scoreWeight,
       studentEndDate: format(values.studentEndDate),
     };
+
     if (this.state.modalAction === 'create') {
-      this.courseService.createCourseTask({
-        ...data,
-        taskId: values.taskId,
-      });
+      await this.courseService.createCourseTask({ ...data, taskId: values.taskId });
     } else {
-      this.courseService.updateCourseTask(values.courseTaskId, data);
+      await this.courseService.updateCourseTask(values.courseTaskId, data);
     }
     const courseTasks = await this.courseService.getCourseTasks();
     this.setState({ modalValues: null, courseTasks });
