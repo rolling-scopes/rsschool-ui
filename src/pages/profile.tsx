@@ -20,11 +20,11 @@ type State = {
 };
 
 const TASK_LABELS = {
-    description: 'Description',
-    score: 'Score',
-    githubPrUrl: 'Pull request',
-    comment: 'Comment',
-}
+  description: 'Description',
+  score: 'Score',
+  githubPrUrl: 'Pull request',
+  comment: 'Comment',
+};
 
 class ProfilePage extends React.Component<Props, State> {
   state: State = {
@@ -73,12 +73,12 @@ class ProfilePage extends React.Component<Props, State> {
     if (this.state.profile) {
       const { profile } = this.state;
       const studentCourses = profile.students.map((data: any) => data.course.name);
-      const studentTasks =  profile.students
+      const studentTasks = profile.students
         .map((data: any) => data.taskResults)
         .reduce((acc: any, v: any) => acc.concat(v), [])
-        .map((v: any) => Object.keys(v).map(k => ({ label: k, value: v[k]})))
+        .map((v: any) => Object.keys(v).map(k => ({ label: k, value: v[k] })))
         .reduce((acc: any, v: any) => acc.concat(v), [])
-        .filter((v: { label: any; }) => TASK_LABELS.hasOwnProperty(`${v.label}`))
+        .filter((v: { label: any }) => TASK_LABELS.hasOwnProperty(`${v.label}`));
       const mentorCourses = profile.mentors.map((data: any) => data.course.name);
       const studentMentor = profile.students
         .filter((f: any) => !!f.mentor)
@@ -149,7 +149,9 @@ class ProfilePage extends React.Component<Props, State> {
             </div>
             <div className="profile_section">
               <div className="profile_label">Education</div>
-              <div className="profile_value">{profile.educationHistory.join(', ')}</div>
+              <div className="profile_value">
+                {Array.isArray(profile.educationHistory) ? profile.educationHistory.join(', ') : ''}
+              </div>
             </div>
             <div className="profile_section">
               <div className="profile_label">Employment history</div>
@@ -184,22 +186,22 @@ class ProfilePage extends React.Component<Props, State> {
             </div>
             <div className="profile_header">Tasks Information</div>
             {studentTasks.map((st: any, i: any) => (
-                <div key={i} className="profile_section">
-                    <div className="profile_label">{TASK_LABELS[`${st.label}` as keyof typeof TASK_LABELS]}</div>
-                    <div className="profile_value">{st.value}</div>
-                </div>
+              <div key={i} className="profile_section">
+                <div className="profile_label">{TASK_LABELS[`${st.label}` as keyof typeof TASK_LABELS]}</div>
+                <div className="profile_value">{st.value}</div>
+              </div>
             ))}
             <div className="profile_section">
-                <div className="profile_label">Score</div>
-                <div className="profile_value" />
+              <div className="profile_label">Score</div>
+              <div className="profile_value" />
             </div>
             <div className="profile_section">
-                <div className="profile_label">Comment</div>
-                <div className="profile_value" />
+              <div className="profile_label">Comment</div>
+              <div className="profile_value" />
             </div>
             <div className="profile_section">
-                <div className="profile_label">Pull Request</div>
-                <div className="profile_value" />
+              <div className="profile_label">Pull Request</div>
+              <div className="profile_value" />
             </div>
             <div className="profile_header">Mentor Information</div>
             <div className="profile_section">
