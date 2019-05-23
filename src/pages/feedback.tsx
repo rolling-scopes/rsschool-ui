@@ -95,8 +95,8 @@ class FeedbackPage extends React.Component<Props, State> {
       });
   };
 
-  private validateComment = (value: string) => {
-    if (!value) {
+  private validateComment = (value: string, allValues: any) => {
+    if (!value && allValues.badgeId) {
       return undefined;
     }
     return value.length < 20 ? 'Comment should be at least 20 characters' : undefined;
