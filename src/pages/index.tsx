@@ -33,6 +33,10 @@ class IndexPage extends React.Component<Props> {
         name: `Score`,
         link: `/score?course=${course.alias}`,
       },
+      {
+        name: `Leave Feedback`,
+        link: `/feedback?course=${course.alias}`,
+      },
     ];
     const isMentorOrAdmin = role === 'mentor' || this.props.session.isAdmin;
     if (!isMentorOrAdmin) {
@@ -50,10 +54,6 @@ class IndexPage extends React.Component<Props> {
       {
         name: `Expel Student`,
         link: `/expel?course=${course.alias}`,
-      },
-      {
-        name: `Leave Feedback`,
-        link: `/feedback?course=${course.alias}`,
       },
       {
         name: `Course Tasks`,
