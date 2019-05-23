@@ -71,7 +71,9 @@ class TaskScorePage extends React.Component<Props, State> {
       students = (await studentsResponse.json()).data.students;
     }
     if (tasksResponse.ok) {
-      tasks = (await tasksResponse.json()).data.sort(sortTasksByEndDate).filter((task: any) => task.studentEndDate);
+      tasks = (await tasksResponse.json()).data
+        .sort(sortTasksByEndDate)
+        .filter((task: any) => task.studentEndDate && task.verification !== 'auto');
     }
     this.setState({ students, tasks });
   }
