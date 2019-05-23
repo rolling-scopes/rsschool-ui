@@ -107,7 +107,7 @@ class ScorePage extends React.Component<Props, State> {
           defaultSorted={[{ id: 'total', desc: false }]}
           defaultPageSize={100}
           getTrProps={(_: any, rowInfo?: RowInfo) => {
-            if (!rowInfo || rowInfo.original) {
+            if (!rowInfo || !rowInfo.original) {
               return {};
             }
             return { className: rowInfo.original.isExpelled ? 'rt-expelled' : '' };
@@ -145,6 +145,18 @@ class ScorePage extends React.Component<Props, State> {
               accessor: 'lastName',
               maxWidth: 160,
               filterable: true,
+              filterMethod: this.stringFilter,
+            },
+            {
+              Header: 'Mentor Github Id',
+              accessor: 'mentorGithubId',
+              maxWidth: 160,
+              filterable: true,
+              Cell: (props: any) => (
+                <Link href={{ pathname: '/profile', query: { githubId: props.value } }}>
+                  <a>{props.value}</a>
+                </Link>
+              ),
               filterMethod: this.stringFilter,
             },
             ...this.getColumns(),
