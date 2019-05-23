@@ -95,11 +95,11 @@ class FeedbackPage extends React.Component<Props, State> {
       });
   };
 
-  private validateComment = (value: string, allValues: any) => {
+  private validateComment = (value: string | undefined, allValues: any) => {
     if (!value && allValues.badgeId) {
       return undefined;
     }
-    return value.length < 20 ? 'Comment should be at least 20 characters' : undefined;
+    return !value || (value.length < 20 ? 'Comment should be at least 20 characters' : undefined);
   };
 
   private handleSubmit = async (values: any, form: SubsetFormApi) => {
