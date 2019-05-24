@@ -142,7 +142,7 @@ class ProfilePage extends React.Component<Props, State> {
               <div className="profile_label">External accounts</div>
               <div className="profile_value">
                   {profile.externalAccounts
-                        .filter((f: any) => f.service)
+                        .filter((exta: any) => exta.username)
                         .map((exta: any) => `Service: ${exta.service} Name: ${exta.username}`)}
               </div>
             </div>
