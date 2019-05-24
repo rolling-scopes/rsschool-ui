@@ -140,7 +140,9 @@ class ProfilePage extends React.Component<Props, State> {
             </div> */}
             <div className="profile_section">
               <div className="profile_label">External accounts</div>
-              <div className="profile_value">{profile.externalAccounts.join(', ')}</div>
+              <div className="profile_value">
+                  {profile.externalAccounts.map((exta: any) => `Service: ${exta.service} Name: ${exta.username}`)}
+              </div>
             </div>
             <div className="profile_header">Mentee Information</div>
             <div className="profile_section">
@@ -150,8 +152,11 @@ class ProfilePage extends React.Component<Props, State> {
             <div className="profile_section">
               <div className="profile_label">Education</div>
               <div className="profile_value">
-                {Array.isArray(profile.educationHistory) ? profile.educationHistory.join(', ') : ''}
-              </div>
+                  {profile.educationHistory.map(
+                    // tslint:disable-next-line:max-line-length
+                    (edh: any) => `Graduation Year: ${edh.graduationYear} University: ${edh.university} Faculty: ${edh.faculty} `,
+                  )}
+               </div>
             </div>
             <div className="profile_section">
               <div className="profile_label">Employment history</div>
