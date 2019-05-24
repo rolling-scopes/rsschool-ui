@@ -141,7 +141,9 @@ class ProfilePage extends React.Component<Props, State> {
             <div className="profile_section">
               <div className="profile_label">External accounts</div>
               <div className="profile_value">
-                  {profile.externalAccounts.map((exta: any) => `Service: ${exta.service} Name: ${exta.username}`)}
+                  {profile.externalAccounts
+                        .filter((f: any) => f.service)
+                        .map((exta: any) => `Service: ${exta.service} Name: ${exta.username}`)}
               </div>
             </div>
             <div className="profile_header">Mentee Information</div>
