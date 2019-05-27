@@ -37,6 +37,10 @@ class IndexPage extends React.Component<Props> {
         name: `Leave Feedback`,
         link: `/feedback?course=${course.alias}`,
       },
+      {
+        name: `Submit Video & Presentation`,
+        link: `/task-artefact?course=${course.alias}`,
+      },
     ];
     const isMentorOrAdmin = role === 'mentor' || this.props.session.isAdmin;
     if (!isMentorOrAdmin) {

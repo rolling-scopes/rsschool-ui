@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FormGroup, Label, Button, Input, Alert } from 'reactstrap';
-import * as fetch from 'isomorphic-fetch';
+import axios from 'axios';
 import { Field } from 'react-final-form';
 import ReactTable from 'react-table';
 import { TaskEditModal } from './TaskEditModal';
@@ -31,16 +31,8 @@ export class TasksForm extends React.Component<Props, State> {
   };
 
   async loadTasks() {
-    const tasksResponse = await fetch(`/api/tasks`, {
-      credentials: 'same-origin',
-    });
-    if (!tasksResponse.ok) {
-      return;
-    }
-    const tasksJson = await tasksResponse.json();
-    this.setState({
-      tasks: tasksJson.data,
-    });
+    const tasksResponse = await axios.get(`/api/tasks`);
+    this.setState({ tasks: tasksResponse.data.data });
   }
 
   async componentDidMount() {
@@ -50,23 +42,14 @@ export class TasksForm extends React.Component<Props, State> {
   stringFilter = (filter: any, row: any) => (row[filter.id] || '').toLowerCase().startsWith(filter.value.toLowerCase());
 
   handleSubmit = async (values: any) => {
-    const result = await fetch(`/api/tasks`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify([values]),
-      credentials: 'same-origin',
-    });
-
-    if (!result.ok) {
-      return;
-    }
-
+    await axios.post(`/api/tasks`, [values]);
     this.setState({ submitted: true });
     await this.loadTasks();
     this.setState({ modalValues: null });
   };
 
   renderModal() {
+    console.log(this.state.modalValues);
     return (
       <TaskEditModal
         onApply={this.handleSubmit}
@@ -79,47 +62,57 @@ export class TasksForm extends React.Component<Props, State> {
           ...this.state.modalValues,
         }}
       >
-        <FormGroup className="col-md-auto">
-          <Field name="name" validate={required}>
-            {({ input, meta }) => (
-              <>
-                <Label>Task Name</Label>
-                <Input {...input} name="name" type="text" />
-                <ValidationError meta={meta} />
-              </>
-            )}
-          </Field>
-          <Field name="description">
-            {({ input }) => (
-              <>
-                <Label>Description</Label>
-                <Input {...input} name="description" type="textarea" />
-              </>
-            )}
-          </Field>
-        </FormGroup>
-        <FormGroup className="col-md-auto">
-          <Field name="descriptionUrl">
-            {({ input }) => (
-              <>
-                <Label>Description Url</Label>
-                <Input {...input} name="descriptionUrl" type="text" />
-              </>
-            )}
-          </Field>
-          <Field name="verification">
-            {({ input, meta }) => (
-              <>
-                <Label>Verification</Label>
-                <Input {...input} name="descriptionUrl" type="select">
-                  <option value="auto">Auto</option>
-                  <option value="manual">Manual</option>
-                </Input>
-                <ValidationError meta={meta} />
-              </>
-            )}
-          </Field>
-        </FormGroup>
+        <Field name="name" validate={required}>
+          {({ input, meta }) => (
+            <FormGroup className="col-md-auto">
+              <Label>Task Name</Label>
+              <Input {...input} name="name" type="text" />
+              <ValidationError meta={meta} />
+            </FormGroup>
+          )}
+        </Field>
+        <Field name="description">
+          {({ input }) => (
+            <FormGroup className="col-md-auto">
+              <Label>Description</Label>
+              <Input {...input} name="description" type="textarea" />
+            </FormGroup>
+          )}
+        </Field>
+
+        <Field name="descriptionUrl">
+          {({ input }) => (
+            <FormGroup className="col-md-auto">
+              <Label>Description Url</Label>
+              <Input {...input} name="descriptionUrl" type="text" />
+            </FormGroup>
+          )}
+        </Field>
+
+        <Field name="verification">
+          {({ input, meta }) => (
+            <FormGroup className="col-md-auto">
+              <Label>Verification</Label>
+              <Input {...input} name="descriptionUrl" type="select">
+                <option value="auto">Auto</option>
+                <option value="manual">Manual</option>
+              </Input>
+              <ValidationError meta={meta} />
+            </FormGroup>
+          )}
+        </Field>
+
+        <Field name="allowStudentArtefacts" type="checkbox">
+          {({ input, meta }) => (
+            <FormGroup className="col-md-auto">
+              <Label>
+                <Input {...input} name="allowStudentArtefacts" type="checkbox" />
+                Allow Student Artefacts
+              </Label>
+              <ValidationError meta={meta} />
+            </FormGroup>
+          )}
+        </Field>
       </TaskEditModal>
     );
   }
