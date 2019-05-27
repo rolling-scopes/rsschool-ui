@@ -49,7 +49,6 @@ export class TasksForm extends React.Component<Props, State> {
   };
 
   renderModal() {
-    console.log(this.state.modalValues);
     return (
       <TaskEditModal
         onApply={this.handleSubmit}
