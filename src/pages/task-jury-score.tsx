@@ -31,11 +31,19 @@ type State = {
 
 const required = (value: any) => (value ? undefined : 'Required');
 
+const formatDisplayValue = (data: Student) => {
+  let result = data.githubId;
+  if (data.firstName || data.lastName) {
+    result = `${result} (${data.firstName} ${data.lastName})`;
+  }
+  return result;
+};
+
 const Option = (props: any) => {
   const data: Student = props.data;
   return (
     <components.Option {...props} key={data.githubId}>
-      {data.githubId}
+      {formatDisplayValue(data)}
     </components.Option>
   );
 };
@@ -44,7 +52,7 @@ const SingleValue = (props: any) => {
   const data: Student = props.data;
   return (
     <components.SingleValue {...props} value={data.githubId}>
-      {data.githubId}
+      {formatDisplayValue(data)}
     </components.SingleValue>
   );
 };
@@ -115,8 +123,8 @@ class TaskJuryScorePage extends React.Component<Props, State> {
                           <Label>Student</Label>
                           <Select
                             placeholder={'Student'}
-                            noOptionsMessage={() => 'Start typing...'}
-                            getOptionValue={(student: Student) => student.studentId.toString()}
+                            isSearchable={true}
+                            getOptionValue={(student: Student) => student.githubId}
                             components={{ Option, SingleValue }}
                             options={this.state.students}
                             onChange={(value: any) => input.onChange(value)}
