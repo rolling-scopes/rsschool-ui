@@ -91,7 +91,7 @@ class GratitudePage extends React.Component<Props, State> {
       const submitStatus = {
         success: true,
         heroesUrl: result.data.data.heroesUrl,
-        message: `#gratutude has been submitted.`,
+        message: `Your feedback has been submitted.`,
       };
       this.setState({ isLoading: false, submitStatus });
       this.timerRef = setTimeout(() => this.setState({ submitStatus: null }), 5000);
