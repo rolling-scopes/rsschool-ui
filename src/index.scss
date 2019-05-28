@@ -7,7 +7,6 @@ body, html {
   padding: 0;
 }
 
-
 .ReactTable .rt-td {
   padding: 5px 5px;
 
@@ -33,4 +32,10 @@ body, html {
 
 .ReactTable .rt-thead.-filters input {
   padding: 3px;
+}
+
+.select-avatar {
+  margin-right: 8px;
+  height: 32px;
+  width: 32px;
 }

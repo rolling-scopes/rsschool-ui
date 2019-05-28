@@ -38,8 +38,8 @@ class IndexPage extends React.Component<Props> {
     if (!course.completed) {
       result.push(
         {
-          name: `Leave Feedback`,
-          link: `/feedback?course=${course.alias}`,
+          name: `#gratitude`,
+          link: `/gratitude?course=${course.alias}`,
         },
         {
           name: `Submit Video & Presentation`,
@@ -75,8 +75,8 @@ class IndexPage extends React.Component<Props> {
           link: `/expel?course=${course.alias}`,
         },
         {
-            name: `Assign Tasks`,
-            link: `/task-assign?course=${course.alias}`,
+          name: `Assign Tasks`,
+          link: `/task-assign?course=${course.alias}`,
         },
       );
     }

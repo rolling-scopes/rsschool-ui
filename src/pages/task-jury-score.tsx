@@ -2,7 +2,8 @@ import * as React from 'react';
 import { FormGroup, Label, Button, Input, Alert } from 'reactstrap';
 import axios from 'axios';
 import { Form, Field, SubsetFormApi } from 'react-final-form';
-import Select, { components } from 'react-select';
+import Select from 'react-select';
+import { SingleValue, Option } from '../components/UserSelect';
 import Header from '../components/Header';
 import withSession, { Session } from '../components/withSession';
 import withCourseData, { Course } from '../components/withCourseData';
@@ -30,38 +31,6 @@ type State = {
 };
 
 const required = (value: any) => (value ? undefined : 'Required');
-
-const formatDisplayValue = (data: Student) => {
-  let result = data.githubId;
-  if (data.firstName || data.lastName) {
-    result = `${result} (${data.firstName} ${data.lastName})`;
-  }
-  return result;
-};
-
-const GithubAvatar = (props: { githubId: string }) => (
-  <img width="32" height="32" style={{ marginRight: '4px' }} src={`https://github.com/${props.githubId}.png`} />
-);
-
-const Option = (props: any) => {
-  const data: Student = props.data;
-  return (
-    <components.Option {...props} key={data.githubId}>
-      <GithubAvatar githubId={data.githubId} />
-      {formatDisplayValue(data)}
-    </components.Option>
-  );
-};
-
-const SingleValue = (props: any) => {
-  const data: Student = props.data;
-  return (
-    <components.SingleValue {...props} value={data.githubId}>
-      <GithubAvatar githubId={data.githubId} />
-      {formatDisplayValue(data)}
-    </components.SingleValue>
-  );
-};
 
 class TaskJuryScorePage extends React.Component<Props, State> {
   state: State = {
