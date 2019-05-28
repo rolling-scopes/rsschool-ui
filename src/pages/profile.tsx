@@ -78,7 +78,7 @@ class ProfilePage extends React.Component<Props, State> {
       const studentTasks = profile.students
         .map((data: any) => data.taskResults)
         .reduce((acc: any, v: any) => acc.concat(v), [])
-        .map((v: any) => ({...v, taskName: v.task.description, taskDescription: v.task.descriptionUrl }))
+        .map((v: any) => ({...v, taskName: v.task.name, taskDescription: v.task.descriptionUrl }))
         .map((v: any) => Object.keys(v).map(k => ({ label: k, value: v[k] })))
         .reduce((acc: any, v: any) => acc.concat(v), [])
         .filter((v: { label: any }) => TASK_LABELS.hasOwnProperty(`${v.label}`));
