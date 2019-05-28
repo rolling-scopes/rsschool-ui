@@ -63,6 +63,7 @@ class IndexPage extends React.Component<Props> {
       name: `Course Tasks`,
       link: `/course-tasks?course=${course.alias}`,
     });
+
     if (!course.completed) {
       result.push(
         {
@@ -73,8 +74,13 @@ class IndexPage extends React.Component<Props> {
           name: `Expel Student`,
           link: `/expel?course=${course.alias}`,
         },
+        {
+            name: `Assign Tasks`,
+            link: `/task-assign?course=${course.alias}`,
+        },
       );
     }
+
     return result;
   };
 
