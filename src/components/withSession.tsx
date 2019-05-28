@@ -9,6 +9,7 @@ export interface Session {
   id: number;
   githubId: string;
   isAdmin: boolean;
+  isActivist: boolean;
   roles: { [key: number]: 'student' | 'mentor' };
 }
 

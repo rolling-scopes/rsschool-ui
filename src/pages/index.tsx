@@ -42,6 +42,14 @@ class IndexPage extends React.Component<Props> {
         link: `/task-artefact?course=${course.alias}`,
       },
     ];
+
+    if (this.props.session.isActivist || this.props.session.isAdmin) {
+      result.push({
+        name: `Submit Jury Score`,
+        link: `/task-jury-score?course=${course.alias}`,
+      });
+    }
+
     const isMentorOrAdmin = role === 'mentor' || this.props.session.isAdmin;
     if (!isMentorOrAdmin) {
       return result;
