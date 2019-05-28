@@ -123,7 +123,7 @@ class ProfilePage extends React.Component<Props, State> {
                 <a href={`https://github.com/${profile.githubId}`}>{`https://github.com/${profile.githubId}`}</a>
               </div>
             </div>
-            {/* <div className="profile_section">
+            <div className="profile_section">
                 <div className="profile_label">Contacts</div>
                 <div className="profile_value">
                     <a href={`tel:${profile.contactsPhone}`} >
@@ -137,7 +137,7 @@ class ProfilePage extends React.Component<Props, State> {
                         {profile.contactsEpamEmail}
                     </a>
                 </div>
-            </div> */}
+            </div>
             <div className="profile_section">
               <div className="profile_label">External accounts</div>
               <div className="profile_value">{profile.externalAccounts.join(', ')}</div>
