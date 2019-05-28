@@ -20,10 +20,12 @@ type State = {
 };
 
 const TASK_LABELS = {
-  description: 'Description',
-  score: 'Score',
-  githubPrUrl: 'Pull request',
-  comment: 'Comment',
+    taskName: 'Task name',
+    taskDescription: 'Task description',
+    description: 'Description',
+    score: 'Score',
+    githubPrUrl: 'Pull request',
+    comment: 'Comment',
 };
 
 class ProfilePage extends React.Component<Props, State> {
@@ -76,10 +78,13 @@ class ProfilePage extends React.Component<Props, State> {
       const studentTasks = profile.students
         .map((data: any) => data.taskResults)
         .reduce((acc: any, v: any) => acc.concat(v), [])
+        .map((v: any) => ({...v, taskName: v.task.description, taskDescription: v.task.descriptionUrl }))
         .map((v: any) => Object.keys(v).map(k => ({ label: k, value: v[k] })))
         .reduce((acc: any, v: any) => acc.concat(v), [])
         .filter((v: { label: any }) => TASK_LABELS.hasOwnProperty(`${v.label}`));
+
       const mentorCourses = profile.mentors.map((data: any) => data.course.name);
+
       const studentMentor = profile.students
         .filter((f: any) => !!f.mentor)
         .map((data: any) => ({
@@ -123,7 +128,7 @@ class ProfilePage extends React.Component<Props, State> {
                 <a href={`https://github.com/${profile.githubId}`}>{`https://github.com/${profile.githubId}`}</a>
               </div>
             </div>
-            {/* <div className="profile_section">
+            <div className="profile_section">
                 <div className="profile_label">Contacts</div>
                 <div className="profile_value">
                     <a href={`tel:${profile.contactsPhone}`} >
@@ -137,7 +142,7 @@ class ProfilePage extends React.Component<Props, State> {
                         {profile.contactsEpamEmail}
                     </a>
                 </div>
-            </div> */}
+            </div>
             <div className="profile_section">
               <div className="profile_label">External accounts</div>
               <div className="profile_value">
