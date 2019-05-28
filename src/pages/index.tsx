@@ -33,45 +33,49 @@ class IndexPage extends React.Component<Props> {
         name: `Score`,
         link: `/score?course=${course.alias}`,
       },
-      {
-        name: `Leave Feedback`,
-        link: `/feedback?course=${course.alias}`,
-      },
-      {
-        name: `Submit Video & Presentation`,
-        link: `/task-artefact?course=${course.alias}`,
-      },
     ];
 
-    if (this.props.session.isActivist || this.props.session.isAdmin) {
-      result.push({
-        name: `Submit Jury Score`,
-        link: `/task-jury-score?course=${course.alias}`,
-      });
+    if (!course.completed) {
+      result.push(
+        {
+          name: `Leave Feedback`,
+          link: `/feedback?course=${course.alias}`,
+        },
+        {
+          name: `Submit Video & Presentation`,
+          link: `/task-artefact?course=${course.alias}`,
+        },
+      );
+
+      if (this.props.session.isActivist || this.props.session.isAdmin) {
+        result.push({
+          name: `Submit Jury Score`,
+          link: `/task-jury-score?course=${course.alias}`,
+        });
+      }
     }
 
     const isMentorOrAdmin = role === 'mentor' || this.props.session.isAdmin;
     if (!isMentorOrAdmin) {
       return result;
     }
-    return result.concat([
-      {
-        name: `Submit Score`,
-        link: `/task-score?course=${course.alias}`,
-      },
-      {
-        name: `Students`,
-        link: `/students?course=${course.alias}`,
-      },
-      {
-        name: `Expel Student`,
-        link: `/expel?course=${course.alias}`,
-      },
-      {
-        name: `Course Tasks`,
-        link: `/course-tasks?course=${course.alias}`,
-      },
-    ]);
+    result.push({
+      name: `Course Tasks`,
+      link: `/course-tasks?course=${course.alias}`,
+    });
+    if (!course.completed) {
+      result.push(
+        {
+          name: `Submit Score`,
+          link: `/task-score?course=${course.alias}`,
+        },
+        {
+          name: `Expel Student`,
+          link: `/expel?course=${course.alias}`,
+        },
+      );
+    }
+    return result;
   };
 
   renderLinks() {

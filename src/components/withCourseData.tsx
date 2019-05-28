@@ -8,6 +8,7 @@ export interface Course {
   id: number;
   name: string;
   alias: string;
+  completed: boolean;
 }
 
 function withCourseData(WrappedComponent: React.ComponentType<any>) {
