@@ -39,10 +39,15 @@ const formatDisplayValue = (data: Student) => {
   return result;
 };
 
+const GithubAvatar = (props: { githubId: string }) => (
+  <img width="32" height="32" style={{ marginRight: '4px' }} src={`https://github.com/${props.githubId}.png`} />
+);
+
 const Option = (props: any) => {
   const data: Student = props.data;
   return (
     <components.Option {...props} key={data.githubId}>
+      <GithubAvatar githubId={data.githubId} />
       {formatDisplayValue(data)}
     </components.Option>
   );
@@ -52,6 +57,7 @@ const SingleValue = (props: any) => {
   const data: Student = props.data;
   return (
     <components.SingleValue {...props} value={data.githubId}>
+      <GithubAvatar githubId={data.githubId} />
       {formatDisplayValue(data)}
     </components.SingleValue>
   );
@@ -122,7 +128,7 @@ class TaskJuryScorePage extends React.Component<Props, State> {
                         <FormGroup className="col-md-6">
                           <Label>Student</Label>
                           <Select
-                            placeholder={'Student'}
+                            placeholder={'(Choose Student)'}
                             isSearchable={true}
                             getOptionValue={(student: Student) => student.githubId}
                             components={{ Option, SingleValue }}
