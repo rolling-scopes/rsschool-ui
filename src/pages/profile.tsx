@@ -22,10 +22,9 @@ type State = {
 const TASK_LABELS = {
     taskName: 'Task name',
     taskDescription: 'Task description',
-    description: 'Description',
     score: 'Score',
-    githubPrUrl: 'Pull request',
     comment: 'Comment',
+    githubPrUrl: 'Pull request',
 };
 
 class ProfilePage extends React.Component<Props, State> {
@@ -138,6 +137,7 @@ class ProfilePage extends React.Component<Props, State> {
                     <a href={`mailto:${profile.contactsEmail}`} >
                         {profile.contactsEmail}
                     </a>
+                    <br/>
                     <a href={`mailto:${profile.contactsEpamEmail}`} >
                         {profile.contactsEpamEmail}
                     </a>
