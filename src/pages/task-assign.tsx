@@ -93,16 +93,18 @@ class TaskAssignPage extends React.Component<Props> {
     async assignTask() {
         const { courseTaskId } = this.state;
 
-        this.setState({
-            isLoading: true,
-        })
+        this.setState({ isLoading: true });
 
-        await fetch(`/api/course/${this.props.course.id}/task/${courseTaskId}/shuffle`, {
-            method: 'POST',
-            credentials: 'same-origin',
-        });
-        const courseTasks = await this.courseService.getCourseTasks()
-        this.setState({ courseTasks, isLoading: false });
+        try {
+            await fetch(`/api/course/${this.props.course.id}/task/${courseTaskId}/shuffle`, {
+                method: 'POST',
+                credentials: 'same-origin',
+            });
+            const courseTasks = await this.courseService.getCourseTasks()
+            this.setState({ courseTasks, isLoading: false });
+        } catch (e) {
+            this.setState({ courseTasks: [], isLoading: false });
+        }
     }
 
     // tslint:disable-next-line:max-line-length
