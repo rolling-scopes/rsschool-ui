@@ -22,10 +22,17 @@ type State = {
 const TASK_LABELS = {
     taskName: 'Task name',
     taskDescription: 'Task description',
-    description: 'Description',
     score: 'Score',
-    githubPrUrl: 'Pull request',
     comment: 'Comment',
+    githubPrUrl: 'Pull request',
+};
+
+const TASK_POSITIONS = {
+    taskName: 1,
+    taskDescription: 2,
+    score: 3,
+    comment: 4,
+    githubPrUrl: 5,
 };
 
 class ProfilePage extends React.Component<Props, State> {
@@ -81,7 +88,13 @@ class ProfilePage extends React.Component<Props, State> {
         .map((v: any) => ({...v, taskName: v.task.name, taskDescription: v.task.descriptionUrl }))
         .map((v: any) => Object.keys(v).map(k => ({ label: k, value: v[k] })))
         .reduce((acc: any, v: any) => acc.concat(v), [])
-        .filter((v: { label: any }) => TASK_LABELS.hasOwnProperty(`${v.label}`));
+        .filter((v: { label: any }) => TASK_LABELS.hasOwnProperty(`${v.label}`))
+        .map((st: any) => ({
+            label: TASK_LABELS[`${st.label}` as keyof typeof TASK_LABELS],
+            position: TASK_POSITIONS[`${st.label}` as keyof typeof TASK_POSITIONS],
+            value: st.value,
+        }))
+        .sort((a: any, b: any) => b.position - a.position);
 
       const mentorCourses = profile.mentors.map((data: any) => data.course.name);
 
@@ -138,6 +151,7 @@ class ProfilePage extends React.Component<Props, State> {
                     <a href={`mailto:${profile.contactsEmail}`} >
                         {profile.contactsEmail}
                     </a>
+                    <br/>
                     <a href={`mailto:${profile.contactsEpamEmail}`} >
                         {profile.contactsEpamEmail}
                     </a>
@@ -199,7 +213,7 @@ class ProfilePage extends React.Component<Props, State> {
             <div className="profile_header">Tasks Information</div>
             {studentTasks.map((st: any, i: any) => (
               <div key={i} className="profile_section">
-                <div className="profile_label">{TASK_LABELS[`${st.label}` as keyof typeof TASK_LABELS]}</div>
+                <div className="profile_label">{st.label}</div>
                 <div className="profile_value">{st.value}</div>
               </div>
             ))}
