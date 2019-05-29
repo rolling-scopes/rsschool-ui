@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Header from '../components/Header';
-import * as fetch from 'isomorphic-fetch';
+import axios from 'axios';
 import { LoadingScreen } from '../components/LoadingScreen';
 import ReactTable, { RowInfo } from 'react-table';
 import Link from 'next/link';
@@ -39,20 +39,12 @@ class ScorePage extends React.Component<Props, State> {
   async componentDidMount() {
     this.setState({ isLoading: true });
     const [scoreResponse, tasksResponse] = await Promise.all([
-      fetch(`/api/course/${this.props.course.id}/score`, {
-        credentials: 'same-origin',
-      }),
-      fetch(`/api/course/${this.props.course.id}/tasks`, {
-        credentials: 'same-origin',
-      }),
+      axios.get(`/api/course/${this.props.course.id}/score`),
+      axios.get<{ data: CourseTask[] }>(`/api/course/${this.props.course.id}/tasks`),
     ]);
 
-    if (!scoreResponse.ok || !tasksResponse.ok) {
-      this.setState({ isLoading: false });
-      return;
-    }
-
-    const [score, tasks] = await Promise.all<any, { data: CourseTask[] }>([scoreResponse.json(), tasksResponse.json()]);
+    const score = scoreResponse.data;
+    const tasks = tasksResponse.data;
     const sortedTasks = tasks.data.filter(task => task.studentEndDate).sort(sortTasksByEndDate);
     const scoreWeights = sortedTasks.reduce(
       (acc, courseTask) => {
@@ -106,6 +98,7 @@ class ScorePage extends React.Component<Props, State> {
         <ReactTable
           defaultSorted={[{ id: 'total', desc: false }]}
           defaultPageSize={100}
+          className="-striped"
           getTrProps={(_: any, rowInfo?: RowInfo) => {
             if (!rowInfo || !rowInfo.original) {
               return {};
@@ -117,9 +110,17 @@ class ScorePage extends React.Component<Props, State> {
             {
               Header: '#',
               id: 'rowNumber',
-              maxWidth: 70,
+              maxWidth: 50,
               filterable: false,
               Cell: (row: any) => row.page * row.pageSize + row.viewIndex + 1,
+            },
+            {
+              Header: ' 😎 ',
+              id: 'avatar',
+              accessor: 'githubId',
+              maxWidth: 40,
+              filterable: false,
+              Cell: (props: any) => <img src={`https://github.com/${props.value}.png`} height={24} width={24} />,
             },
             {
               Header: 'Github Id',
@@ -159,15 +160,17 @@ class ScorePage extends React.Component<Props, State> {
               ),
               filterMethod: this.stringFilter,
             },
-            ...this.getColumns(),
             {
               id: 'total',
               Header: 'Total',
+              maxWidth: 80,
               filterable: false,
               className: 'align-right',
               accessor: this.calculateTotal,
               sortMethod: this.numberSort,
+              Cell: (props: any) => <span className="td-selected">{props.value}</span>,
             },
+            ...this.getColumns(),
           ]}
         />
       </LoadingScreen>

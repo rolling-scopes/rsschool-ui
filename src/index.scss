@@ -17,6 +17,10 @@ body, html {
     padding: 0.2rem 0.4rem;
     line-height: 1rem;
   }
+  .td-selected {
+    font-weight: bold;
+    color: #333;
+  }
 }
 
 .ReactTable .rt-th a {
@@ -32,6 +36,10 @@ body, html {
 
 .ReactTable .rt-thead.-filters input {
   padding: 3px;
+}
+
+.ReactTable .rt-th.rt-th-selected {
+  font-weight: bold;
 }
 
 .select-avatar {
