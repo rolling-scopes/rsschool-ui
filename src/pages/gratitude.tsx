@@ -167,9 +167,11 @@ class GratitudePage extends React.Component<Props, State> {
       <>
         <Alert color={this.state.submitStatus.success ? 'info' : 'danger'}>
           {this.state.submitStatus.message}
-          {this.state.submitStatus.heroesUrl && (
-            <a href={this.state.submitStatus.heroesUrl}>{this.state.submitStatus}</a>
-          )}
+          <div>
+            {this.state.submitStatus.heroesUrl && (
+              <a href={this.state.submitStatus.heroesUrl}>{this.state.submitStatus.heroesUrl}</a>
+            )}
+          </div>
         </Alert>
       </>
     );
