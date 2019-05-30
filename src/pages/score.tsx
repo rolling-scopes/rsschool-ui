@@ -115,22 +115,18 @@ class ScorePage extends React.Component<Props, State> {
               Cell: (row: any) => row.page * row.pageSize + row.viewIndex + 1,
             },
             {
-              Header: ' 😎 ',
-              id: 'avatar',
-              accessor: 'githubId',
-              maxWidth: 40,
-              filterable: false,
-              Cell: (props: any) => <img src={`https://github.com/${props.value}.png`} height={24} width={24} />,
-            },
-            {
               Header: 'Github Id',
               accessor: 'githubId',
-              maxWidth: 160,
+              minWidth: 160,
+              maxWidth: 200,
               filterable: true,
               Cell: (props: any) => (
-                <Link href={{ pathname: '/profile', query: { githubId: props.value } }}>
-                  <a>{props.value}</a>
-                </Link>
+                <>
+                  <img src={`https://github.com/${props.value}.png`} className="cell-avatar" height={24} width={24} />
+                  <Link href={{ pathname: '/profile', query: { githubId: props.value } }}>
+                    <a>{props.value}</a>
+                  </Link>
+                </>
               ),
               filterMethod: this.stringFilter,
             },

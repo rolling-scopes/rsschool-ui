@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { FormGroup, Label, Button, Input, Alert } from 'reactstrap';
 import { Form, Field, SubsetFormApi, FormRenderProps } from 'react-final-form';
-import AsyncSelect from 'react-select/lib/Async';
+// @ts-ignore
+import AsyncSelect from 'react-select/async';
 import axios from 'axios';
 import Header from '../components/Header';
 import { SingleValue, Option } from '../components/UserSelect';

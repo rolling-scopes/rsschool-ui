@@ -2,7 +2,8 @@ import * as React from 'react';
 import { FormGroup, Label, Button, Input, Alert } from 'reactstrap';
 import axios from 'axios';
 import { Form, Field, SubsetFormApi } from 'react-final-form';
-import Select from 'react-select';
+// @ts-ignore
+import AsyncSelect from 'react-select/async';
 import { SingleValue, Option } from '../components/UserSelect';
 import Header from '../components/Header';
 import withSession, { Session } from '../components/withSession';
@@ -70,6 +71,17 @@ class TaskJuryScorePage extends React.Component<Props, State> {
     }
   };
 
+  loadStudents = async (searchText: string) => {
+    if (!searchText) {
+      return this.state.students.slice(0, 10);
+    }
+    return this.state.students
+      .filter(student => {
+        return student.githubId.startsWith(searchText.toLowerCase());
+      })
+      .slice(0, 10);
+  };
+
   render() {
     if (!this.props.session || !this.props.session.roles || !this.props.course) {
       return null;
@@ -96,12 +108,14 @@ class TaskJuryScorePage extends React.Component<Props, State> {
                       {({ input, meta }) => (
                         <FormGroup className="col-md-6">
                           <Label>Student</Label>
-                          <Select
+                          <AsyncSelect
                             placeholder={'(Choose Student)'}
                             isSearchable={true}
+                            cacheOptions={true}
                             getOptionValue={(student: Student) => student.githubId}
                             components={{ Option, SingleValue }}
-                            options={this.state.students}
+                            noOptionsMessage={() => 'Start typing...'}
+                            loadOptions={this.loadStudents}
                             onChange={(value: any) => input.onChange(value)}
                           />
                           <ValidationError meta={meta} />
