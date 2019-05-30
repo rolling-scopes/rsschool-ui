@@ -105,12 +105,12 @@ class TaskAssignPage extends React.Component<Props> {
     }
 
     // tslint:disable-next-line:max-line-length
-    stringFilter = (filter: any, row: any) => (row[filter.id] || '').toLowerCase().startsWith(filter.value.toLowerCase());
+    stringFilter = (filter: any, row: any) => (row[filter.id] || '').toLowerCase().trim().startsWith(filter.value.toLowerCase());
 
     taskFilter = (filter: any, row: any) => {
         const task = this.state.courseTasks.find(c => c.courseTaskId === row.courseTaskId);
         const value = task ? task.name : '';
-        return value.toLowerCase().startsWith(filter.value.toLowerCase());
+        return value.toLowerCase().trim().startsWith(filter.value.toLowerCase());
     }
 
     render() {
@@ -161,7 +161,6 @@ class TaskAssignPage extends React.Component<Props> {
                                 <a>{props.value}</a>
                               </Link>
                             ),
-                            // filterMethod: this.stringFilter,
                           },
                           {
                             Header: 'Student Github Id',
@@ -172,7 +171,6 @@ class TaskAssignPage extends React.Component<Props> {
                                 <a>{props.value}</a>
                               </Link>
                             ),
-                            // filterMethod: this.stringFilter,
                           },
                     ]}
                 />
