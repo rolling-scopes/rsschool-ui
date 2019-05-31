@@ -114,18 +114,11 @@ class TaskAssignPage extends React.Component<Props> {
     }
 
     render() {
-        if (!this.props.session || !this.props.session.roles || !this.props.course) {
-            return null;
-        }
-
-        const { roles, isAdmin } = this.props.session;
-
         return (
             <LoadingScreen show={this.state.isLoading}>
                 <Header username={this.props.session ? this.props.session.githubId : 'noname'} />
                 <h2>{this.props.course.name}</h2>
-                {roles[this.props.course.id] !== 'mentor' && !isAdmin ?
-                    null :
+                {this.props.session && this.props.session.isAdmin ?
                     <div>
                         <Select
                             placeholder={'Choose task'}
@@ -137,7 +130,7 @@ class TaskAssignPage extends React.Component<Props> {
                             onChange={(value: any) => this.onChange(value)}
                         />
                         <Button color="success" onClick={this.assignTask}>Assign</Button>
-                    </div>}
+                    </div> : null}
                 <ReactTable
                     defaultSorted={[{ id: 'total', desc: false }]}
                     defaultPageSize={100}
