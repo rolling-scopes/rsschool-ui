@@ -118,13 +118,13 @@ class TaskAssignPage extends React.Component<Props> {
             return null;
         }
 
-        const { roles, isAdmin } = this.props.session;
+        const { isAdmin } = this.props.session;
 
         return (
             <LoadingScreen show={this.state.isLoading}>
                 <Header username={this.props.session ? this.props.session.githubId : 'noname'} />
                 <h2>{this.props.course.name}</h2>
-                {roles[this.props.course.id] !== 'mentor' && !isAdmin ?
+                {!isAdmin ?
                     null :
                     <div>
                         <Select
