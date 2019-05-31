@@ -95,6 +95,7 @@ export class TasksForm extends React.Component<Props, State> {
               <Input {...input} name="descriptionUrl" type="select">
                 <option value="auto">Auto</option>
                 <option value="manual">Manual</option>
+                <option value="interview">Interview</option>
               </Input>
               <ValidationError meta={meta} />
             </FormGroup>

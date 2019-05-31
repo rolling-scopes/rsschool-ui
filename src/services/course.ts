@@ -13,6 +13,7 @@ export interface ReadCourseTask {
   studentStartDate: string | null;
   studentEndDate: string | null;
   taskResultCount: number;
+  verification: string;
 }
 
 export interface CreateCourseTask {

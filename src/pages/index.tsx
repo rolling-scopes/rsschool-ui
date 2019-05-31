@@ -78,6 +78,10 @@ class IndexPage extends React.Component<Props> {
           name: `Assign Tasks`,
           link: `/task-assign?course=${course.alias}`,
         },
+        {
+            name: `Submit Feedback`,
+            link: `/feedback?course=${course.alias}`,
+        },
       );
     }
 

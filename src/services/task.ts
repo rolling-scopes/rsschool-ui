@@ -8,7 +8,7 @@ export interface Task {
   descriptionUrl: string | null;
   description: string | null;
   githubPrRequired: string | null;
-  verification: 'manual' | 'auto';
+  verification: 'manual' | 'auto' | 'interview';
 }
 
 export interface Stage {
