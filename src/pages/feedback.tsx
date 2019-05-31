@@ -8,7 +8,7 @@ import { Form, Field, FormRenderProps } from 'react-final-form';
 import { Button, Label, FormGroup, Input } from 'reactstrap';
 import ValidationError from '../components/ValidationError';
 // @ts-ignore
-import AsyncSelect from 'react-select/async';
+import Select from 'react-select';
 import { CourseService, ReadCourseTask } from '../services/course';
 
 import '../index.scss';
@@ -20,13 +20,7 @@ type Props = {
 
 type State = {
     isLoading: boolean;
-}
-
-type Verification = 'auto' | 'manual' | 'verification';
-
-type Interview = {
-    name: string;
-    verification: Verification,
+    interview: ReadCourseTask[]
 }
 
 const formatDisplayValue = (data: ReadCourseTask) => {
@@ -55,6 +49,7 @@ const SingleValue = (props: any) => {
 class FeedbackPage extends React.Component<Props, State> {
     state: State = {
         isLoading: false,
+        interview: [],
     };
 
     private courseService: CourseService;
@@ -67,9 +62,20 @@ class FeedbackPage extends React.Component<Props, State> {
         this.loadTasks = this.loadTasks.bind(this);
     }
 
+    async componentDidMount() {
+        const interview = await this.loadTasks() as unknown as ReadCourseTask[];
+
+        this.setState({ interview });
+    }
+
     async loadTasks() {
-        const tasks = await this.courseService.getCourseTasks();
-        return tasks.map((t) => t.verification === 'interview');
+        try {
+            const tasks = await this.courseService.getCourseTasks();
+
+            return tasks.filter((t: ReadCourseTask) => t.verification === 'interview');
+        } catch (e) {
+            return [];
+        }
     }
 
     handleSubmit() {
@@ -77,19 +83,24 @@ class FeedbackPage extends React.Component<Props, State> {
     }
 
     renderForm({ handleSubmit }: FormRenderProps) {
+        const chosedOption = this.state.interview[0];
+
+        // tslint:disable-next-line:no-console
+        console.log(chosedOption);
+
         return (
             <LoadingScreen show={this.state.isLoading}>
                 <form onSubmit={handleSubmit}>
                     <Field name="task">
                         {({ meta, input }) => (
                             <FormGroup className="col-md-6">
-                                <Label>Interview</Label>
-                                <AsyncSelect
+                                <Label>Interview type</Label>
+                                <Select
                                     placeholder={'Interview'}
                                     noOptionsMessage={() => 'Start typing...'}
-                                    cacheOptions={true}
                                     components={{ Option, SingleValue }}
-                                    loadOptions={this.loadTasks}
+                                    options={this.state.interview}
+                                    value={chosedOption}
                                     onChange={(value: any) => input.onChange(value)}
                                 />
                                 <ValidationError meta={meta} />
