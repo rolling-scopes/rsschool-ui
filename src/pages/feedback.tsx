@@ -85,9 +85,6 @@ class FeedbackPage extends React.Component<Props, State> {
     renderForm({ handleSubmit }: FormRenderProps) {
         const chosedOption = this.state.interview[0];
 
-        // tslint:disable-next-line:no-console
-        console.log(chosedOption);
-
         return (
             <LoadingScreen show={this.state.isLoading}>
                 <form onSubmit={handleSubmit}>
