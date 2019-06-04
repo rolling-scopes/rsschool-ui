@@ -45,6 +45,10 @@ class IndexPage extends React.Component<Props> {
           name: `Submit Video & Presentation`,
           link: `/task-artefact?course=${course.alias}`,
         },
+        {
+          name: `Assign Tasks`,
+          link: `/task-assign?course=${course.alias}`,
+        },
       );
 
       if (this.props.session.isActivist || this.props.session.isAdmin) {
@@ -73,10 +77,6 @@ class IndexPage extends React.Component<Props> {
         {
           name: `Expel Student`,
           link: `/expel?course=${course.alias}`,
-        },
-        {
-          name: `Assign Tasks`,
-          link: `/task-assign?course=${course.alias}`,
         },
       );
     }
