@@ -42,6 +42,10 @@ class IndexPage extends React.Component<Props> {
           link: `/gratitude?course=${course.alias}`,
         },
         {
+          name: `Mentor Contacts`,
+          link: `/mentor-contacts?course=${course.alias}`,
+        },
+        {
           name: `Submit Video & Presentation`,
           link: `/task-artefact?course=${course.alias}`,
         },
