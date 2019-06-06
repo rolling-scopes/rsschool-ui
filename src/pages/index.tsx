@@ -75,6 +75,10 @@ class IndexPage extends React.Component<Props> {
     if (!course.completed) {
       result.push(
         {
+          name: `Interview Feedback`,
+          link: `/interview-feedback?course=${course.alias}`,
+        },
+        {
           name: `Submit Score`,
           link: `/task-score?course=${course.alias}`,
         },
