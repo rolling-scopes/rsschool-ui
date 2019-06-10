@@ -1,17 +1,18 @@
 import * as React from 'react';
 import Header from '../components/Header';
-import * as fetch from 'isomorphic-fetch';
+import axios from 'axios';
 import Login from '../components/Login';
 import { LoadingScreen } from '../components/LoadingScreen';
 import Router from 'next/router';
 import { withRouter } from 'next/router';
+import withSession, { Session } from '../components/withSession';
 
 import '../index.scss';
 import Link from 'next/link';
 
 type Props = {
   router: any;
-  session: any;
+  session: Session;
 };
 
 type State = {
@@ -20,12 +21,12 @@ type State = {
 };
 
 const TASK_LABELS = {
-    taskName: 'Task name',
-    taskDescription: 'Task description',
-    description: 'Description',
-    score: 'Score',
-    githubPrUrl: 'Pull request',
-    comment: 'Comment',
+  taskName: 'Task name',
+  taskDescription: 'Task description',
+  description: 'Description',
+  score: 'Score',
+  githubPrUrl: 'Pull request',
+  comment: 'Comment',
 };
 
 class ProfilePage extends React.Component<Props, State> {
@@ -40,25 +41,24 @@ class ProfilePage extends React.Component<Props, State> {
   }
 
   async fetchData() {
-    this.setState({
-      isLoading: true,
-    });
+    this.setState({ isLoading: true });
 
     const { router } = this.props;
 
-    const response = await fetch(`api/profile?githubId=${router.query.githubId}`, { credentials: 'same-origin' });
+    try {
+      const githubId = router.query.githubId;
+      const response = githubId
+        ? await axios.get(`api/profile`, { params: { githubId } })
+        : await axios.get(`api/profile/me`);
 
-    if (!response.ok) {
+      this.setState({
+        isLoading: false,
+        profile: response.data.data,
+      });
+    } catch (e) {
       Router.push('/login');
       return;
     }
-
-    const json = await response.json();
-
-    this.setState({
-      isLoading: false,
-      profile: json.data,
-    });
   }
 
   async componentDidMount() {
@@ -78,7 +78,7 @@ class ProfilePage extends React.Component<Props, State> {
       const studentTasks = profile.students
         .map((data: any) => data.taskResults)
         .reduce((acc: any, v: any) => acc.concat(v), [])
-        .map((v: any) => ({...v, taskName: v.task.name, taskDescription: v.task.descriptionUrl }))
+        .map((v: any) => ({ ...v, taskName: v.task.name, taskDescription: v.task.descriptionUrl }))
         .map((v: any) => Object.keys(v).map(k => ({ label: k, value: v[k] })))
         .reduce((acc: any, v: any) => acc.concat(v), [])
         .filter((v: { label: any }) => TASK_LABELS.hasOwnProperty(`${v.label}`));
@@ -107,6 +107,11 @@ class ProfilePage extends React.Component<Props, State> {
           <div className="profile_container">
             <div className="profile_header">General Information</div>
             <div className="profile_section">
+              <div className="profile_value">
+                <img width="64" src={`https://github.com/${profile.githubId}.png`} />
+              </div>
+            </div>
+            <div className="profile_section">
               <div className="profile_label">Name and Surname</div>
               <div className="profile_value">
                 {profile.firstNameNative} {profile.lastNameNative}
@@ -129,41 +134,27 @@ class ProfilePage extends React.Component<Props, State> {
               </div>
             </div>
             <div className="profile_section">
-                <div className="profile_label">Contacts</div>
-                <div className="profile_value">
-                    <a href={`tel:${profile.contactsPhone}`} >
-                        {profile.contactsPhone}
-                    </a>
-                    <br/>
-                    <a href={`mailto:${profile.contactsEmail}`} >
-                        {profile.contactsEmail}
-                    </a>
-                    <a href={`mailto:${profile.contactsEpamEmail}`} >
-                        {profile.contactsEpamEmail}
-                    </a>
-                </div>
-            </div>
-            <div className="profile_section">
-              <div className="profile_label">External accounts</div>
+              <div className="profile_label">Contacts</div>
               <div className="profile_value">
-                  {profile.externalAccounts
-                        .filter((exta: any) => exta.username)
-                        .map((exta: any) => `Service: ${exta.service} Name: ${exta.username}`)}
+                <a href={`tel:${profile.contactsPhone}`}>{profile.contactsPhone}</a>
+                <br />
+                <a href={`mailto:${profile.contactsEmail}`}>{profile.contactsEmail}</a>
+                <a href={`mailto:${profile.contactsEpamEmail}`}>{profile.contactsEpamEmail}</a>
               </div>
-            </div>
-            <div className="profile_header">Mentee Information</div>
-            <div className="profile_section">
-              <div className="profile_label">Courses</div>
-              <div className="profile_value">{studentCourses.join(', ')}</div>
             </div>
             <div className="profile_section">
               <div className="profile_label">Education</div>
               <div className="profile_value">
-                  {profile.educationHistory.map(
-                    // tslint:disable-next-line:max-line-length
-                    (edh: any) => `Graduation Year: ${edh.graduationYear} University: ${edh.university} Faculty: ${edh.faculty} `,
-                  )}
-               </div>
+                {profile.educationHistory
+                  .filter((edh: any) => edh.university || edh.faculty)
+                  .map((edh: any) => (
+                    <>
+                      <div>Graduation Year: {edh.graduationYear}</div>
+                      <div>University: {edh.university}</div>
+                      <div>Faculty: {edh.faculty}</div>
+                    </>
+                  ))}
+              </div>
             </div>
             <div className="profile_section">
               <div className="profile_label">Employment history</div>
@@ -179,6 +170,20 @@ class ProfilePage extends React.Component<Props, State> {
                 <a href={`${profile.cvUrl}`}>{profile.cvUrl}</a>
               </div>
             </div>
+            <div className="profile_section">
+              <div className="profile_label">External accounts</div>
+              <div className="profile_value">
+                {profile.externalAccounts
+                  .filter((exta: any) => exta.username)
+                  .map((exta: any) => `Service: ${exta.service} Name: ${exta.username}`)}
+              </div>
+            </div>
+            <div className="profile_header">Student Profile</div>
+            <div className="profile_section">
+              <div className="profile_label">Courses</div>
+              <div className="profile_value">{studentCourses.join(', ')}</div>
+            </div>
+
             <div className="profile_section">
               <div className="profile_label">Fulltime ready</div>
               <div className="profile_value">{profile.readyFullTime}</div>
@@ -215,7 +220,7 @@ class ProfilePage extends React.Component<Props, State> {
               <div className="profile_label">Pull Request</div>
               <div className="profile_value" />
             </div>
-            <div className="profile_header">Mentor Information</div>
+            <div className="profile_header">Mentor Profile</div>
             <div className="profile_section">
               <div className="profile_label">Courses</div>
               <div className="profile_value">{mentorCourses.join(', ')}</div>
@@ -259,4 +264,4 @@ class ProfilePage extends React.Component<Props, State> {
   }
 }
 
-export default withRouter(ProfilePage);
+export default withRouter(withSession(ProfilePage));

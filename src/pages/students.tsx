@@ -72,7 +72,6 @@ class StudentsPage extends React.Component<Props, State> {
             {
               Header: 'Profile',
               accessor: 'githubId',
-              // tslint:disable-next-line:max-line-length
               Cell: props => (
                 <Link href={{ pathname: '/profile', query: { githubId: props.value } }}>
                   <a>Show profile</a>
