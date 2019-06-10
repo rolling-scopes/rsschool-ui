@@ -45,7 +45,10 @@ class ScorePage extends React.Component<Props, State> {
 
     const score = scoreResponse.data;
     const tasks = tasksResponse.data;
-    const sortedTasks = tasks.data.filter(task => task.studentEndDate).sort(sortTasksByEndDate);
+
+    const sortedTasks = tasks.data
+      .filter(task => task.studentEndDate || this.props.course.completed)
+      .sort(sortTasksByEndDate);
     const scoreWeights = sortedTasks.reduce(
       (acc, courseTask) => {
         acc[courseTask.courseTaskId] = courseTask.scoreWeight || 1;
