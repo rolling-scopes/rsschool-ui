@@ -4,7 +4,7 @@ import Link from 'next/link';
 import './index.scss';
 
 type Props = {
-  username: string;
+  username?: string;
 };
 
 class Header extends React.Component<Props, any> {
