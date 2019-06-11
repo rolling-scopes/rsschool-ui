@@ -1,10 +1,10 @@
-import * as React from 'react';
 import Router from 'next/router';
-import withSession, { Session } from '../components/withSession';
-import withCourses from '../components/withCourses';
-import { Course } from '../components/withCourseData';
+import * as React from 'react';
 import { ListGroup, ListGroupItem } from 'reactstrap';
 import Header from '../components/Header';
+import { Course } from '../components/withCourseData';
+import withCourses from '../components/withCourses';
+import withSession, { Session } from '../components/withSession';
 
 import '../index.scss';
 
@@ -13,20 +13,25 @@ type Props = {
   session?: Session;
 };
 
-type LinkInfo = {
-  name: string;
-  link: string;
-};
+class IndexPage extends React.PureComponent<Props> {
+  private hasAccessToCourse = (session: Session, course: Course) => {
+    const { isAdmin, isHirer, isActivist } = session;
+    const role = session.roles[course.id];
+    return !!role || isAdmin || isHirer || isActivist;
+  };
 
-class IndexPage extends React.Component<Props> {
-  getLinks = (course: Course) => {
+  private getLinks = (course: Course) => {
     if (!this.props.session) {
       return [];
     }
-    const role = this.props.session.roles[course.id];
-    if (!role && !this.props.session.isAdmin) {
+
+    if (!this.hasAccessToCourse(this.props.session, course)) {
       return [];
     }
+
+    const role = this.props.session.roles[course.id];
+    const { isAdmin, isActivist } = this.props.session;
+    const isMentor = !!role;
 
     const result = [
       {
@@ -35,44 +40,44 @@ class IndexPage extends React.Component<Props> {
       },
     ];
 
-    if (!course.completed) {
-      result.push(
-        {
-          name: `#gratitude`,
-          link: `/gratitude?course=${course.alias}`,
-        },
-        {
-          name: `Mentor Contacts`,
-          link: `/mentor-contacts?course=${course.alias}`,
-        },
-        {
-          name: `Submit Video & Presentation`,
-          link: `/task-artefact?course=${course.alias}`,
-        },
-        {
-          name: `Assign Tasks`,
-          link: `/task-assign?course=${course.alias}`,
-        },
-      );
-
-      if (this.props.session.isActivist || this.props.session.isAdmin) {
-        result.push({
-          name: `Submit Jury Score`,
-          link: `/task-jury-score?course=${course.alias}`,
-        });
-      }
+    if (isAdmin) {
+      result.push({
+        name: `Course Tasks`,
+        link: `/course-tasks?course=${course.alias}`,
+      });
     }
 
-    const isMentorOrAdmin = role === 'mentor' || this.props.session.isAdmin;
-    if (!isMentorOrAdmin) {
+    if (course.completed) {
       return result;
     }
-    result.push({
-      name: `Course Tasks`,
-      link: `/course-tasks?course=${course.alias}`,
-    });
 
-    if (!course.completed) {
+    result.push(
+      {
+        name: `#gratitude`,
+        link: `/gratitude?course=${course.alias}`,
+      },
+      {
+        name: `Mentor Contacts`,
+        link: `/mentor-contacts?course=${course.alias}`,
+      },
+      {
+        name: `Submit Video & Presentation`,
+        link: `/task-artefact?course=${course.alias}`,
+      },
+      {
+        name: `Assign Tasks`,
+        link: `/task-assign?course=${course.alias}`,
+      },
+    );
+
+    if (isActivist || isAdmin) {
+      result.push({
+        name: `Submit Jury Score`,
+        link: `/task-jury-score?course=${course.alias}`,
+      });
+    }
+
+    if (isMentor || isAdmin) {
       result.push(
         {
           name: `Interview Feedback`,
@@ -92,7 +97,7 @@ class IndexPage extends React.Component<Props> {
     return result;
   };
 
-  renderLinks() {
+  private renderLinks() {
     return (this.props.courses || [])
       .sort((a, b) => b.alias.localeCompare(a.alias))
       .map(course => {
@@ -105,7 +110,7 @@ class IndexPage extends React.Component<Props> {
       });
   }
 
-  renderLink = (linkInfo: LinkInfo) => {
+  private renderLink = (linkInfo: LinkInfo) => {
     return (
       <ListGroupItem key={linkInfo.link}>
         <a
@@ -136,5 +141,7 @@ class IndexPage extends React.Component<Props> {
     );
   }
 }
+
+type LinkInfo = { name: string; link: string };
 
 export default withCourses(withSession(IndexPage));
