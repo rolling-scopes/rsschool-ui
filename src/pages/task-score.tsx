@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FormGroup, Label, Button, Input, Alert } from 'reactstrap';
-import * as fetch from 'isomorphic-fetch';
+import axios from 'axios';
 import { Form, Field, SubsetFormApi } from 'react-final-form';
 import Header from '../components/Header';
 import withSession, { Session } from '../components/withSession';
@@ -16,6 +16,24 @@ type Props = {
 };
 
 type Student = { firstName: string; lastName: string; studentId: number; isExpelled: boolean };
+
+type Task = {
+  courseTaskId: number;
+  taskId: number;
+  name: string;
+  maxScore: number | null;
+  scoreWeight: number;
+  stageId: number;
+  githubPrRequired: boolean;
+  verification: 'manual' | 'auto';
+  description: string | null;
+  descriptionUrl: string;
+  studentStartDate: string | null;
+  studentEndDate: string | null;
+  taskResultCount: number;
+  allowStudentArtefacts: boolean;
+  useJury: boolean;
+};
 
 type State = {
   students: Student[];
@@ -56,45 +74,29 @@ class TaskScorePage extends React.Component<Props, State> {
 
   async componentDidMount() {
     const [studentsResponse, tasksResponse] = await Promise.all([
-      fetch(`/api/course/${this.props.course.id}/mentor/students`, {
-        credentials: 'same-origin',
-      }),
-      fetch(`/api/course/${this.props.course.id}/tasks`, {
-        credentials: 'same-origin',
-      }),
+      axios.get<{ data: { students: Student[] } }>(`/api/course/${this.props.course.id}/mentor/students`),
+      axios.get<{ data: Task[] }>(`/api/course/${this.props.course.id}/tasks`),
     ]);
 
-    let students = [];
-    let tasks = [];
+    const students = studentsResponse.data.data.students;
+    const tasks = tasksResponse.data.data
+      .sort(sortTasksByEndDate)
+      .filter(task => task.studentEndDate && task.verification !== 'auto' && !task.useJury);
 
-    if (studentsResponse.ok) {
-      students = (await studentsResponse.json()).data.students;
-    }
-    if (tasksResponse.ok) {
-      tasks = (await tasksResponse.json()).data
-        .sort(sortTasksByEndDate)
-        .filter((task: any) => task.studentEndDate && task.verification !== 'auto');
-    }
     this.setState({ students, tasks });
   }
 
   handleSubmit = async (values: any, formApi: SubsetFormApi) => {
     this.setState({ isLoading: true });
 
-    const result = await fetch(`/api/course/${this.props.course.id}/score`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(values),
-      credentials: 'same-origin',
-    });
+    try {
+      await axios.post(`/api/course/${this.props.course.id}/score`, values);
 
-    if (result.ok) {
       formApi.reset();
+      this.setState({ submitted: true, isLoading: false });
+    } catch (e) {
+      this.setState({ submitted: false, isLoading: false });
     }
-    this.setState({
-      submitted: !!result.ok,
-      isLoading: false,
-    });
   };
 
   render() {
