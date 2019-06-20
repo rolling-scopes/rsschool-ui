@@ -6,7 +6,6 @@ const { serverRuntimeConfig } = getConfig();
 function withCourses(WrappedComponent: React.ComponentType<any>) {
   return class extends React.PureComponent {
     static async getInitialProps() {
-      console.info(JSON.stringify(serverRuntimeConfig, null, 2));
       const coursesResponse = await fetch(`${serverRuntimeConfig.rsHost || ''}/api/courses`);
       if (coursesResponse.ok) {
         const courses = (await coursesResponse.json()).data;
