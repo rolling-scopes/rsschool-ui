@@ -20,15 +20,6 @@ type State = {
   isLoading: boolean;
 };
 
-const TASK_LABELS = {
-  taskName: 'Task name',
-  taskDescription: 'Task description',
-  description: 'Description',
-  score: 'Score',
-  githubPrUrl: 'Pull request',
-  comment: 'Comment',
-};
-
 class ProfilePage extends React.Component<Props, State> {
   state: State = {
     isLoading: true,
@@ -238,6 +229,7 @@ class ProfilePage extends React.Component<Props, State> {
           const mentor = student.mentor;
           const mentorUser = mentor.user;
           const tasks = student.taskResults;
+          const feedback = student.feedback;
           return (
             <div key={i}>
               <div className="profile_subheader">{student.course.name}</div>
@@ -261,9 +253,9 @@ class ProfilePage extends React.Component<Props, State> {
                   <Table className="profile-task-table mt-3">
                     <thead>
                       <tr>
-                        <th>Task</th>
-                        <th>Score</th>
-                        <th>PR</th>
+                          <th>Task</th>
+                          <th>Score</th>
+                          <th>PR</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -290,6 +282,14 @@ class ProfilePage extends React.Component<Props, State> {
                   </Table>
                 </div>
               )}
+                {(feedback as { comment: string }[]).map((f, i) => (
+                    <div key={i}>
+                        <div className="profile_section">
+                            <div className="profile_label">Comment </div>
+                            <div className="profile_value">{f.comment}</div>
+                        </div>
+                    </div>
+                ))}
             </div>
           );
         })}
