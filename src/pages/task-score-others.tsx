@@ -46,7 +46,9 @@ const githubPrRegExp = /https:\/\/github.com\/(\w|\d|\-)+\/(\w|\d|\-)+\/pull\/(\
 
 const required = (value: any) => (value ? undefined : 'Required');
 
-class TaskScorePage extends React.Component<Props, State> {
+const COURSE_TASK_IDS = [52];
+
+class TaskScoreOthersPage extends React.Component<Props, State> {
   state: State = {
     isLoading: false,
     students: [],
@@ -73,17 +75,17 @@ class TaskScorePage extends React.Component<Props, State> {
   };
 
   async componentDidMount() {
-    const [studentsResponse, tasksResponse] = await Promise.all([
-      axios.get<{ data: { students: Student[] } }>(`/api/course/${this.props.course.id}/mentor/students`),
-      axios.get<{ data: Task[] }>(`/api/course/${this.props.course.id}/tasks`),
-    ]);
-
-    const students = studentsResponse.data.data.students;
+    const tasksResponse = await axios.get<{ data: Task[] }>(`/api/course/${this.props.course.id}/tasks`);
     const tasks = tasksResponse.data.data
       .sort(sortTasksByEndDate)
-      .filter(task => task.studentEndDate && task.verification !== 'auto' && !task.useJury);
-
-    this.setState({ students, tasks });
+      .filter(
+        task =>
+          task.studentEndDate &&
+          task.verification !== 'auto' &&
+          !task.useJury &&
+          COURSE_TASK_IDS.includes(task.courseTaskId),
+      );
+    this.setState({ tasks });
   }
 
   handleSubmit = async (values: any, formApi: SubsetFormApi) => {
@@ -97,6 +99,15 @@ class TaskScorePage extends React.Component<Props, State> {
     } catch (e) {
       this.setState({ submitted: false, isLoading: false });
     }
+  };
+
+  onChangeTask = async (value: any) => {
+    const response = await axios.get<{ data: { students: Student[] } }>(
+      `/api/course/${this.props.course.id}/mentor/otherStudents?courseTaskId=${value}`,
+    );
+    this.setState({
+      students: response.data.data.students,
+    });
   };
 
   render() {
@@ -113,7 +124,7 @@ class TaskScorePage extends React.Component<Props, State> {
         <div>
           <Header username={this.props.session.githubId} />
           <div className="m-3">
-            <h3 className="mb-3">My Students</h3>
+            <h3 className="mb-3">Others Students</h3>
 
             {this.state.submitted && <Alert color="info">Score has been submitted</Alert>}
 
@@ -122,6 +133,32 @@ class TaskScorePage extends React.Component<Props, State> {
               render={({ handleSubmit }) => (
                 <LoadingScreen show={this.state.isLoading}>
                   <form onSubmit={handleSubmit}>
+                    <FormGroup className="col-md-6">
+                      <Field name="courseTaskId">
+                        {({ input, meta }) => (
+                          <>
+                            <Label>Task</Label>
+                            <Input
+                              {...input}
+                              name="tasks"
+                              type="select"
+                              onChange={e => {
+                                input.onChange(e);
+                                this.onChangeTask(e.target.value);
+                              }}
+                            >
+                              <option value="">(Empty)</option>
+                              {this.state.tasks.map((task, i) => (
+                                <option value={task.courseTaskId} key={i}>
+                                  {task.name}
+                                </option>
+                              ))}
+                            </Input>
+                            <ValidationError meta={meta} />
+                          </>
+                        )}
+                      </Field>
+                    </FormGroup>
                     <FormGroup className="col-md-6">
                       <Field name="studentId" validate={required}>
                         {({ input, meta }) => (
@@ -140,24 +177,7 @@ class TaskScorePage extends React.Component<Props, State> {
                         )}
                       </Field>
                     </FormGroup>
-                    <FormGroup className="col-md-6">
-                      <Field name="courseTaskId">
-                        {({ input, meta }) => (
-                          <>
-                            <Label>Task</Label>
-                            <Input {...input} name="tasks" type="select">
-                              <option value="">(Empty)</option>
-                              {this.state.tasks.map((task, i) => (
-                                <option value={task.courseTaskId} key={i}>
-                                  {task.name}
-                                </option>
-                              ))}
-                            </Input>
-                            <ValidationError meta={meta} />
-                          </>
-                        )}
-                      </Field>
-                    </FormGroup>
+
                     <FormGroup className="col-md-6">
                       <Field name="githubPrUrl" validate={this.validateGithubPr}>
                         {({ input, meta }) => (
@@ -208,4 +228,4 @@ class TaskScorePage extends React.Component<Props, State> {
   }
 }
 
-export default withCourseData(withSession(TaskScorePage));
+export default withCourseData(withSession(TaskScoreOthersPage));

@@ -75,6 +75,8 @@ const initialValues: any = {
 
 const required = (value: any) => (value ? undefined : 'Required');
 
+const COURSE_TASK_ID = 49;
+
 class InterviewFeedbackPage extends React.Component<Props, State> {
   state: State = {
     isLoading: false,
@@ -84,8 +86,10 @@ class InterviewFeedbackPage extends React.Component<Props, State> {
   };
 
   async componentDidMount() {
-    const studentsResponse = await axios.get(`/api/course/${this.props.course.id}/mentor/students`);
-    const students = studentsResponse.data.data.interviewStudents;
+    const studentsResponse = await axios.get(
+      `/api/course/${this.props.course.id}/mentor/otherStudents?courseTaskId=${COURSE_TASK_ID}`,
+    );
+    const students = studentsResponse.data.data.students;
     this.setState({ students });
   }
 
@@ -106,7 +110,7 @@ class InterviewFeedbackPage extends React.Component<Props, State> {
     const body = {
       formAnswers,
       score,
-      courseTaskId: 49,
+      courseTaskId: COURSE_TASK_ID,
       studentId: Number(values.studentId),
       comment: values.comment || '',
     };

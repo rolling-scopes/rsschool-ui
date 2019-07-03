@@ -80,16 +80,20 @@ class IndexPage extends React.PureComponent<Props> {
     if (isMentor || isAdmin) {
       result.push(
         {
-          name: `Interview Feedback`,
-          link: `/interview-feedback?course=${course.alias}`,
-        },
-        {
-          name: `Submit Score`,
+          name: `My Students: Submit Score`,
           link: `/task-score?course=${course.alias}`,
         },
         {
-          name: `Expel Student`,
+          name: `My Students: Expel Student`,
           link: `/expel?course=${course.alias}`,
+        },
+        {
+          name: `Others Students: Interview Feedback`,
+          link: `/interview-feedback?course=${course.alias}`,
+        },
+        {
+          name: `Others Students: Submit Score`,
+          link: `/task-score-others?course=${course.alias}`,
         },
       );
     }

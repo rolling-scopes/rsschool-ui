@@ -37,6 +37,11 @@ export class CourseService {
     return result.data.data;
   }
 
+  async getCourseTasksWithTaskCheckers() {
+    const result = await axios.get<{ data: ReadCourseTask[] }>(`/api/course/${this.courseId}/tasksCheckers`);
+    return result.data.data;
+  }
+
   async getStages() {
     const result = await axios.get<{ data: Stage[] }>(`/api/course/${this.courseId}/stages`);
     return result.data.data;

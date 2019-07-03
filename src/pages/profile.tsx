@@ -253,9 +253,9 @@ class ProfilePage extends React.Component<Props, State> {
                   <Table className="profile-task-table mt-3">
                     <thead>
                       <tr>
-                          <th>Task</th>
-                          <th>Score</th>
-                          <th>PR</th>
+                        <th>Task</th>
+                        <th>Score</th>
+                        <th>PR</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -282,14 +282,14 @@ class ProfilePage extends React.Component<Props, State> {
                   </Table>
                 </div>
               )}
-                {(feedback as { comment: string }[]).map((f, i) => (
-                    <div key={i}>
-                        <div className="profile_section">
-                            <div className="profile_label">Comment </div>
-                            <div className="profile_value">{f.comment}</div>
-                        </div>
-                    </div>
-                ))}
+              {(feedback as { comment: string }[]).map((f, i) => (
+                <div key={i}>
+                  <div className="profile_section">
+                    <div className="profile_label">Comment </div>
+                    <div className="profile_value">{f.comment}</div>
+                  </div>
+                </div>
+              ))}
             </div>
           );
         })}
