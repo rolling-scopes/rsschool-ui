@@ -1,11 +1,11 @@
-import * as React from 'react';
-import Header from '../components/Header';
 import axios from 'axios';
-import { LoadingScreen } from '../components/LoadingScreen';
-import ReactTable, { RowInfo } from 'react-table';
 import Link from 'next/link';
-import withSession, { Session } from '../components/withSession';
+import * as React from 'react';
+import ReactTable, { RowInfo } from 'react-table';
+import Header from '../components/Header';
+import { LoadingScreen } from '../components/LoadingScreen';
 import withCourseData, { Course } from '../components/withCourseData';
+import withSession, { Session } from '../components/withSession';
 import { sortTasksByEndDate } from '../services/rules';
 
 import '../index.scss';

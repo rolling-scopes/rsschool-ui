@@ -15,7 +15,7 @@ const formatDisplayValue = (data: Person) => {
   return result;
 };
 
-const GithubAvatar = (props: { githubId: string }) => (
+export const GithubAvatar = (props: { githubId: string }) => (
   <img className="select-avatar" src={`https://github.com/${props.githubId}.png`} />
 );
 
