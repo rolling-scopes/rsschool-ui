@@ -1,6 +1,7 @@
 import axios from 'axios';
 import Link from 'next/link';
 import * as React from 'react';
+import lodashRound from 'lodash.round';
 import ReactTable, { RowInfo } from 'react-table';
 import Header from '../components/Header';
 import { LoadingScreen } from '../components/LoadingScreen';
@@ -181,7 +182,7 @@ class ScorePage extends React.Component<Props, State> {
       const weight = this.state.scoreWeights[value.courseTaskId];
       return acc + value.score * (weight != null ? weight : 1);
     }, 0);
-    return Math.round(total);
+    return lodashRound(total, 1);
   };
 }
 
