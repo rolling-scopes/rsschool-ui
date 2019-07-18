@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Header from '../components/Header';
 import axios from 'axios';
-import { ListGroup, ListGroupItem } from 'reactstrap';
+import { ListGroup } from 'reactstrap';
 import withCourseData, { Course } from '../components/withCourseData';
 import withSession from '../components/withSession';
 

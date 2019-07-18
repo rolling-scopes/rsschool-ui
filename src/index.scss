@@ -50,3 +50,15 @@ body, html {
   height: 32px;
   width: 32px;
 }
+
+.profile_container .spacer {
+  flex: 1;
+}
+
+.profile_container .profile-action-edit {
+  align-self: center;
+}
+
+.profile-avatar-action {
+  display: flex;
+}

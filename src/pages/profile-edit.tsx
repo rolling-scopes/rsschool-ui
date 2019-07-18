@@ -1,13 +1,15 @@
-import * as React from 'react';
-import { Table, Button } from 'reactstrap';
-import Header from '../components/Header';
 import axios from 'axios';
-import { LoadingScreen } from '../components/LoadingScreen';
-import { withRouter } from 'next/router';
-import withSession, { Session } from '../components/withSession';
-
-import '../index.scss';
 import Link from 'next/link';
+import * as React from 'react';
+import { Field, Form } from 'react-final-form';
+import { withRouter } from 'next/router';
+
+import { Button, FormGroup, Input, Label, Table } from 'reactstrap';
+import Header from '../components/Header';
+import { LoadingScreen } from '../components/LoadingScreen';
+import ValidationError from '../components/ValidationError';
+import withSession, { Session } from '../components/withSession';
+import '../index.scss';
 
 type Props = {
   router: any;
@@ -19,7 +21,9 @@ type State = {
   isLoading: boolean;
 };
 
-class ProfilePage extends React.Component<Props, State> {
+const required = (value: any) => (value ? undefined : 'Required');
+
+class EditProfilePage extends React.Component<Props, State> {
   state: State = {
     isLoading: true,
     profile: null,
@@ -33,13 +37,8 @@ class ProfilePage extends React.Component<Props, State> {
   async fetchData() {
     this.setState({ isLoading: true });
 
-    const { router } = this.props;
-
     try {
-      const githubId = router.query.githubId;
-      const response = githubId
-        ? await axios.get(`api/profile`, { params: { githubId } })
-        : await axios.get(`api/profile/me`);
+      const response = await axios.get(`api/profile/me`);
 
       const profile = response.data.data;
       this.setState({ isLoading: false, profile });
@@ -52,11 +51,59 @@ class ProfilePage extends React.Component<Props, State> {
     await this.fetchData();
   }
 
-  async componentDidUpdate(prevProps: { router: { query: { githubId: any } } }) {
-    if (prevProps.router.query.githubId !== this.props.router.query.githubId) {
-      await this.fetchData();
+  private handleSubmit = async (values: any) => {
+    try {
+      this.setState({ isLoading: true });
+      const externalAccounts = [];
+      if (values.codewars) {
+        externalAccounts.push({
+          service: 'codewars',
+          username: values.codewars,
+        });
+      }
+      if (values.codeacademy) {
+        externalAccounts.push({
+          service: 'codeacademy',
+          username: values.codeacademy,
+        });
+      }
+      if (values.htmlacademy) {
+        externalAccounts.push({
+          service: 'htmlacademy',
+          username: values.htmlacademy,
+        });
+      }
+      const data = {
+        firstName: values.firstName,
+        lastName: values.lastName,
+        firstNameNative: values.firstNameNative,
+        lastNameNative: values.lastNameNative,
+        externalAccounts,
+      };
+
+      const response = await axios.post(`api/profile/me`, data);
+      const profile = response.data.data;
+
+      this.setState({ isLoading: false, profile });
+    } catch (e) {
+      this.setState({ isLoading: false });
     }
-  }
+  };
+
+  private getInitialValues = (profile: any) => {
+    const codewars = profile.externalAccounts.find((i: any) => i.service === 'codewars');
+    const codeacademy = profile.externalAccounts.find((i: any) => i.service === 'codeacademy');
+    const htmlacademy = profile.externalAccounts.find((i: any) => i.service === 'htmlacademy');
+    return {
+      firstName: profile.firstName,
+      lastName: profile.lastName,
+      firstNameNative: profile.firstNameNative,
+      lastNameNative: profile.lastNameNative,
+      codewars: codewars ? codewars.username : '',
+      codeacademy: codeacademy ? codeacademy.username : '',
+      htmlacademy: htmlacademy ? htmlacademy.username : '',
+    };
+  };
 
   renderProfile() {
     if (!this.state.profile) {
@@ -69,42 +116,116 @@ class ProfilePage extends React.Component<Props, State> {
     }
     const { profile } = this.state;
 
-    const mentorCourses = profile.mentors.map((data: any) => data.course.name);
-    const mentorStudents = profile.mentors
-      .map((data: any) =>
-        data.students.map((s: any) => ({
-          githubId: s.user.githubId,
-          name: `${s.user.firstName} ${s.user.lastName}`,
-        })),
-      )
-      .reduce((acc: any, v: any) => acc.concat(v), []);
-
     return (
       <div>
-        <Header username={profile.firstName} />
+        <Header />
         <div className="profile_container">
-          {this.renderGeneralInfo(profile)}
-          {this.renderBadges(profile)}
-          {this.renderStudentProfile(profile)}
+          <Form
+            onSubmit={this.handleSubmit}
+            initialValues={this.getInitialValues(profile)}
+            render={({ handleSubmit }) => (
+              <LoadingScreen show={this.state.isLoading}>
+                <form onSubmit={handleSubmit}>
+                  <FormGroup className="col-md-6">
+                    <Field name="firstName" validate={required}>
+                      {({ input, meta }) => (
+                        <>
+                          <Label>First Name</Label>
+                          <Input {...input} name="lastName" type="text" />
+                          <ValidationError meta={meta} />
+                        </>
+                      )}
+                    </Field>
+                  </FormGroup>
+                  <FormGroup className="col-md-6">
+                    <Field name="lastName" validate={required}>
+                      {({ input, meta }) => (
+                        <>
+                          <Label>Last Name</Label>
+                          <Input {...input} name="lastName" type="text" />
+                          <ValidationError meta={meta} />
+                        </>
+                      )}
+                    </Field>
+                  </FormGroup>
+                  <FormGroup className="col-md-6">
+                    <Field name="firstNameNative" validate={required}>
+                      {({ input, meta }) => (
+                        <>
+                          <Label>First Name Native</Label>
+                          <Input {...input} name="firstNameNative" type="text" />
+                          <ValidationError meta={meta} />
+                        </>
+                      )}
+                    </Field>
+                  </FormGroup>
+                  <FormGroup className="col-md-6">
+                    <Field name="lastNameNative" validate={required}>
+                      {({ input, meta }) => (
+                        <>
+                          <Label>Last Name Native</Label>
+                          <Input {...input} name="lastNameNative" type="text" />
+                          <ValidationError meta={meta} />
+                        </>
+                      )}
+                    </Field>
+                  </FormGroup>
 
-          <div className="profile_header">Mentor Profile</div>
-          <div className="profile_section">
-            <div className="profile_label">Courses</div>
-            <div className="profile_value">{mentorCourses.join(', ')}</div>
-          </div>
-          <div className="profile_section">
-            <div className="profile_label">Students</div>
-            <div className="profile_value">
-              {mentorStudents.map((st: any, i: any) => (
-                <span key={i}>
-                  <Link href={{ pathname: '/profile', query: { githubId: st.githubId } }}>
-                    <a>{st.name}</a>
-                  </Link>
-                  {i !== mentorStudents.length - 1 ? <span>{', '}</span> : null}
-                </span>
-              ))}
-            </div>
-          </div>
+                  <FormGroup className="col-md-6">
+                    <Field name="codewars">
+                      {({ input, meta }) => (
+                        <>
+                          <Label>Codewars Username</Label>
+                          <Input {...input} name="codewars" type="text" />
+                          <ValidationError meta={meta} />
+                        </>
+                      )}
+                    </Field>
+                  </FormGroup>
+
+                  <FormGroup className="col-md-6">
+                    <Field name="htmlacademy">
+                      {({ input, meta }) => (
+                        <>
+                          <Label>HTML Academy Username</Label>
+                          <Input {...input} name="htmlacademy" type="text" />
+                          <ValidationError meta={meta} />
+                        </>
+                      )}
+                    </Field>
+                  </FormGroup>
+
+                  <FormGroup className="col-md-6">
+                    <Field name="сodeacademy">
+                      {({ input, meta }) => (
+                        <>
+                          <Label>Codeacademy Username</Label>
+                          <Input {...input} name="сodeacademy" type="text" />
+                          <ValidationError meta={meta} />
+                        </>
+                      )}
+                    </Field>
+                  </FormGroup>
+
+                  <div className="row text-center">
+                    <div className="form-group col-md-6 d-flex justify-content-between">
+                      <Button
+                        onClick={() => {
+                          this.props.router.push('/profile');
+                        }}
+                        color="secondary"
+                      >
+                        Back to Profile
+                      </Button>
+                      <Button type="submit" color="success">
+                        Save Changes
+                      </Button>
+                    </div>
+                  </div>
+                </form>
+              </LoadingScreen>
+            )}
+          />
         </div>
       </div>
     );
@@ -129,13 +250,7 @@ class ProfilePage extends React.Component<Props, State> {
           <div className="profile_value profile-avatar-action">
             <img width="64" src={`https://github.com/${profile.githubId}.png`} />
             <div className="spacer" />
-            <Button
-              onClick={() => {
-                this.props.router.push('/profile-edit');
-              }}
-              color="primary"
-              className="profile-action-edit"
-            >
+            <Button color="primary" className="profile-action-edit">
               Edit
             </Button>
           </div>
@@ -244,7 +359,7 @@ class ProfilePage extends React.Component<Props, State> {
                       href={{ pathname: '/profile', query: { githubId: mentorUser.githubId } }}
                     >
                       <a>
-                        {mentorUser.firstName} {mentorUser.lastName}{' '}
+                        {mentorUser.firstName} {mentorUser.lastName}
                       </a>
                     </Link>
                   </span>
@@ -333,4 +448,4 @@ class ProfilePage extends React.Component<Props, State> {
   }
 }
 
-export default withRouter(withSession(ProfilePage));
+export default withRouter(withSession(EditProfilePage));
