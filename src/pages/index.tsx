@@ -5,6 +5,7 @@ import Header from '../components/Header';
 import { Course } from '../components/withCourseData';
 import withCourses from '../components/withCourses';
 import withSession, { Session } from '../components/withSession';
+import { ActivityBanner } from '../components/ActivityBanner';
 
 import '../index.scss';
 
@@ -137,6 +138,7 @@ class IndexPage extends React.PureComponent<Props> {
     }
     return (
       <div>
+        <ActivityBanner />
         <Header username={this.props.session.githubId} />
         <div className="m-2 mb-4">{this.renderLink({ name: 'My Profile', link: '/profile' })}</div>
         {links}
