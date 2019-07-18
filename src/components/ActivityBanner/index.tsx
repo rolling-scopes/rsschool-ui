@@ -26,7 +26,7 @@ class ActivityBanner extends React.Component<any, any> {
     if (this.state.lastActivityTime < 0) {
       return null;
     }
-    const isShown = this.state.lastActivityTime > this.now - defaultIdleTime;
+    const isShown = this.state.lastActivityTime < this.now - defaultIdleTime;
     return (
       <div className="activity-banner">
         {isShown && (
