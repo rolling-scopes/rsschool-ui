@@ -32,7 +32,6 @@ class IndexPage extends React.PureComponent<Props> {
 
     const role = this.props.session.roles[course.id];
     const { isAdmin, isActivist } = this.props.session;
-    const isMentor = !!role;
 
     const result = [
       {
@@ -41,11 +40,17 @@ class IndexPage extends React.PureComponent<Props> {
       },
     ];
 
-    if (isAdmin) {
-      result.push({
-        name: `Course Tasks`,
-        link: `/course-tasks?course=${course.alias}`,
-      });
+    if (isAdmin || role === 'coursemanager') {
+      result.push(
+        {
+          name: `Course Tasks`,
+          link: `/course-tasks?course=${course.alias}`,
+        },
+        {
+          name: `Assign Tasks`,
+          link: `/task-assign?course=${course.alias}`,
+        },
+      );
     }
 
     if (course.completed) {
@@ -65,10 +70,6 @@ class IndexPage extends React.PureComponent<Props> {
         name: `Submit Video & Presentation`,
         link: `/task-artefact?course=${course.alias}`,
       },
-      {
-        name: `Assign Tasks`,
-        link: `/task-assign?course=${course.alias}`,
-      },
     );
 
     if (isActivist || isAdmin) {
@@ -78,7 +79,7 @@ class IndexPage extends React.PureComponent<Props> {
       });
     }
 
-    if (isMentor || isAdmin) {
+    if (role === 'mentor' || isAdmin) {
       result.push(
         {
           name: `My Students: Submit Score`,
@@ -106,10 +107,14 @@ class IndexPage extends React.PureComponent<Props> {
     return (this.props.courses || [])
       .sort((a, b) => b.alias.localeCompare(a.alias))
       .map(course => {
+        const links = this.getLinks(course);
+        if (links.length === 0) {
+          return null;
+        }
         return (
           <div className="m-2 mt-4" key={course.id}>
             <h3>{course.name}</h3>
-            <ListGroup>{this.getLinks(course).map(this.renderLink)}</ListGroup>
+            <ListGroup>{links.map(this.renderLink)}</ListGroup>
           </div>
         );
       });

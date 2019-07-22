@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as fetch from 'isomorphic-fetch';
+import axios from 'axios';
 import { LoadingScreen } from './LoadingScreen';
 import Router from 'next/router';
 
@@ -11,7 +11,7 @@ export interface Session {
   isAdmin: boolean;
   isHirer: boolean;
   isActivist: boolean;
-  roles: { [key: number]: 'student' | 'mentor' };
+  roles: { [key: number]: 'student' | 'mentor' | 'coursemanager' };
 }
 
 type State = {
@@ -33,17 +33,15 @@ function withSession(WrappedComponent: React.ComponentType<any>) {
         this.setState({ session: sessionCache, isLoading: false });
         return;
       }
-      const response = await fetch(`/api/session`, {
-        credentials: 'same-origin',
-      });
-      this.setState({ isLoading: false });
-      if (!response.ok) {
+      try {
+        const response = await axios.get(`/api/session`);
+        this.setState({ isLoading: false });
+        sessionCache = response.data.data;
+        this.setState({ session: sessionCache });
+      } catch (e) {
+        this.setState({ isLoading: false });
         Router.push('/login');
-        return;
       }
-      const json = await response.json();
-      sessionCache = json.data;
-      this.setState({ session: sessionCache });
     }
 
     render() {
