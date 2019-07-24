@@ -1,13 +1,20 @@
 import * as React from 'react';
+
+import { Header } from 'components/Header';
+import withSession, { Session } from 'components/withSession';
 import { FormGroup, Label, Button, Input } from 'reactstrap';
 import { Field } from 'react-final-form';
 import ReactTable from 'react-table';
 import { TaskService } from 'services/task';
 import { requiredValidator } from 'components/Forms';
-import { TaskEditModal } from './TaskEditModal';
+import { TaskEditModal } from 'components/TasksForm/TaskEditModal';
 import { ValidationError } from 'components/ValidationError';
 
-type Props = {};
+import '../../index.scss';
+
+type Props = {
+  session: Session;
+};
 
 type State = {
   submitted: boolean;
@@ -15,7 +22,7 @@ type State = {
   modalValues: any | null;
 };
 
-export class TasksForm extends React.Component<Props, State> {
+class Tasks extends React.Component<Props, State> {
   state: State = {
     submitted: false,
     tasks: [],
@@ -120,63 +127,68 @@ export class TasksForm extends React.Component<Props, State> {
 
   render() {
     return (
-      <div className="m-3">
-        {this.renderModal()}
-        <Button color="success" onClick={this.handleAddTaskClick}>
-          Add
-        </Button>
-        <ReactTable
-          className="-striped -highlight"
-          defaultSorted={[{ id: 'name', desc: false }]}
-          filterable={true}
-          defaultPageSize={50}
-          defaultFilterMethod={(filter, row) => String(row[filter.id]) === filter.value}
-          data={this.state.tasks}
-          columns={[
-            {
-              Header: 'Task Id',
-              accessor: 'id',
-              maxWidth: 100,
-              sortMethod: (a, b) => b - a,
-            },
-            {
-              Header: 'Name',
-              accessor: 'name',
-              maxWidth: 360,
-              filterMethod: this.stringFilter,
-            },
-            {
-              Header: 'Description',
-              accessor: 'description',
-              maxWidth: 100,
-              filterMethod: this.stringFilter,
-            },
-            {
-              Header: 'Description Url',
-              accessor: 'descriptionUrl',
-              filterMethod: this.stringFilter,
-            },
-            {
-              Header: 'Verification',
-              accessor: 'verification',
-              maxWidth: 100,
-              filterMethod: this.stringFilter,
-            },
-            {
-              Header: 'Actions',
-              filterable: false,
-              maxWidth: 100,
-              Cell: row => (
-                <>
-                  <Button color="link" onClick={() => this.handleRowClick(row)}>
-                    Edit
-                  </Button>
-                </>
-              ),
-            },
-          ]}
-        />
+      <div>
+        <Header username={this.props.session.githubId} />
+        <div className="m-3">
+          {this.renderModal()}
+          <Button color="success" onClick={this.handleAddTaskClick}>
+            Add
+          </Button>
+          <ReactTable
+            className="-striped -highlight"
+            defaultSorted={[{ id: 'name', desc: false }]}
+            filterable={true}
+            defaultPageSize={50}
+            defaultFilterMethod={(filter, row) => String(row[filter.id]) === filter.value}
+            data={this.state.tasks}
+            columns={[
+              {
+                Header: 'Task Id',
+                accessor: 'id',
+                maxWidth: 100,
+                sortMethod: (a, b) => b - a,
+              },
+              {
+                Header: 'Name',
+                accessor: 'name',
+                maxWidth: 360,
+                filterMethod: this.stringFilter,
+              },
+              {
+                Header: 'Description',
+                accessor: 'description',
+                maxWidth: 100,
+                filterMethod: this.stringFilter,
+              },
+              {
+                Header: 'Description Url',
+                accessor: 'descriptionUrl',
+                filterMethod: this.stringFilter,
+              },
+              {
+                Header: 'Verification',
+                accessor: 'verification',
+                maxWidth: 100,
+                filterMethod: this.stringFilter,
+              },
+              {
+                Header: 'Actions',
+                filterable: false,
+                maxWidth: 100,
+                Cell: row => (
+                  <>
+                    <Button color="link" onClick={() => this.handleRowClick(row)}>
+                      Edit
+                    </Button>
+                  </>
+                ),
+              },
+            ]}
+          />
+        </div>
       </div>
     );
   }
 }
+
+export default withSession(Tasks);

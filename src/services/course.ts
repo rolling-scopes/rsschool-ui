@@ -1,10 +1,14 @@
 import axios from 'axios';
+import getConfig from 'next/config';
 
-export interface ReadCourseTask {
+const { serverRuntimeConfig } = getConfig();
+
+export interface CourseTask {
   courseTaskId: number;
   taskId: number;
   name: string;
   maxScore: number | null;
+  verification: 'auto' | 'manual';
   scoreWeight: number;
   stageId: number;
   githubPrRequired: boolean;
@@ -13,6 +17,8 @@ export interface ReadCourseTask {
   studentStartDate: string | null;
   studentEndDate: string | null;
   taskResultCount: number;
+  useJury: boolean;
+  checker: 'mentor' | 'assigned';
 }
 
 export interface CreateCourseTask {
@@ -29,36 +35,147 @@ export interface Stage {
   name: string;
 }
 
+export interface Course {
+  id: number;
+  name: string;
+  alias: string;
+  status: 'planned' | 'active' | 'completed';
+}
+
+export interface MentorWithContacts {
+  githubId: string;
+  email: string;
+  phone: string;
+}
+
 export class CourseService {
-  constructor(private courseId: number) {}
+  private host = serverRuntimeConfig.rsHost || '';
 
-  async getCourseTasks() {
-    const result = await axios.get<{ data: ReadCourseTask[] }>(`/api/course/${this.courseId}/tasks`);
+  async getCourses() {
+    const result = await axios.get<{ data: Course[] }>(`${this.host}/api/courses`);
     return result.data.data;
   }
 
-  async getCourseTasksWithTaskCheckers() {
-    const result = await axios.get<{ data: ReadCourseTask[] }>(`/api/course/${this.courseId}/tasksCheckers`);
+  async getCourseTasks(courseId: number) {
+    const result = await axios.get<{ data: CourseTask[] }>(`${this.host}/api/course/${courseId}/tasks`);
     return result.data.data;
   }
 
-  async getStages() {
-    const result = await axios.get<{ data: Stage[] }>(`/api/course/${this.courseId}/stages`);
+  async getCourseTasksWithTaskCheckers(courseId: number) {
+    const result = await axios.get<{ data: CourseTask[] }>(`${this.host}/api/course/${courseId}/tasksCheckers`);
     return result.data.data;
   }
 
-  async createCourseTask(data: CreateCourseTask) {
-    const result = await axios.post(`/api/course/${this.courseId}/task`, data);
+  async getStages(courseId: number) {
+    const result = await axios.get<{ data: Stage[] }>(`${this.host}/api/course/${courseId}/stages`);
     return result.data.data;
   }
 
-  async updateCourseTask(courseTaskId: number, data: any) {
-    const result = await axios.put(`/api/course/${this.courseId}/task/${courseTaskId}`, data);
+  async createCourseTask(courseId: number, data: CreateCourseTask) {
+    const result = await axios.post(`${this.host}/api/course/${courseId}/task`, data);
     return result.data.data;
   }
 
-  async deleteCourseTask(courseTaskId: number) {
-    const result = await axios.delete(`/api/course/${this.courseId}/task/${courseTaskId}`);
+  async updateCourseTask(courseId: number, courseTaskId: number, data: any) {
+    const result = await axios.put(`${this.host}/api/course/${courseId}/task/${courseTaskId}`, data);
     return result.data.data;
   }
+
+  async deleteCourseTask(courseId: number, courseTaskId: number) {
+    const result = await axios.delete(`/api/course/${courseId}/task/${courseTaskId}`);
+    return result.data.data;
+  }
+
+  async getStudentProfile(courseId: number) {
+    const result = await axios.get<{
+      data: StudentProfile;
+    }>(`/api/course/${courseId}/student/profile`);
+    return result.data.data;
+  }
+
+  async getCourseScore(courseId: number) {
+    const result = await axios.get<{
+      data: StudentScore[];
+    }>(`/api/course/${courseId}/score`);
+    return result.data.data;
+  }
+
+  async postStudentScore(courseId: number, studentId: number, data: PostScore) {
+    await axios.post(`/api/course/${courseId}/score`, {
+      studentId,
+      ...data,
+    });
+  }
+
+  async getAllStudents(courseId: number) {
+    const result = await axios.get<{ data: { students: StudentBasic[]; assignedStudents: AssignedStudent[] } }>(
+      `/api/course/${courseId}/mentor/students/all`,
+    );
+    return result.data.data;
+  }
+
+  async getMyStudents(courseId: number) {
+    const result = await axios.get<{ data: { students: StudentBasic[] } }>(
+      `/api/course/${courseId}/mentor/students/all`,
+    );
+    return result.data.data.students;
+  }
+
+  async getAssignedStudents(courseId: number) {
+    const result = await axios.get<{ data: { assignedStudents: AssignedStudent[] } }>(
+      `/api/course/${courseId}/mentor/students/all`,
+    );
+    return result.data.data.assignedStudents;
+  }
+}
+
+export interface StudentProfile {
+  courseId: number;
+  totalScore: number;
+  mentor: MentorWithContacts | null;
+}
+
+export interface StudentBasic {
+  lastName: string;
+  firstName: string;
+  githubId: string;
+  isActive: boolean;
+
+  id: number;
+  userId: number;
+  courseId: number;
+
+  mentor: MentorBasic | null;
+}
+
+export interface AssignedStudent extends StudentBasic {
+  courseTaskId: number;
+}
+
+export interface MentorBasic {
+  lastName: string;
+  firstName: string;
+  githubId: string;
+
+  id: number;
+  userId: number;
+  courseId: number;
+
+  students: StudentBasic[];
+}
+export interface StudentScore extends StudentBasic {
+  taskResults: {
+    courseTaskId: number;
+    score: number;
+  }[];
+  rank: number;
+  locationName: string;
+  totalScore: number;
+}
+
+export interface PostScore {
+  courseTaskId: number;
+  score: number;
+  comment?: string;
+  githubPrUrl?: string;
 }

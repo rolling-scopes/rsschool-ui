@@ -14,6 +14,7 @@
     "jsx-no-lambda": false,
     "jsx-no-multiline-js": false,
     "jsx-wrap-multiline": false,
+    "jsx-boolean-value": false,
     "member-access": false,
     "member-ordering": false,
     "no-console": [

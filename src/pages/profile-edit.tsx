@@ -1,16 +1,18 @@
-import axios from 'axios';
-import { withRouter } from 'next/router';
 import * as React from 'react';
-import { Field, Form } from 'react-final-form';
-import { Button, FormGroup, Input, Label } from 'reactstrap';
-import Header from '../components/Header';
-import { LoadingScreen } from '../components/LoadingScreen';
-import ValidationError from '../components/ValidationError';
-import withSession, { Session } from '../components/withSession';
+import { Form } from 'react-final-form';
+import { Button, FormGroup } from 'reactstrap';
+import axios from 'axios';
+import { withRouter, RouterProps } from 'next/router';
+
+import { TextInput } from 'components/Forms';
+import { Header } from 'components/Header';
+import { LoadingScreen } from 'components/LoadingScreen';
+import withSession, { Session } from 'components/withSession';
+
 import '../index.scss';
 
 type Props = {
-  router: any;
+  router: RouterProps;
   session: Session;
 };
 
@@ -18,8 +20,6 @@ type State = {
   profile: any;
   isLoading: boolean;
 };
-
-const required = (value: any) => (value ? undefined : 'Required');
 
 class EditProfilePage extends React.Component<Props, State> {
   state: State = {
@@ -107,7 +107,7 @@ class EditProfilePage extends React.Component<Props, State> {
     if (!this.state.profile) {
       return (
         <div>
-          <Header />
+          <Header username={this.props.session.githubId} />
           <h2 className="m-4">No Access</h2>
         </div>
       );
@@ -115,8 +115,8 @@ class EditProfilePage extends React.Component<Props, State> {
     const { profile } = this.state;
 
     return (
-      <div>
-        <Header />
+      <>
+        <Header username={this.props.session.githubId} />
         <div className="profile_container">
           <Form
             onSubmit={this.handleSubmit}
@@ -125,94 +125,32 @@ class EditProfilePage extends React.Component<Props, State> {
               <LoadingScreen show={this.state.isLoading}>
                 <form onSubmit={handleSubmit}>
                   <FormGroup className="col-md-6">
-                    <Field name="firstName" validate={required}>
-                      {({ input, meta }) => (
-                        <>
-                          <Label>First Name</Label>
-                          <Input {...input} name="lastName" type="text" />
-                          <ValidationError meta={meta} />
-                        </>
-                      )}
-                    </Field>
+                    <TextInput field="firstName" label="First Name" required />
                   </FormGroup>
                   <FormGroup className="col-md-6">
-                    <Field name="lastName" validate={required}>
-                      {({ input, meta }) => (
-                        <>
-                          <Label>Last Name</Label>
-                          <Input {...input} name="lastName" type="text" />
-                          <ValidationError meta={meta} />
-                        </>
-                      )}
-                    </Field>
+                    <TextInput field="lastName" label="Last Name" required />
                   </FormGroup>
                   <FormGroup className="col-md-6">
-                    <Field name="firstNameNative" validate={required}>
-                      {({ input, meta }) => (
-                        <>
-                          <Label>First Name Native</Label>
-                          <Input {...input} name="firstNameNative" type="text" />
-                          <ValidationError meta={meta} />
-                        </>
-                      )}
-                    </Field>
+                    <TextInput field="firstNameNative" label="First Name Native" required />
                   </FormGroup>
                   <FormGroup className="col-md-6">
-                    <Field name="lastNameNative" validate={required}>
-                      {({ input, meta }) => (
-                        <>
-                          <Label>Last Name Native</Label>
-                          <Input {...input} name="lastNameNative" type="text" />
-                          <ValidationError meta={meta} />
-                        </>
-                      )}
-                    </Field>
+                    <TextInput field="lastNameNative" label="Last Name Native" required />
                   </FormGroup>
 
                   <FormGroup className="col-md-6">
-                    <Field name="codewars">
-                      {({ input, meta }) => (
-                        <>
-                          <Label>Codewars Username</Label>
-                          <Input {...input} name="codewars" type="text" />
-                          <ValidationError meta={meta} />
-                        </>
-                      )}
-                    </Field>
+                    <TextInput field="codewars" label="Codewars Username" />
+                  </FormGroup>
+                  <FormGroup className="col-md-6">
+                    <TextInput field="htmlacademy" label="HTML Academy Username" />
                   </FormGroup>
 
                   <FormGroup className="col-md-6">
-                    <Field name="htmlacademy">
-                      {({ input, meta }) => (
-                        <>
-                          <Label>HTML Academy Username</Label>
-                          <Input {...input} name="htmlacademy" type="text" />
-                          <ValidationError meta={meta} />
-                        </>
-                      )}
-                    </Field>
-                  </FormGroup>
-
-                  <FormGroup className="col-md-6">
-                    <Field name="сodeacademy">
-                      {({ input, meta }) => (
-                        <>
-                          <Label>Codeacademy Username</Label>
-                          <Input {...input} name="сodeacademy" type="text" />
-                          <ValidationError meta={meta} />
-                        </>
-                      )}
-                    </Field>
+                    <TextInput field="сodeacademy" label="Codeacademy Username" />
                   </FormGroup>
 
                   <div className="row text-center">
                     <div className="form-group col-md-6 d-flex justify-content-between">
-                      <Button
-                        onClick={() => {
-                          this.props.router.push('/profile');
-                        }}
-                        color="secondary"
-                      >
+                      <Button onClick={() => this.props.router.push('/profile')} color="secondary">
                         Back to Profile
                       </Button>
                       <Button type="submit" color="success">
@@ -225,19 +163,12 @@ class EditProfilePage extends React.Component<Props, State> {
             )}
           />
         </div>
-      </div>
+      </>
     );
   }
 
   render() {
-    if (!this.props.session) {
-      return null;
-    }
-    return (
-      <>
-        <LoadingScreen show={this.state.isLoading}>{this.renderProfile()}</LoadingScreen>
-      </>
-    );
+    return <LoadingScreen show={this.state.isLoading}>{this.renderProfile()}</LoadingScreen>;
   }
 }
 

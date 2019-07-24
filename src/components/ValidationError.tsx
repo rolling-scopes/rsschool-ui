@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Alert } from 'reactstrap';
 
-export default function ValidationError(props: any) {
+export function ValidationError(props: any) {
   const { meta } = props;
   if (!meta.error || !meta.touched) {
     return null;

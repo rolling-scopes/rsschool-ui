@@ -5,13 +5,14 @@ import Router from 'next/router';
 
 import '../index.scss';
 
+export type Role = 'student' | 'mentor' | 'coursemanager';
 export interface Session {
   id: number;
   githubId: string;
   isAdmin: boolean;
   isHirer: boolean;
   isActivist: boolean;
-  roles: { [key: number]: 'student' | 'mentor' | 'coursemanager' };
+  roles: { [key: number]: Role };
 }
 
 type State = {
@@ -21,7 +22,7 @@ type State = {
 
 let sessionCache: Session | undefined;
 
-function withSession(WrappedComponent: React.ComponentType<any>) {
+function withSession(WrappedComponent: React.ComponentType<any>, requiredRole?: Role) {
   return class extends React.Component<any, State> {
     state: State = {
       isLoading: true,
@@ -45,9 +46,19 @@ function withSession(WrappedComponent: React.ComponentType<any>) {
     }
 
     render() {
+      if (this.state.session && requiredRole) {
+        const { roles, isAdmin } = this.state.session;
+        if (roles[this.props.course.id] !== requiredRole && !isAdmin) {
+          return (
+            <h4 className="m-5 d-flex justify-content-center">
+              You are not [{requiredRole}] in {this.props.course.alias}
+            </h4>
+          );
+        }
+      }
       return (
         <LoadingScreen show={this.state.isLoading}>
-          <WrappedComponent session={this.state.session} {...this.props} />;
+          {this.state.session && <WrappedComponent session={this.state.session} {...this.props} />}
         </LoadingScreen>
       );
     }

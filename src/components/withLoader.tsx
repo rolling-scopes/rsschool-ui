@@ -1,5 +1,4 @@
 import * as React from 'react';
-
 import { LoadingScreen } from './LoadingScreen';
 
 export const withLoader = ({ type }: any) => (WrappedComponent: React.ComponentType) => (props: any) => {

@@ -1,32 +1,26 @@
-import axios from 'axios';
 import Link from 'next/link';
 import * as React from 'react';
-import lodashRound from 'lodash.round';
 import ReactTable, { RowInfo } from 'react-table';
-import Header from '../components/Header';
-import { LoadingScreen } from '../components/LoadingScreen';
-import withCourseData, { Course } from '../components/withCourseData';
-import withSession, { Session } from '../components/withSession';
-import { sortTasksByEndDate } from '../services/rules';
+import { Alert } from 'reactstrap';
+import { Header } from 'components/Header';
+import { LoadingScreen } from 'components/LoadingScreen';
+import withCourseData from 'components/withCourseData';
+import { Course, CourseTask, CourseService, StudentScore } from 'services/course';
+import withSession, { Session } from 'components/withSession';
+import { sortTasksByEndDate } from 'services/rules';
 
-import '../index.scss';
+import '../../index.scss';
 
 type Props = {
-  session?: Session;
+  session: Session;
   course: Course;
 };
 
 type State = {
-  students: any[];
+  students: StudentScore[];
   isLoading: boolean;
-  courseTasks: any[];
+  courseTasks: CourseTask[];
 };
-
-interface CourseTask {
-  courseTaskId: number;
-  studentEndDate: string | null;
-  scoreWeight: number | null;
-}
 
 class ScorePage extends React.Component<Props, State> {
   state: State = {
@@ -35,37 +29,22 @@ class ScorePage extends React.Component<Props, State> {
     courseTasks: [],
   };
 
+  courseService = new CourseService();
+
   async componentDidMount() {
     this.setState({ isLoading: true });
-    const [scoreResponse, tasksResponse] = await Promise.all([
-      axios.get(`/api/course/${this.props.course.id}/score`),
-      axios.get<{ data: CourseTask[] }>(`/api/course/${this.props.course.id}/tasks`),
+
+    const [courseScore, courseTasks] = await Promise.all([
+      this.courseService.getCourseScore(this.props.course.id),
+      this.courseService.getCourseTasks(this.props.course.id),
     ]);
 
-    const score = scoreResponse.data;
-    const tasks = tasksResponse.data;
-
-    const sortedTasks = tasks.data
-      .filter(task => task.studentEndDate || this.props.course.completed)
+    const sortedTasks = courseTasks
+      .filter(task => !!task.studentEndDate || this.props.course.status !== 'active')
       .sort(sortTasksByEndDate);
-    const scoreWeights = sortedTasks.reduce(
-      (acc, courseTask) => {
-        acc[courseTask.courseTaskId] = courseTask.scoreWeight || 1;
-        return acc;
-      },
-      {} as { [key: string]: number },
-    );
+
     this.setState({
-      students: score.data
-        .map((d: any) => {
-          d.total = this.calculateTotal(d, scoreWeights);
-          return d;
-        })
-        .sort((a: any, b: any) => this.numberSort(a.total, b.total))
-        .map((d: any, i: number) => {
-          d.index = i + 1;
-          return d;
-        }),
+      students: courseScore,
       courseTasks: sortedTasks,
       isLoading: false,
     });
@@ -73,7 +52,7 @@ class ScorePage extends React.Component<Props, State> {
 
   getColumns() {
     const columns = this.state.courseTasks.map(task => ({
-      id: task.courseTaskId,
+      id: task.courseTaskId.toString(),
       Header: () => {
         return task.descriptionUrl ? (
           <a className="table-header-link" href={task.descriptionUrl}>
@@ -85,7 +64,7 @@ class ScorePage extends React.Component<Props, State> {
       },
       className: 'align-right',
       sortMethod: this.numberSort,
-      accessor: (d: any) => {
+      accessor: (d: StudentScore) => {
         const currentTask = d.taskResults.find((taskResult: any) => taskResult.courseTaskId === task.courseTaskId);
         return currentTask ? <div>{currentTask.score}</div> : 0;
       },
@@ -98,28 +77,25 @@ class ScorePage extends React.Component<Props, State> {
   numberSort = (a: number, b: number) => b - a;
 
   render() {
-    if (!this.props.session) {
-      return null;
-    }
     return (
       <LoadingScreen show={this.state.isLoading}>
-        <Header username={this.props.session.githubId} />
-        <h2>{this.props.course.name}</h2>
+        <Header title="Score" username={this.props.session.githubId} courseName={this.props.course.name} />
+        <Alert color="warning">Score is refreshed every 5 minutes</Alert>
         <ReactTable
-          defaultSorted={[{ id: 'total', desc: false }]}
+          defaultSorted={[{ id: 'totalScore', desc: false }]}
           defaultPageSize={100}
           className="-striped"
           getTrProps={(_: any, rowInfo?: RowInfo) => {
             if (!rowInfo || !rowInfo.original) {
               return {};
             }
-            return { className: rowInfo.original.isExpelled ? 'rt-expelled' : '' };
+            return { className: !(rowInfo.original as StudentScore).isActive ? 'rt-expelled' : '' };
           }}
           data={this.state.students}
           columns={[
             {
               Header: '#',
-              accessor: 'index',
+              accessor: 'rank',
               maxWidth: 50,
               filterable: false,
             },
@@ -154,8 +130,15 @@ class ScorePage extends React.Component<Props, State> {
               filterMethod: this.stringFilter,
             },
             {
+              Header: 'Location',
+              accessor: 'locationName',
+              maxWidth: 120,
+              filterable: true,
+              filterMethod: this.stringFilter,
+            },
+            {
               Header: 'Mentor Github Id',
-              accessor: 'mentorGithubId',
+              accessor: 'mentor.githubId',
               maxWidth: 160,
               filterable: true,
               Cell: (props: any) => (
@@ -167,7 +150,7 @@ class ScorePage extends React.Component<Props, State> {
             },
             {
               Header: 'Total',
-              accessor: 'total',
+              accessor: 'totalScore',
               maxWidth: 80,
               filterable: false,
               className: 'align-right',
@@ -180,17 +163,6 @@ class ScorePage extends React.Component<Props, State> {
       </LoadingScreen>
     );
   }
-
-  private calculateTotal = (
-    d: { taskResults: { score: number; courseTaskId: number }[] },
-    scoreWeights: { [key: string]: number },
-  ) => {
-    const total = d.taskResults.reduce((acc: number, value) => {
-      const weight = scoreWeights[value.courseTaskId];
-      return acc + value.score * (weight != null ? weight : 1);
-    }, 0);
-    return lodashRound(total, 1);
-  };
 }
 
 export default withCourseData(withSession(ScorePage));

@@ -4,17 +4,16 @@ import { Field } from 'react-final-form';
 import ReactTable from 'react-table';
 import DatePicker from 'react-datepicker';
 import { format } from 'date-fns';
-import { CourseService, ReadCourseTask, Stage } from '../services/course';
-import { TaskService, Task } from '../services/task';
-import Header from '../components/Header';
-import withSession, { Session } from '../components/withSession';
-import withCourseData, { Course } from '../components/withCourseData';
-import { TaskEditModal } from '../components/TasksForm/TaskEditModal';
-import ValidationError from '../components/ValidationError';
+import { CourseService, CourseTask, Stage, Course } from 'services/course';
+import { TaskService, Task } from 'services/task';
+import { Header } from 'components/Header';
+import withSession, { Session } from 'components/withSession';
+import withCourseData from 'components/withCourseData';
+import { TaskEditModal } from 'components/TasksForm/TaskEditModal';
+import { ValidationError } from 'components/ValidationError';
+import { requiredValidator } from 'components/Forms';
 
-import '../index.scss';
-
-const required = (value: any) => (value ? undefined : 'Required');
+import '../../../index.scss';
 
 type Props = {
   session?: Session;
@@ -23,7 +22,7 @@ type Props = {
 
 type State = {
   tasks: Task[];
-  courseTasks: ReadCourseTask[];
+  courseTasks: CourseTask[];
   stages: Stage[];
   modalValues: any;
   modalAction: 'update' | 'create';
@@ -42,14 +41,14 @@ class CourseTasksPage extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this.courseService = new CourseService(props.course.id);
+    this.courseService = new CourseService();
   }
 
   async componentDidMount() {
     const taskService = new TaskService();
     const [courseTasks, stages, tasks] = await Promise.all([
-      this.courseService.getCourseTasks(),
-      this.courseService.getStages(),
+      this.courseService.getCourseTasks(this.props.course.id),
+      this.courseService.getStages(this.props.course.id),
       taskService.getTasks(),
     ]);
     this.setState({ courseTasks, stages, tasks });
@@ -63,8 +62,8 @@ class CourseTasksPage extends React.Component<Props, State> {
       <div>
         <Header username={this.props.session.githubId} />
         {this.renderModal()}
-        <Button color="success" onClick={this.handleAddTaskClick}>
-          Add
+        <Button size="sm" color="success" onClick={this.handleAddTaskClick}>
+          Add Task
         </Button>
         <ReactTable
           className="-striped -highlight"
@@ -131,7 +130,7 @@ class CourseTasksPage extends React.Component<Props, State> {
         }}
       >
         {this.state.modalAction === 'create' && (
-          <Field name="taskId" validate={required}>
+          <Field name="taskId" validate={requiredValidator}>
             {({ input, meta }) => (
               <FormGroup className="col-md-auto">
                 <Label>Task</Label>
@@ -150,7 +149,7 @@ class CourseTasksPage extends React.Component<Props, State> {
             )}
           </Field>
         )}
-        <Field name="stageId" validate={required}>
+        <Field name="stageId" validate={requiredValidator}>
           {({ input, meta }) => (
             <FormGroup className="col-md-auto">
               <Label>Stage</Label>
@@ -216,8 +215,8 @@ class CourseTasksPage extends React.Component<Props, State> {
   };
 
   private handleDeleteRowClick = async (row: any) => {
-    await this.courseService.deleteCourseTask(row.original.courseTaskId);
-    const courseTasks = await this.courseService.getCourseTasks();
+    await this.courseService.deleteCourseTask(this.props.course.id, row.original.courseTaskId);
+    const courseTasks = await this.courseService.getCourseTasks(this.props.course.id);
     this.setState({ courseTasks });
   };
 
@@ -230,11 +229,11 @@ class CourseTasksPage extends React.Component<Props, State> {
     };
 
     if (this.state.modalAction === 'create') {
-      await this.courseService.createCourseTask({ ...data, taskId: values.taskId });
+      await this.courseService.createCourseTask(this.props.course.id, { ...data, taskId: values.taskId });
     } else {
-      await this.courseService.updateCourseTask(values.courseTaskId, data);
+      await this.courseService.updateCourseTask(this.props.course.id, values.courseTaskId, data);
     }
-    const courseTasks = await this.courseService.getCourseTasks();
+    const courseTasks = await this.courseService.getCourseTasks(this.props.course.id);
     this.setState({ modalValues: null, courseTasks });
   };
 }
