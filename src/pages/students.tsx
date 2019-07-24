@@ -3,7 +3,7 @@ import ReactTable from 'react-table';
 import Link from 'next/link';
 
 import Header from '../components/Header';
-import * as fetch from 'isomorphic-fetch';
+import axios from 'axios';
 import { LoadingScreen } from '../components/LoadingScreen';
 import withCourseData, { Course } from '../components/withCourseData';
 import withSession from '../components/withSession';
@@ -26,12 +26,9 @@ class StudentsPage extends React.Component<Props, State> {
   };
 
   async componentDidMount() {
-    const response = await fetch(`/api/course/${this.props.course.id}/students`, {
-      credentials: 'same-origin',
-    });
-    const json = await response.json();
+    const response = await axios(`/api/course/${this.props.course.id}/students`);
     this.setState({
-      students: json.data,
+      students: response.data.data,
       isLoading: false,
     });
   }

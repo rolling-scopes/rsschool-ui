@@ -1,11 +1,12 @@
-import * as React from 'react';
-import Header from '../components/Header';
 import axios from 'axios';
-import { LoadingScreen } from '../components/LoadingScreen';
-import ReactTable, { RowInfo } from 'react-table';
 import Link from 'next/link';
-import withSession, { Session } from '../components/withSession';
+import * as React from 'react';
+import lodashRound from 'lodash.round';
+import ReactTable, { RowInfo } from 'react-table';
+import Header from '../components/Header';
+import { LoadingScreen } from '../components/LoadingScreen';
 import withCourseData, { Course } from '../components/withCourseData';
+import withSession, { Session } from '../components/withSession';
 import { sortTasksByEndDate } from '../services/rules';
 
 import '../index.scss';
@@ -58,7 +59,16 @@ class ScorePage extends React.Component<Props, State> {
     );
     this.setState({
       scoreWeights,
-      students: score.data,
+      students: score.data
+        .map((d: any) => {
+          d.total = this.calculateTotal(d);
+          return d;
+        })
+        .sort((a: any, b: any) => this.numberSort(a.total, b.total))
+        .map((d: any, i: number) => {
+          d.index = i + 1;
+          return d;
+        }),
       courseTasks: sortedTasks,
       isLoading: false,
     });
@@ -112,7 +122,7 @@ class ScorePage extends React.Component<Props, State> {
           columns={[
             {
               Header: '#',
-              id: 'rowNumber',
+              accessor: 'index',
               maxWidth: 50,
               filterable: false,
               Cell: (row: any) => row.page * row.pageSize + row.viewIndex + 1,
@@ -160,12 +170,11 @@ class ScorePage extends React.Component<Props, State> {
               filterMethod: this.stringFilter,
             },
             {
-              id: 'total',
               Header: 'Total',
+              accessor: 'total',
               maxWidth: 80,
               filterable: false,
               className: 'align-right',
-              accessor: this.calculateTotal,
               sortMethod: this.numberSort,
               Cell: (props: any) => <span className="td-selected">{props.value}</span>,
             },
@@ -181,7 +190,7 @@ class ScorePage extends React.Component<Props, State> {
       const weight = this.state.scoreWeights[value.courseTaskId];
       return acc + value.score * (weight != null ? weight : 1);
     }, 0);
-    return Math.round(total);
+    return lodashRound(total, 1);
   };
 }
 

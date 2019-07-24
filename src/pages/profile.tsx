@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { Table } from 'reactstrap';
+import { Table, Button } from 'reactstrap';
 import Header from '../components/Header';
 import axios from 'axios';
-import Login from '../components/Login';
 import { LoadingScreen } from '../components/LoadingScreen';
 import { withRouter } from 'next/router';
 import withSession, { Session } from '../components/withSession';
@@ -111,20 +110,13 @@ class ProfilePage extends React.Component<Props, State> {
     );
   }
 
-  renderLogin() {
-    if (!this.state.profile && !this.state.isLoading) {
-      return <Login />;
-    }
-    return null;
-  }
-
   render() {
+    if (!this.props.session) {
+      return null;
+    }
     return (
       <>
-        <LoadingScreen show={this.state.isLoading}>
-          {this.renderLogin()}
-          {this.renderProfile()}
-        </LoadingScreen>
+        <LoadingScreen show={this.state.isLoading}>{this.renderProfile()}</LoadingScreen>
       </>
     );
   }
@@ -134,8 +126,18 @@ class ProfilePage extends React.Component<Props, State> {
       <>
         <div className="profile_header">General Information</div>
         <div className="profile_section">
-          <div className="profile_value">
+          <div className="profile_value profile-avatar-action">
             <img width="64" src={`https://github.com/${profile.githubId}.png`} />
+            <div className="spacer" />
+            <Button
+              onClick={() => {
+                this.props.router.push('/profile-edit');
+              }}
+              color="primary"
+              className="profile-action-edit"
+            >
+              Edit
+            </Button>
           </div>
         </div>
         <div className="profile_section">

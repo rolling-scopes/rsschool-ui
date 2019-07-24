@@ -1,13 +1,16 @@
-import * as React from 'react';
-import { FormGroup, Label, Button, Input, Alert } from 'reactstrap';
 import axios from 'axios';
-import { Form, Field, SubsetFormApi } from 'react-final-form';
+import * as React from 'react';
+import { Field, Form, SubsetFormApi } from 'react-final-form';
+import Select from 'react-select';
+import { Alert, Button, FormGroup, Input, Label } from 'reactstrap';
 import Header from '../components/Header';
-import withSession, { Session } from '../components/withSession';
-import withCourseData, { Course } from '../components/withCourseData';
-import { sortTasksByEndDate } from '../services/rules';
-import ValidationError from '../components/ValidationError';
 import { LoadingScreen } from '../components/LoadingScreen';
+import { Option, SingleValue } from '../components/UserSelect';
+import ValidationError from '../components/ValidationError';
+import withCourseData, { Course } from '../components/withCourseData';
+import withSession, { Session } from '../components/withSession';
+import { sortTasksByEndDate } from '../services/rules';
+
 import '../index.scss';
 
 type Props = {
@@ -78,7 +81,7 @@ class TaskScorePage extends React.Component<Props, State> {
       axios.get<{ data: Task[] }>(`/api/course/${this.props.course.id}/tasks`),
     ]);
 
-    const students = studentsResponse.data.data.students;
+    const students = studentsResponse.data.data.students.filter(student => !student.isExpelled);
     const tasks = tasksResponse.data.data
       .sort(sortTasksByEndDate)
       .filter(task => task.studentEndDate && task.verification !== 'auto' && !task.useJury);
@@ -88,7 +91,6 @@ class TaskScorePage extends React.Component<Props, State> {
 
   handleSubmit = async (values: any, formApi: SubsetFormApi) => {
     this.setState({ isLoading: true });
-
     try {
       await axios.post(`/api/course/${this.props.course.id}/score`, values);
 
@@ -127,14 +129,23 @@ class TaskScorePage extends React.Component<Props, State> {
                         {({ input, meta }) => (
                           <>
                             <Label>Student</Label>
-                            <Input {...input} type="select" placeholder="Student">
+                            <Select
+                              {...input}
+                              onChange={(student: any) => input.onChange(student.studentId)}
+                              value={this.state.students.find(student => student.studentId === input.value)}
+                              placeholder={'Choose student'}
+                              getOptionValue={(task: Student) => task.studentId.toString()}
+                              components={{ Option, SingleValue }}
+                              options={this.state.students}
+                            />
+                            {/* <Input {...input} type="select" placeholder="Student">
                               <option value="">(Empty)</option>
                               {this.state.students.map((student, i) => (
                                 <option disabled={!!student.isExpelled} value={student.studentId} key={i}>
                                   {student.firstName} {student.lastName}
                                 </option>
                               ))}
-                            </Input>
+                            </Input> */}
                             <ValidationError meta={meta} />
                           </>
                         )}

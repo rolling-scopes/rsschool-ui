@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as fetch from 'isomorphic-fetch';
+import axios from 'axios';
 import { NextContext } from 'next';
 import getConfig from 'next/config';
 const { serverRuntimeConfig } = getConfig();
@@ -14,13 +14,14 @@ export interface Course {
 function withCourseData(WrappedComponent: React.ComponentType<any>) {
   return class extends React.PureComponent<{ course?: Course }> {
     static async getInitialProps(context: NextContext) {
-      const alias = context.query.course;
-      const courses = await fetch(`${serverRuntimeConfig.rsHost || ''}/api/courses`);
-      if (courses.ok) {
-        const course = (await courses.json()).data.find((c: any) => c.alias === alias);
+      try {
+        const alias = context.query.course;
+        const courses = await axios(`${serverRuntimeConfig.rsHost || ''}/api/courses`);
+        const course = courses.data.data.find((c: any) => c.alias === alias);
         return { course };
+      } catch (e) {
+        return {};
       }
-      return {};
     }
 
     render() {

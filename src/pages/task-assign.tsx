@@ -4,6 +4,7 @@ import Select from 'react-select';
 import { components } from 'react-select';
 import Header from '../components/Header';
 import Link from 'next/link';
+import axios from 'axios';
 import { LoadingScreen } from '../components/LoadingScreen';
 import ReactTable, { RowInfo } from 'react-table';
 import withSession, { Session } from '../components/withSession';
@@ -95,10 +96,7 @@ class TaskAssignPage extends React.Component<Props> {
       isLoading: true,
     });
 
-    await fetch(`/api/course/${this.props.course.id}/task/${courseTaskId}/shuffle`, {
-      method: 'POST',
-      credentials: 'same-origin',
-    });
+    await axios.post(`/api/course/${this.props.course.id}/task/${courseTaskId}/shuffle`);
     const courseTasks = await this.courseService.getCourseTasks();
     this.setState({ courseTasks, isLoading: false });
   }

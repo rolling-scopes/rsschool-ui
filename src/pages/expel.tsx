@@ -1,12 +1,15 @@
 import * as React from 'react';
-import { FormGroup, Label, Button, Input, Alert } from 'reactstrap';
-import { Form, Field, SubsetFormApi } from 'react-final-form';
-import Header from '../components/Header';
-import withSession, { Session } from '../components/withSession';
-import withCourseData, { Course } from '../components/withCourseData';
-import { LoadingScreen } from '../components/LoadingScreen';
-import ValidationError from '../components/ValidationError';
+import { Field, Form, SubsetFormApi } from 'react-final-form';
+import Select from 'react-select';
+import axios from 'axios';
 
+import { Alert, Button, FormGroup, Input, Label } from 'reactstrap';
+import Header from '../components/Header';
+import { LoadingScreen } from '../components/LoadingScreen';
+import { Option, SingleValue } from '../components/UserSelect';
+import ValidationError from '../components/ValidationError';
+import withCourseData, { Course } from '../components/withCourseData';
+import withSession, { Session } from '../components/withSession';
 import '../index.scss';
 
 type Student = { firstName: string; lastName: string; studentId: number; isExpelled: boolean };
@@ -35,41 +38,30 @@ class ExpelPage extends React.Component<Props, State> {
   formRef = React.createRef();
 
   async componentDidMount() {
-    const studentsResponse = await fetch(`/api/course/${this.props.course.id}/mentor/students`, {
-      credentials: 'same-origin',
-    });
-
-    let students = [];
-
-    if (studentsResponse.ok) {
-      students = (await studentsResponse.json()).data.students;
-    }
+    const studentsResponse = await axios.get<{ data: { students: Student[] } }>(
+      `/api/course/${this.props.course.id}/mentor/students`,
+    );
+    const students = studentsResponse.data.data.students.filter(student => !student.isExpelled);
     this.setState({ students });
   }
 
   handleSubmit = async (values: any, form: SubsetFormApi) => {
-    this.setState({
-      isLoading: true,
-    });
-    const result = await fetch(`/api/course/${this.props.course.id}/expulsion`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(values),
-      credentials: 'same-origin',
-    });
-    if (result.ok) {
+    this.setState({ isLoading: true });
+
+    try {
+      await axios.post(`/api/course/${this.props.course.id}/expulsion`, values);
       this.setState({
         isLoading: false,
         submitted: true,
         resultMessage: 'The student has been expelled',
       });
       form.reset();
-      return;
+    } catch (e) {
+      this.setState({
+        isLoading: false,
+        resultMessage: 'An error occurred',
+      });
     }
-    this.setState({
-      isLoading: false,
-      resultMessage: 'An error occurred',
-    });
   };
 
   render() {
@@ -100,14 +92,23 @@ class ExpelPage extends React.Component<Props, State> {
                         {({ input, meta }) => (
                           <>
                             <Label>Student</Label>
-                            <Input {...input} type="select" placeholder="Student">
+                            <Select
+                              {...input}
+                              onChange={(student: any) => input.onChange(student.studentId)}
+                              value={this.state.students.find(student => student.studentId === input.value)}
+                              placeholder={'Choose student'}
+                              getOptionValue={(task: Student) => task.studentId.toString()}
+                              components={{ Option, SingleValue }}
+                              options={this.state.students}
+                            />
+                            {/* <Input {...input} type="select" placeholder="Student">
                               <option value="">(Empty)</option>
                               {this.state.students.map((student, i) => (
                                 <option disabled={!!student.isExpelled} value={student.studentId} key={i}>
                                   {student.firstName} {student.lastName}
                                 </option>
                               ))}
-                            </Input>
+                            </Input> */}
                             <ValidationError meta={meta} />
                           </>
                         )}
