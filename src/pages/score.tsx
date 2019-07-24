@@ -122,7 +122,6 @@ class ScorePage extends React.Component<Props, State> {
               accessor: 'index',
               maxWidth: 50,
               filterable: false,
-              Cell: (row: any) => row.page * row.pageSize + row.viewIndex + 1,
             },
             {
               Header: 'Github Id',
