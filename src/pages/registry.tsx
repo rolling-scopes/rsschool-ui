@@ -1,24 +1,24 @@
 import * as React from 'react';
+import axios from 'axios';
 
-import { Button, ButtonGroup, FormGroup, Input, Label } from 'reactstrap';
-import { Form, Field } from 'react-final-form';
+import { Alert, Button, ButtonGroup, Container, FormGroup, Row } from 'reactstrap';
+import { Form } from 'react-final-form';
 import Select from 'react-select';
 
 import Header from '../components/Header';
-import ValidationError from '../components/ValidationError';
+import InputField from './../components/Registry/InputField';
+import DropdownField from './../components/Registry/DropdownField';
 
-import { Course } from '../components/withCourseData';
-import withCourses from '../components/withCourses';
-import withSession, { Session } from '../components/withSession';
+import { Course } from './../components/withCourseData';
+import withCourses from './../components/withCourses';
+import withSession, { Session } from './../components/withSession';
 
-import { City, CITIES } from './../services/reference-data';
+import { CITIES } from './../services/reference-data';
 
 const TYPES = {
   MENTOR: 'mentor',
   MENTEE: 'mentee',
 };
-
-const required = (value: any) => (value ? undefined : 'Required');
 
 type Props = {
   courses?: Course[];
@@ -34,23 +34,10 @@ type State = {
   selectedCourse: SelectCourse,
   courses: SelectCourse[],
   type: string,
+  submitted: boolean,
 };
 
-// type FormModel = {
-//   firstName: string,
-//   lastName: string,
-//   nativeFirstName?: string,
-//   nativeLastName?: string,
-//   dateOfBirth?: Date,
-//   locationName: City,
-//   otherLocationName?: string,
-//   contactsPhone: string,
-//   contactsEmail: string,
-//   contactsEpamEmail?: string,
-//   educationHistory?: string,
-//   employmentHistory?: string,
-//   comment?: string,
-// }
+const citiesOptions = [{ id: '', name: '(Empty)' }].concat(CITIES).map(city => ({ label: city.name, value: city.id }))
 
 class CourseRegistryPage extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -63,6 +50,7 @@ class CourseRegistryPage extends React.Component<Props, State> {
       selectedCourse: courses[0],
       courses,
       type: TYPES.MENTEE,
+      submitted: false,
     }
   }
 
@@ -77,8 +65,54 @@ class CourseRegistryPage extends React.Component<Props, State> {
 
   private getButtonClass = (buttonId: string) => this.state.type === buttonId ? 'success' : 'secondary'
 
-  private handleSubmit = (model: any) => {
-    console.dir(model);
+  private handleSubmit = async (model: any) => {
+    const { type, selectedCourse: course } = this.state;
+    const { comment, locationName } = model;
+    const registryModel = {
+      type,
+      course: course.value,
+      comment,
+    };
+    const userModel = {
+      firstName: model.firstName,
+      lastName: model.lastName,
+      firstNameNative: model.firstNameNative,
+      lastNameNative: model.lastNameNative,
+      dateOfBirth: model.dateOfBirth,
+      locationName: locationName === 'other' ? model.otherLocationName : locationName,
+      contactsPhone: model.contactsPhone,
+      contactsEmail: model.contactsEmail,
+      contactsEpamEmail: model.contactsEpamEmail,
+      educationHistory: [{
+        graduationYear: model.graduationYear,
+        faculty: model.faculty,
+        university: model.university,
+      }],
+      employmentHistory: [{
+        title: model.title,
+        dateFrom: model.dateFrom,
+        dateTo: model.dateTo,
+        toPresent: model.toPresent,
+      }],
+    };
+
+    const requests = [
+      axios.post('api/profile/registry', userModel),
+      axios.post('api/registry', registryModel),
+    ]
+
+    try {
+      await Promise.all(requests)
+      this.setState({
+        submitted: true,
+      }, () => {
+        setTimeout(() => {
+          this.setState({ submitted: false });
+        }, 5000);
+      });
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   render() {
@@ -92,11 +126,13 @@ class CourseRegistryPage extends React.Component<Props, State> {
       <div>
         <Header username={this.props.session.githubId} />
 
-        <div className="container">
+        <Container>
           <FormGroup>
             <h3>Course Registry</h3>
           </FormGroup>
-          <div className="row align-items-center">
+          {this.state.submitted && <Alert color="info">Registration has been submitted</Alert>}
+
+          <Row className="align-items-center">
             <FormGroup className="col-md-6">
               <ButtonGroup>
                 <Button
@@ -124,166 +160,80 @@ class CourseRegistryPage extends React.Component<Props, State> {
                 onChange={this.changeCourse}
               />
             </FormGroup>
-          </div>
+          </Row>
 
           <Form
             onSubmit={this.handleSubmit}
             render={({ handleSubmit }) => (
               <form onSubmit={handleSubmit}>
-                <div className="row text-left">
-                  <Field name="firstName" validate={required}>
-                    {({ input, meta }) => (
-                        <FormGroup className="col-md-6">
-                          <Label>First Name</Label>
-                          <Input {...input} name="firstName" type="text" />
-                          <ValidationError meta={meta} />
-                        </FormGroup>
-                    )}
-                  </Field>
-                  <Field name="lastName" validate={required}>
-                    {({ input, meta }) => (
-                        <FormGroup className="col-md-6">
-                          <Label>Last Name</Label>
-                          <Input {...input} name="lastName" type="text" />
-                          <ValidationError meta={meta} />
-                        </FormGroup>
-                    )}
-                  </Field>
-                </div>
+                <Row className="align-items-center">
+                  <InputField name="firstName" label="First Name" />
+                  <InputField name="lastName" label="Last Name" />
+                </Row>
                 {
                   type === TYPES.MENTEE &&
                   (<>
-                    <div className="row text-left">
-                      <Field name="nativeFirstName">
-                        {({ input }) => (
-                            <FormGroup className="col-md-6">
-                              <Label>Native First Name</Label>
-                              <Input {...input} name="nativeFirstName" type="text" />
-                            </FormGroup>
-                        )}
-                      </Field>
-                      <Field name="nativeLastName">
-                        {({ input }) => (
-                            <FormGroup className="col-md-6">
-                              <Label>Native Last Name</Label>
-                              <Input {...input} name="nativeLastName" type="text" />
-                            </FormGroup>
-                        )}
-                      </Field>
-                    </div>
-                    <div className="row text-left">
-                      <Field name="dateOfBirth">
-                        {({ input }) => (
-                            <FormGroup className="col-md-6">
-                              <Label>Date Of Birth</Label>
-                              <Input {...input} name="dateOfBirth" type="date" />
-                              </FormGroup>
-                        )}
-                      </Field>
-                    </div>
+                    <Row className="align-items-center">
+                      <InputField name="lastNameNative" label="Native Last Name" isRequired={false} />
+                      <InputField name="firstNameNative" label="Native First Name" isRequired={false} />
+                    </Row>
+                    <Row className="align-items-center">
+                      <InputField name="dateOfBirth" label="Date Of Birth" type="date" isRequired={false} />
+                    </Row>
                   </>)
                 }
-                <div className="row text-left">
-                  <Field name="locationName" validate={required}>
-                    {({ input, meta }) => (
-                      <FormGroup className="col-md-6">
-                        <Label>Location Name</Label>
-                        <Input {...input} type="select">
-                          <option value="">(Empty)</option>
-                          {CITIES.map((city, i) => (
-                            <option value={city.id} key={i}>
-                              {city.name}
-                            </option>
-                          ))}
-                        </Input>
-                        <ValidationError meta={meta} />
-                      </FormGroup>
-                    )}
-                  </Field>
-                  <Field name="otherLocationName">
-                    {({ input }) => (
-                      <FormGroup className="col-md-6">
-                        <Label>Location Name (If Other)</Label>
-                        <Input {...input} name="otherLocationName" type="text" />
-                      </FormGroup>
-                    )}
-                  </Field>
-                </div>
-                <div className="row text-left">
-                  <Field name="contactsPhone" validate={required}>
-                    {({ input, meta }) => (
-                      <FormGroup className="col-md-6">
-                        <Label>Contacts Phone</Label>
-                        <Input {...input} name="contactsPhone" type="tel" />
-                        <ValidationError meta={meta} />
-                      </FormGroup>
-                    )}
-                  </Field>
-                  <Field name="contactsEmail" validate={required}>
-                    {({ input, meta }) => (
-                      <FormGroup className="col-md-6">
-                        <Label>Contacts E-mail</Label>
-                        <Input {...input} name="contactsEmail" type="email" />
-                        <ValidationError meta={meta} />
-                      </FormGroup>
-                    )}
-                  </Field>
-                </div>
-                <div className="row text-left">
-                  <Field name="contactsEpamEmail">
-                    {({ input }) => (
-                      <FormGroup className="col-md-6">
-                        <Label>Contacts EPAM E-mail</Label>
-                        <Input {...input} name="contactsEpamEmail" type="email" />
-                      </FormGroup>
-                    )}
-                  </Field>
-                </div>
-                <div className="row text-left">
+                <Row className="align-items-center">
+                  <DropdownField name="locationName" label="LocationName" options={citiesOptions} />
+                  <InputField name="otherLocationName" label="Location Name (If Other)" isRequired={false} />
+                </Row>
+                <Row className="align-items-center">
+                  <InputField name="contactsPhone" label="Contacts Phone" type="tel" />
+                  <InputField name="contactsEmail" label="Contacts E-mail" type="email" />
+                </Row>
+                <Row className="align-items-center">
+                  <InputField name="contactsEpamEmail" label="Contacts EPAM E-mail" type="email" isRequired={false} />
+                </Row>
+                <Row className="align-items-center">
                   {
                     type === TYPES.MENTEE &&
-                    (<Field name="educationHistory" validate={required}>
-                      {({ input, meta }) => (
-                        <FormGroup className="col-md-6">
-                          <Label>Education History</Label>
-                          <Input {...input} name="educationHistory" type="text" />
-                          <ValidationError meta={meta} />
-                        </FormGroup>
-                      )}
-                    </Field>)
+                    (<Container>
+                      <h5>Education History</h5>
+                      <Row className="align-items-center">
+                        <InputField name="graduationYear" label="Graduation Year" type="number" />
+                      </Row>
+                      <Row className="align-items-center">
+                        <InputField name="faculty" label="Faculty" />
+                        <InputField name="university" label="University" />
+                      </Row>
+                    </Container>)
                   }
-                  <Field
-                    name="employmentHistory"
-                    validate={(value: any) => (value || type === TYPES.MENTEE ? undefined : 'Required')}
-                  >
-                    {({ input, meta }) => (
-                      <FormGroup className="col-md-6">
-                        <Label>Employment History</Label>
-                        <Input {...input} name="employmentHistory" type="text" />
-                        <ValidationError meta={meta} />
-                      </FormGroup>
-                    )}
-                  </Field>
-                </div>
-                <div className="row text-left">
-                  <Field name="comment">
-                    {({ input }) => (
-                      <FormGroup className="col-md-6">
-                        <Label>Comment</Label>
-                        <Input {...input} name="comment" type="textarea" />
-                      </FormGroup>
-                    )}
-                  </Field>
-                </div>
-                <div className="row text-left">
+                  <Container>
+                    <h5>Employment History</h5>
+                    <Row className="align-items-center">
+                      <InputField name="title" label="Title" isRequired={type === TYPES.MENTOR} />
+                      <InputField name="toPresent" label="Is Present" type="checkbox" isRequired={false} />
+                    </Row>
+                    <Row className="align-items-center">
+                      <InputField name="dateFrom" label="From" isRequired={type === TYPES.MENTOR} />
+                      <InputField name="dateTo" label="To" isRequired={false} />
+                    </Row>
+                    <Row className="align-items-center">
+                      <InputField name="companyName" label="Company Name" isRequired={type === TYPES.MENTOR} />
+                    </Row>
+                  </Container>
+                </Row>
+                <Row className="align-items-center">
+                  <InputField name="comment" label="Comment" type="textarea" isRequired={false} />
+                </Row>
+                <Row className="align-items-center">
                   <FormGroup className="col-md-6">
                     <Button type="submit" color="success">Submit</Button>
                   </FormGroup>
-                </div>
+                </Row>
               </form>
             )}
           />
-        </div>
+        </Container>
       </div>
     )
   }
