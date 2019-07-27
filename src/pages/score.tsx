@@ -20,7 +20,6 @@ type State = {
   students: any[];
   isLoading: boolean;
   courseTasks: any[];
-  scoreWeights: { [key: string]: number };
 };
 
 interface CourseTask {
@@ -34,7 +33,6 @@ class ScorePage extends React.Component<Props, State> {
     isLoading: false,
     students: [],
     courseTasks: [],
-    scoreWeights: {},
   };
 
   async componentDidMount() {
@@ -58,10 +56,9 @@ class ScorePage extends React.Component<Props, State> {
       {} as { [key: string]: number },
     );
     this.setState({
-      scoreWeights,
       students: score.data
         .map((d: any) => {
-          d.total = this.calculateTotal(d);
+          d.total = this.calculateTotal(d, scoreWeights);
           return d;
         })
         .sort((a: any, b: any) => this.numberSort(a.total, b.total))
@@ -125,7 +122,6 @@ class ScorePage extends React.Component<Props, State> {
               accessor: 'index',
               maxWidth: 50,
               filterable: false,
-              Cell: (row: any) => row.page * row.pageSize + row.viewIndex + 1,
             },
             {
               Header: 'Github Id',
@@ -185,9 +181,12 @@ class ScorePage extends React.Component<Props, State> {
     );
   }
 
-  private calculateTotal = (d: { taskResults: { score: number; courseTaskId: number }[] }) => {
+  private calculateTotal = (
+    d: { taskResults: { score: number; courseTaskId: number }[] },
+    scoreWeights: { [key: string]: number },
+  ) => {
     const total = d.taskResults.reduce((acc: number, value) => {
-      const weight = this.state.scoreWeights[value.courseTaskId];
+      const weight = scoreWeights[value.courseTaskId];
       return acc + value.score * (weight != null ? weight : 1);
     }, 0);
     return lodashRound(total, 1);
