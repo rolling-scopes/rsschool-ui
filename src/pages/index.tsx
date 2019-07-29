@@ -145,7 +145,10 @@ class IndexPage extends React.PureComponent<Props> {
       <div>
         <ActivityBanner />
         <Header username={this.props.session.githubId} />
-        <div className="m-2 mb-4">{this.renderLink({ name: 'My Profile', link: '/profile' })}</div>
+        <div className="m-2 mb-4">
+          {this.renderLink({ name: 'My Profile', link: '/profile' })}
+          {this.renderLink({ name: 'Course Registry', link: '/registry' })}
+        </div>
         {links}
         {this.props.session.isAdmin && (
           <div className="m-2 mb-4">{this.renderLink({ name: 'All Tasks', link: '/tasks' })}</div>
