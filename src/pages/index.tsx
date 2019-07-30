@@ -170,6 +170,7 @@ class IndexPage extends React.PureComponent<Props, State> {
     return (
       <div>
         <ActivityBanner />
+
         <Header username={this.props.session.githubId} />
 
         <div className="m-3">
