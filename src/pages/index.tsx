@@ -54,7 +54,7 @@ const routes = [
   //   access: combine(isCourseNotCompleted, isMentor),
   // },
   {
-    name: `😢 Expel Student`,
+    name: `😞 Expel Student`,
     getLink: (course: Course) => `/course/mentor/expel?course=${course.alias}`,
     access: combine(isCourseNotCompleted, isMentor),
   },
