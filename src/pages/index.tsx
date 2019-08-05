@@ -208,7 +208,7 @@ class IndexPage extends React.PureComponent<Props, State> {
               <DropdownMenu>
                 {this.getCourses().map(course => (
                   <DropdownItem onClick={() => this.setState({ activeCourseId: course.id })} key={course.id}>
-                    {course.name} ({this.getStatus(activeCourse)})
+                    {course.name} ({this.getStatus(course)})
                   </DropdownItem>
                 ))}
               </DropdownMenu>
