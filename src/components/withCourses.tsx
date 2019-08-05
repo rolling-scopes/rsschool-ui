@@ -1,14 +1,12 @@
 import * as React from 'react';
-import axios from 'axios';
-import getConfig from 'next/config';
-const { serverRuntimeConfig } = getConfig();
+import { CourseService } from 'services/course';
 
 function withCourses(WrappedComponent: React.ComponentType<any>) {
   return class extends React.PureComponent {
     static async getInitialProps() {
       try {
-        const coursesResponse = await axios(`${serverRuntimeConfig.rsHost || ''}/api/courses`);
-        const courses = coursesResponse.data.data;
+        const service = new CourseService();
+        const courses = await service.getCourses();
         return { courses };
       } catch (e) {
         return {};

@@ -2,16 +2,15 @@ import * as React from 'react';
 import { Button } from 'reactstrap';
 import Select from 'react-select';
 import { components } from 'react-select';
-import Header from '../components/Header';
+import { Header } from 'components';
 import Link from 'next/link';
 import axios from 'axios';
-import { LoadingScreen } from '../components/LoadingScreen';
 import ReactTable, { RowInfo } from 'react-table';
-import withSession, { Session } from '../components/withSession';
-import withCourseData, { Course } from '../components/withCourseData';
-import { CourseService, ReadCourseTask } from '../services/course';
+import withSession, { Session } from 'components/withSession';
+import withCourseData from 'components/withCourseData';
+import { CourseService, CourseTask, Course, StudentBasic } from 'services/course';
 
-import '../index.scss';
+import '../../../index.scss';
 
 type Props = {
   session?: Session;
@@ -21,7 +20,7 @@ type Props = {
 type State = {
   isLoading: boolean;
   courseTaskId: number | null;
-  courseTasks: ReadCourseTask[];
+  courseTasks: CourseTask[];
 };
 
 type Task = {
@@ -29,12 +28,12 @@ type Task = {
   taskId: number;
 };
 
-const formatDisplayValue = (data: ReadCourseTask) => {
+const formatDisplayValue = (data: CourseTask) => {
   return `${data.name}`;
 };
 
 const Option = (props: any) => {
-  const data: ReadCourseTask = props.data;
+  const data: CourseTask = props.data;
 
   return (
     <components.Option {...props} key={data.courseTaskId}>
@@ -44,7 +43,7 @@ const Option = (props: any) => {
 };
 
 const SingleValue = (props: any) => {
-  const data: ReadCourseTask = props.data;
+  const data: CourseTask = props.data;
 
   return (
     <components.SingleValue {...props} value={data.courseTaskId}>
@@ -67,25 +66,25 @@ class TaskAssignPage extends React.Component<Props> {
       return [];
     }
 
-    return await this.courseService.getCourseTasksWithTaskCheckers();
+    return await this.courseService.getCourseTasksWithTaskCheckers(this.props.course.id);
   };
 
   constructor(props: Props) {
     super(props);
-    this.courseService = new CourseService(props.course.id);
+    this.courseService = new CourseService();
     this.onChange = this.onChange.bind(this);
     this.assignTask = this.assignTask.bind(this);
   }
 
   async componentDidMount() {
-    const courseTasks = await this.courseService.getCourseTasksWithTaskCheckers();
+    const courseTasks = await this.courseService.getCourseTasksWithTaskCheckers(this.props.course.id);
     this.setState({
       isLoading: false,
       courseTasks,
     });
   }
 
-  onChange(task: ReadCourseTask) {
+  onChange(task: CourseTask) {
     this.setState({ courseTaskId: task.courseTaskId });
   }
 
@@ -97,7 +96,7 @@ class TaskAssignPage extends React.Component<Props> {
     });
 
     await axios.post(`/api/course/${this.props.course.id}/task/${courseTaskId}/shuffle`);
-    const courseTasks = await this.courseService.getCourseTasks();
+    const courseTasks = await this.courseService.getCourseTasks(this.props.course.id);
     this.setState({ courseTasks, isLoading: false });
   }
 
@@ -125,7 +124,7 @@ class TaskAssignPage extends React.Component<Props> {
     const { isAdmin } = this.props.session;
 
     return (
-      <LoadingScreen show={this.state.isLoading}>
+      <>
         <Header username={this.props.session ? this.props.session.githubId : 'noname'} />
         <h2>{this.props.course.name}</h2>
         {!isAdmin ? null : (
@@ -151,7 +150,8 @@ class TaskAssignPage extends React.Component<Props> {
             if (!rowInfo || !rowInfo.original) {
               return {};
             }
-            return { className: rowInfo.original.isExpelled ? 'rt-expelled' : '' };
+            const student = rowInfo.original as StudentBasic;
+            return { className: !student.isActive ? 'rt-expelled' : '' };
           }}
           data={this.state.courseTasks.map((c: any) => c.taskCheckers).reduce((acc, v) => acc.concat(v), [])}
           columns={[
@@ -187,7 +187,7 @@ class TaskAssignPage extends React.Component<Props> {
             },
           ]}
         />
-      </LoadingScreen>
+      </>
     );
   }
 }

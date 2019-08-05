@@ -1,28 +1,30 @@
 import * as React from 'react';
 import { Table, Button } from 'reactstrap';
-import Header from '../components/Header';
+import { Header } from 'components/Header';
 import axios from 'axios';
 import { LoadingScreen } from '../components/LoadingScreen';
-import { withRouter } from 'next/router';
+import { withRouter, RouterProps } from 'next/router';
 import withSession, { Session } from '../components/withSession';
 
 import '../index.scss';
 import Link from 'next/link';
 
 type Props = {
-  router: any;
+  router: RouterProps;
   session: Session;
 };
 
 type State = {
   profile: any;
   isLoading: boolean;
+  user: { id: number; githubId: string } | null;
 };
 
 class ProfilePage extends React.Component<Props, State> {
   state: State = {
     isLoading: true,
     profile: null,
+    user: null,
   };
 
   constructor(props: Readonly<Props>) {
@@ -36,13 +38,14 @@ class ProfilePage extends React.Component<Props, State> {
     const { router } = this.props;
 
     try {
-      const githubId = router.query.githubId;
+      const githubId = router.query ? (router.query.githubId as string) : null;
       const response = githubId
         ? await axios.get(`api/profile`, { params: { githubId } })
         : await axios.get(`api/profile/me`);
 
       const profile = response.data.data;
-      this.setState({ isLoading: false, profile });
+      const user = githubId ? { id: profile.id, githubId } : null;
+      this.setState({ isLoading: false, profile, user });
     } catch (e) {
       this.setState({ isLoading: false, profile: null });
     }
@@ -52,8 +55,8 @@ class ProfilePage extends React.Component<Props, State> {
     await this.fetchData();
   }
 
-  async componentDidUpdate(prevProps: { router: { query: { githubId: any } } }) {
-    if (prevProps.router.query.githubId !== this.props.router.query.githubId) {
+  async componentDidUpdate(prevProps: { router: { query?: any } }) {
+    if (prevProps.router.query.githubId !== this.props.router.query!.githubId) {
       await this.fetchData();
     }
   }
@@ -62,7 +65,7 @@ class ProfilePage extends React.Component<Props, State> {
     if (!this.state.profile) {
       return (
         <div>
-          <Header />
+          <Header username={this.props.session.githubId} />
           <h2 className="m-4">No Access</h2>
         </div>
       );
@@ -81,7 +84,7 @@ class ProfilePage extends React.Component<Props, State> {
 
     return (
       <div>
-        <Header username={profile.firstName} />
+        <Header username={this.props.session.githubId} />
         <div className="profile_container">
           {this.renderGeneralInfo(profile)}
           {this.renderBadges(profile)}
@@ -122,6 +125,7 @@ class ProfilePage extends React.Component<Props, State> {
   }
 
   private renderGeneralInfo(profile: any) {
+    const user = this.state.user;
     return (
       <>
         <div className="profile_header">General Information</div>
@@ -129,15 +133,28 @@ class ProfilePage extends React.Component<Props, State> {
           <div className="profile_value profile-avatar-action">
             <img width="64" src={`https://github.com/${profile.githubId}.png`} />
             <div className="spacer" />
-            <Button
-              onClick={() => {
-                this.props.router.push('/profile-edit');
-              }}
-              color="primary"
-              className="profile-action-edit"
-            >
-              Edit
-            </Button>
+            {!user ? (
+              <Button
+                onClick={() => {
+                  this.props.router.push('/profile-edit');
+                }}
+                color="primary"
+                className="profile-action-edit"
+              >
+                Edit
+              </Button>
+            ) : (
+              <Button
+                onClick={() => {
+                  this.props.router.push(`/private-feedback?githubId=${user.githubId}&userId=${user.id}`);
+                }}
+                color="primary"
+                className="profile-action-edit"
+              >
+                Leave Private Feedback
+              </Button>
+            )}
+            <div className="ml-3" />
           </div>
         </div>
         <div className="profile_section">
@@ -229,7 +246,6 @@ class ProfilePage extends React.Component<Props, State> {
         <div className="profile_header">Student Profile</div>
         {profile.students.map((student: any, i: number) => {
           const mentor = student.mentor;
-          const mentorUser = mentor.user;
           const tasks = student.taskResults;
           const feedback = student.feedback;
           return (
@@ -238,13 +254,10 @@ class ProfilePage extends React.Component<Props, State> {
               <div className="profile_section">
                 <div className="profile_label">Mentor</div>
                 <div className="profile_value">
-                  <span key={mentorUser.githubId}>
-                    <Link
-                      key={mentorUser.githubId}
-                      href={{ pathname: '/profile', query: { githubId: mentorUser.githubId } }}
-                    >
+                  <span key={mentor.githubId}>
+                    <Link key={mentor.githubId} href={{ pathname: '/profile', query: { githubId: mentor.githubId } }}>
                       <a>
-                        {mentorUser.firstName} {mentorUser.lastName}{' '}
+                        {mentor.firstName} {mentor.lastName}{' '}
                       </a>
                     </Link>
                   </span>

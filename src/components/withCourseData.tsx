@@ -1,23 +1,16 @@
 import * as React from 'react';
-import axios from 'axios';
 import { NextContext } from 'next';
-import getConfig from 'next/config';
-const { serverRuntimeConfig } = getConfig();
-
-export interface Course {
-  id: number;
-  name: string;
-  alias: string;
-  completed: boolean;
-}
+import { Course, CourseService } from 'services/course';
+import { Session } from './withSession';
 
 function withCourseData(WrappedComponent: React.ComponentType<any>) {
-  return class extends React.PureComponent<{ course?: Course }> {
+  return class extends React.PureComponent<{ course?: Course; session: Session }> {
     static async getInitialProps(context: NextContext) {
       try {
+        const service = new CourseService();
         const alias = context.query.course;
-        const courses = await axios(`${serverRuntimeConfig.rsHost || ''}/api/courses`);
-        const course = courses.data.data.find((c: any) => c.alias === alias);
+        const courses = await service.getCourses();
+        const course = courses.find(c => c.alias === alias);
         return { course };
       } catch (e) {
         return {};

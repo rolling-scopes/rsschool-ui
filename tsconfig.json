@@ -1,8 +1,7 @@
 {
   "compileOnSave": true,
   "compilerOptions": {
-    "outDir": "./dist/out-tsc",
-    "baseUrl": "./src/app",
+    "baseUrl": "./src",
     "sourceMap": true,
     "declaration": false,
     "moduleResolution": "node",

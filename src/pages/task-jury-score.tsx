@@ -5,11 +5,13 @@ import { Form, Field, SubsetFormApi } from 'react-final-form';
 // @ts-ignore
 import AsyncSelect from 'react-select/async';
 import { SingleValue, Option } from '../components/UserSelect';
-import Header from '../components/Header';
+import { Header } from '../components/Header';
 import withSession, { Session } from '../components/withSession';
-import withCourseData, { Course } from '../components/withCourseData';
-import ValidationError from '../components/ValidationError';
+import withCourseData from '../components/withCourseData';
+import { ValidationError } from '../components/ValidationError';
 import { LoadingScreen } from '../components/LoadingScreen';
+import { Course } from 'services/course';
+
 import '../index.scss';
 
 type Props = {

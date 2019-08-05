@@ -1,15 +1,16 @@
 import * as React from 'react';
-import Header from '../components/Header';
+import { Header } from '../components/Header';
 import axios from 'axios';
 import { ListGroup } from 'reactstrap';
-import withCourseData, { Course } from '../components/withCourseData';
-import withSession from '../components/withSession';
+import withCourseData from 'components/withCourseData';
+import withSession, { Session } from 'components/withSession';
+import { Course } from 'services/course';
 
 import '../index.scss';
 
 type Props = {
   course: Course;
-  session: any;
+  session: Session;
 };
 
 type State = {
@@ -23,9 +24,7 @@ class MentorContactsPage extends React.Component<Props, State> {
 
   async componentDidMount() {
     const response = await axios.get(`/api/course/${this.props.course.id}/mentorContacts`);
-    this.setState({
-      profiles: response.data.data,
-    });
+    this.setState({ profiles: response.data.data });
   }
 
   renderProfiles() {

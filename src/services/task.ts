@@ -23,4 +23,8 @@ export class TaskService {
     const result = await axios.get<{ data: Task[] }>(`/api/tasks`);
     return result.data.data;
   }
+
+  async updateTasks(data: any[]) {
+    await axios.post(`/api/tasks`, data);
+  }
 }

@@ -2,12 +2,14 @@ import * as React from 'react';
 import { FormGroup, Label, Button, Input, Alert } from 'reactstrap';
 import axios from 'axios';
 import { Form, Field, SubsetFormApi } from 'react-final-form';
-import Header from '../components/Header';
+import { Header } from '../components/Header';
 import withSession, { Session } from '../components/withSession';
-import withCourseData, { Course } from '../components/withCourseData';
+import withCourseData from '../components/withCourseData';
 import { sortTasksByEndDate } from '../services/rules';
-import ValidationError from '../components/ValidationError';
+import { ValidationError } from '../components/ValidationError';
 import { LoadingScreen } from '../components/LoadingScreen';
+import { Course } from 'services/course';
+
 import '../index.scss';
 
 type Props = {

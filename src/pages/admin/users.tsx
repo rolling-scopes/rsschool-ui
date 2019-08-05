@@ -2,13 +2,14 @@ import axios from 'axios';
 import Link from 'next/link';
 import * as React from 'react';
 import { Button, Form, FormGroup, Input, InputGroup, InputGroupAddon, ListGroup, ListGroupItem } from 'reactstrap';
-import Header from '../components/Header';
-import { GithubAvatar } from '../components/UserSelect';
-import withSession, { Session } from '../components/withSession';
-import '../index.scss';
+import { Header } from 'components/Header';
+import { GithubAvatar } from 'components/UserSelect';
+import withSession, { Session } from 'components/withSession';
+
+import '../../index.scss';
 
 type Props = {
-  session?: Session;
+  session: Session;
 };
 
 type State = {
@@ -33,13 +34,9 @@ class Users extends React.Component<Props, State> {
   };
 
   render() {
-    if (!this.props.session) {
-      return null;
-    }
     return (
-      <div>
-        <Header />
-
+      <>
+        <Header username={this.props.session.githubId} />
         <div className="m-5">
           <h3>Search Users</h3>
           <Form onSubmit={this.doSearch}>
@@ -72,7 +69,7 @@ class Users extends React.Component<Props, State> {
             </ListGroup>
           )}
         </div>
-      </div>
+      </>
     );
   }
 }

@@ -1,20 +1,91 @@
+import { ActivityBanner, Header } from 'components';
+import { Dropdown, DropdownToggle, Alert, Nav, NavItem, ListGroupItem, DropdownMenu, DropdownItem } from 'reactstrap';
 import Router from 'next/router';
 import * as React from 'react';
-import { ListGroup, ListGroupItem } from 'reactstrap';
-import Header from '../components/Header';
-import { Course } from '../components/withCourseData';
-import withCourses from '../components/withCourses';
-import withSession, { Session } from '../components/withSession';
-import { ActivityBanner } from '../components/ActivityBanner';
-
+import { Course } from 'services/course';
+import withCourses from 'components/withCourses';
+import withSession, { Session, Role } from 'components/withSession';
 import '../index.scss';
 
 type Props = {
   courses?: Course[];
-  session?: Session;
+  session: Session;
 };
 
-class IndexPage extends React.PureComponent<Props> {
+type State = {
+  dropdownOpen: boolean;
+  activeCourseId: number | null;
+};
+
+const githubIssuesUrl = 'https://github.com/rolling-scopes/rsschool-api/issues';
+
+const anyAccess = () => true;
+const isMentor = (_: Course, role: Role, isAdmin: boolean) => role === 'mentor' || isAdmin;
+const isAdmin = (_1: Course, _2: Role, isAdmin: boolean) => isAdmin;
+const isCourseNotCompleted = (course: Course) => !course.completed;
+
+const combine = (...checks: any[]) => (course: Course, role: Role, isAdmin: boolean) =>
+  checks.every(check => check(course, role, isAdmin));
+
+const routes = [
+  {
+    name: `🔥 Score`,
+    getLink: (course: Course) => `/course/score?course=${course.alias}`,
+    access: anyAccess,
+  },
+  {
+    name: `✅ Check Task`,
+    getLink: (course: Course) => `/course/mentor/check-task?course=${course.alias}`,
+    access: combine(isCourseNotCompleted, isMentor),
+  },
+  {
+    name: `👏 Public Feedback (#gratitude)`,
+    getLink: (course: Course) => `/course/gratitude?course=${course.alias}`,
+    access: combine(isCourseNotCompleted, anyAccess),
+  },
+  {
+    name: `💌 Private Feedback`,
+    getLink: (_: Course) => `/private-feedback`,
+    access: combine(isCourseNotCompleted, anyAccess),
+  },
+  // {
+  //   name: `🎤 Interview Feedback`,
+  //   getLink: (course: Course) => `/course/mentor/interview-feedback?course=${course.alias}`,
+  //   access: combine(isCourseNotCompleted, isMentor),
+  // },
+  {
+    name: `😞 Expel Student`,
+    getLink: (course: Course) => `/course/mentor/expel?course=${course.alias}`,
+    access: combine(isCourseNotCompleted, isMentor),
+  },
+  {
+    name: `🗂 Course Tasks`,
+    getLink: (course: Course) => `/course/admin/tasks?course=${course.alias}`,
+    access: isAdmin,
+  },
+  {
+    name: `🐞 Submit "Bug"`,
+    getLink: (_: Course) => `${githubIssuesUrl}/new?assignees=apalchys&labels=&template=bug_report.md`,
+    access: combine(isCourseNotCompleted, anyAccess),
+  },
+  {
+    name: `🔢 Submit "Data Issue"`,
+    getLink: (_: Course) => `${githubIssuesUrl}/new?assignees=apalchys&labels=&template=data-issue-report.md&title=`,
+    access: anyAccess,
+  },
+  // {
+  //   name: `➡️ Assign Tasks`,
+  //   getLink: (course: Course) => `/course/admin/task-assign?course=${course.alias}`,
+  //   access: combine(isCourseNotCompleted, isAdmin),
+  // },
+];
+
+class IndexPage extends React.PureComponent<Props, State> {
+  state: State = {
+    dropdownOpen: false,
+    activeCourseId: null,
+  };
+
   private hasAccessToCourse = (session: Session, course: Course) => {
     const { isAdmin, isHirer, isActivist } = session;
     const role = session.roles[course.id];
@@ -31,93 +102,34 @@ class IndexPage extends React.PureComponent<Props> {
     }
 
     const role = this.props.session.roles[course.id];
-    const { isAdmin, isActivist } = this.props.session;
+    const { isAdmin } = this.props.session;
 
-    const result = [
-      {
-        name: `Score`,
-        link: `/score?course=${course.alias}`,
-      },
-    ];
-
-    if (isAdmin || role === 'coursemanager') {
-      result.push(
-        {
-          name: `Course Tasks`,
-          link: `/course-tasks?course=${course.alias}`,
-        },
-        {
-          name: `Assign Tasks`,
-          link: `/task-assign?course=${course.alias}`,
-        },
-      );
-    }
-
-    if (course.completed) {
-      return result;
-    }
-
-    result.push(
-      {
-        name: `#gratitude`,
-        link: `/gratitude?course=${course.alias}`,
-      },
-      {
-        name: `Mentor Contacts`,
-        link: `/mentor-contacts?course=${course.alias}`,
-      },
-      {
-        name: `Submit Video & Presentation`,
-        link: `/task-artefact?course=${course.alias}`,
-      },
-    );
-
-    if (isActivist || isAdmin) {
-      result.push({
-        name: `Submit Jury Score`,
-        link: `/task-jury-score?course=${course.alias}`,
-      });
-    }
-
-    if (role === 'mentor' || isAdmin) {
-      result.push(
-        {
-          name: `My Students: Submit Score`,
-          link: `/task-score?course=${course.alias}`,
-        },
-        {
-          name: `My Students: Expel Student`,
-          link: `/expel?course=${course.alias}`,
-        },
-        {
-          name: `Others Students: Interview Feedback`,
-          link: `/interview-feedback?course=${course.alias}`,
-        },
-        {
-          name: `Others Students: Submit Score`,
-          link: `/task-score-others?course=${course.alias}`,
-        },
-      );
-    }
-
-    return result;
+    return routes
+      .filter(route => route.access(course, role, isAdmin))
+      .map(route => ({
+        name: route.name,
+        link: route.getLink(course),
+      }));
   };
 
-  private renderLinks() {
-    return (this.props.courses || [])
-      .sort((a, b) => b.alias.localeCompare(a.alias))
-      .map(course => {
-        const links = this.getLinks(course);
-        if (links.length === 0) {
-          return null;
-        }
-        return (
-          <div className="m-2 mt-4" key={course.id}>
-            <h3>{course.name}</h3>
-            <ListGroup>{links.map(this.renderLink)}</ListGroup>
-          </div>
-        );
-      });
+  private getCourses() {
+    const { session, courses } = this.props;
+    if (!session || !courses) {
+      return [];
+    }
+    const { isAdmin } = session;
+    return courses.filter(course => session.roles[course.id] || isAdmin).sort((a, b) => b.alias.localeCompare(a.alias));
+  }
+
+  private getActiveCourse() {
+    const courses = this.getCourses();
+    if (courses.length === 0) {
+      return null;
+    }
+    if (this.state.activeCourseId == null) {
+      return courses[0];
+    }
+    return courses.find(course => course.id === this.state.activeCourseId);
   }
 
   private renderLink = (linkInfo: LinkInfo) => {
@@ -136,26 +148,74 @@ class IndexPage extends React.PureComponent<Props> {
     );
   };
 
-  render() {
-    const links = this.renderLinks();
-    if (!this.props.session) {
-      return null;
+  private getStatus = (course: Course) => {
+    if (course.completed) {
+      return 'Completed';
     }
+    if (course.planned) {
+      return 'Planned';
+    }
+    return 'Active';
+  };
+
+  renderNoCourse() {
+    const hasPlanned = (this.props.courses || []).some(course => course.planned && !course.completed);
+    return (
+      <Alert color="warning" style={{ fontSize: '1rem' }}>
+        <div>You are not student or mentor in any active course</div>
+        {hasPlanned ? (
+          <div>
+            You can <a href="/course/registry">register here</a> to the upcoming course
+          </div>
+        ) : (
+          <div>Unfortunately, there are no any planned courses for now.</div>
+        )}
+      </Alert>
+    );
+  }
+
+  render() {
+    const { isAdmin } = this.props.session;
+    const activeCourse = this.getActiveCourse();
     return (
       <div>
         <ActivityBanner />
+
         <Header username={this.props.session.githubId} />
-        <div className="m-2 mb-4">
-          {this.renderLink({ name: 'My Profile', link: '/profile' })}
-          {/* {this.renderLink({ name: 'Course Registry', link: '/registry' })} */}
+
+        <div className="m-3">
+          {!activeCourse && this.renderNoCourse()}
+          <Nav className="mb-3">
+            {isAdmin && (
+              <NavItem>
+                <a href="/admin/tasks">All Tasks</a>
+              </NavItem>
+            )}
+            {isAdmin && (
+              <NavItem>
+                <a href="/admin/users">All Users</a>
+              </NavItem>
+            )}
+          </Nav>
+          {activeCourse && (
+            <Dropdown
+              isOpen={this.state.dropdownOpen}
+              toggle={() => this.setState({ dropdownOpen: !this.state.dropdownOpen })}
+            >
+              <DropdownToggle style={{ fontSize: '1rem' }} caret>
+                {activeCourse.name} ({this.getStatus(activeCourse)})
+              </DropdownToggle>
+              <DropdownMenu>
+                {this.getCourses().map(course => (
+                  <DropdownItem onClick={() => this.setState({ activeCourseId: course.id })} key={course.id}>
+                    {course.name} ({this.getStatus(activeCourse)})
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+          )}
+          {activeCourse && this.getLinks(activeCourse).map(this.renderLink)}
         </div>
-        {links}
-        {this.props.session.isAdmin && (
-          <div className="m-2 mb-4">{this.renderLink({ name: 'All Tasks', link: '/tasks' })}</div>
-        )}
-        {this.props.session.isAdmin && (
-          <div className="m-2 mb-4">{this.renderLink({ name: 'All Users', link: '/users' })}</div>
-        )}
       </div>
     );
   }

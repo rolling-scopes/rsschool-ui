@@ -20,9 +20,7 @@ export class TaskEditModal extends React.Component<Props> {
     this.props.onApply(values);
   };
 
-  handleApply = () => {
-    submitFn();
-  };
+  handleApply = () => submitFn();
 
   render() {
     return (
