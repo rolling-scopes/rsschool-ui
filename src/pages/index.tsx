@@ -22,7 +22,7 @@ const githubIssuesUrl = 'https://github.com/rolling-scopes/rsschool-api/issues';
 const anyAccess = () => true;
 const isMentor = (_: Course, role: Role, isAdmin: boolean) => role === 'mentor' || isAdmin;
 const isAdmin = (_1: Course, _2: Role, isAdmin: boolean) => isAdmin;
-const isCourseNotCompleted = (course: Course) => course.status === 'active';
+const isCourseNotCompleted = (course: Course) => !course.completed;
 
 const combine = (...checks: any[]) => (course: Course, role: Role, isAdmin: boolean) =>
   checks.every(check => check(course, role, isAdmin));
@@ -148,8 +148,18 @@ class IndexPage extends React.PureComponent<Props, State> {
     );
   };
 
+  private getStatus = (course: Course) => {
+    if (course.completed) {
+      return 'Completed';
+    }
+    if (course.planned) {
+      return 'Planned';
+    }
+    return 'Active';
+  };
+
   renderNoCourse() {
-    const hasPlanned = (this.props.courses || []).some(course => course.status === 'planned');
+    const hasPlanned = (this.props.courses || []).some(course => course.planned && !course.completed);
     return (
       <Alert color="warning" style={{ fontSize: '1rem' }}>
         <div>You are not student or mentor in any active course</div>
@@ -193,12 +203,12 @@ class IndexPage extends React.PureComponent<Props, State> {
               toggle={() => this.setState({ dropdownOpen: !this.state.dropdownOpen })}
             >
               <DropdownToggle style={{ fontSize: '1rem' }} caret>
-                {activeCourse.name} ({activeCourse.status})
+                {activeCourse.name} ({this.getStatus(activeCourse)})
               </DropdownToggle>
               <DropdownMenu>
                 {this.getCourses().map(course => (
                   <DropdownItem onClick={() => this.setState({ activeCourseId: course.id })} key={course.id}>
-                    {course.name} ({course.status})
+                    {course.name} ({this.getStatus(activeCourse)})
                   </DropdownItem>
                 ))}
               </DropdownMenu>

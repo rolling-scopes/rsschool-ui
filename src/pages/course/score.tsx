@@ -40,14 +40,10 @@ class ScorePage extends React.Component<Props, State> {
     ]);
 
     const sortedTasks = courseTasks
-      .filter(task => !!task.studentEndDate || this.props.course.status !== 'active')
+      .filter(task => !!task.studentEndDate || this.props.course.completed)
       .sort(sortTasksByEndDate);
 
-    this.setState({
-      students: courseScore,
-      courseTasks: sortedTasks,
-      isLoading: false,
-    });
+    this.setState({ students: courseScore, courseTasks: sortedTasks, isLoading: false });
   }
 
   getColumns() {

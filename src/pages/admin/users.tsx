@@ -5,7 +5,8 @@ import { Button, Form, FormGroup, Input, InputGroup, InputGroupAddon, ListGroup,
 import { Header } from 'components/Header';
 import { GithubAvatar } from 'components/UserSelect';
 import withSession, { Session } from 'components/withSession';
-import '../index.scss';
+
+import '../../index.scss';
 
 type Props = {
   session: Session;

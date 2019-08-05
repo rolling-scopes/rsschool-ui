@@ -39,7 +39,8 @@ export interface Course {
   id: number;
   name: string;
   alias: string;
-  status: 'planned' | 'active' | 'completed';
+  completed: boolean;
+  planned: boolean;
 }
 
 export interface MentorWithContacts {

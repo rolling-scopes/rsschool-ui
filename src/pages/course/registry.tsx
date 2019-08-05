@@ -43,7 +43,7 @@ class CourseRegistryPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     const courses: SelectCourse[] = (this.props.courses || [])
-      .filter((course: Course) => course.status === 'planned')
+      .filter((course: Course) => course.planned)
       .map((course: Course): SelectCourse => ({ label: course.name, value: course.id }));
 
     this.state = {
