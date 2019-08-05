@@ -131,7 +131,7 @@ class ProfilePage extends React.Component<Props, State> {
         <div className="profile_header">General Information</div>
         <div className="profile_section">
           <div className="profile_value profile-avatar-action">
-            <img width="64" src={`https://github.com/${profile.githubId}.png`} />
+            <img width="64" height="64" src={`https://github.com/${profile.githubId}.png`} />
             <div className="spacer" />
             {!user ? (
               <Button
