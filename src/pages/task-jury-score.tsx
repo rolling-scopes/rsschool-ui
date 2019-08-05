@@ -12,7 +12,7 @@ import { ValidationError } from '../components/ValidationError';
 import { LoadingScreen } from '../components/LoadingScreen';
 import { Course } from 'services/course';
 
-import '../../index.scss';
+import '../index.scss';
 
 type Props = {
   session?: Session;
