@@ -71,7 +71,7 @@ const routes = [
   {
     name: `🔢 Submit "Data Issue"`,
     getLink: (_: Course) => `${githubIssuesUrl}/new?assignees=apalchys&labels=&template=data-issue-report.md&title=`,
-    access: combine(isCourseNotCompleted, anyAccess),
+    access: anyAccess,
   },
   // {
   //   name: `➡️ Assign Tasks`,
@@ -205,11 +205,6 @@ class IndexPage extends React.PureComponent<Props, State> {
             </Dropdown>
           )}
           {activeCourse && this.getLinks(activeCourse).map(this.renderLink)}
-          {/* {links} */}
-          {/* {this.renderLink({ name: 'Course Registry', link: '/course/registry' })} */}
-          {/*
-          {this.props.session.isAdmin && <div>{this.renderLink({ name: 'All Tasks', link: '/admin/tasks' })}</div>}
-          {this.props.session.isAdmin && <div>{this.renderLink({ name: 'All Users', link: '/admin/users' })}</div>} */}
         </div>
       </div>
     );
