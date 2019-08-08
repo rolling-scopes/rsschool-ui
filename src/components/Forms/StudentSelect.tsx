@@ -22,7 +22,7 @@ export function StudentSelect(props: Props) {
           <Label>Student</Label>
           <Select
             {...input}
-            onChange={(student: any) => input.onChange(student.studentId)}
+            onChange={(student: any) => input.onChange(student.id)}
             value={props.data.find(student => student.id === input.value)}
             placeholder={'Choose student'}
             getOptionValue={(person: Person) => person.id.toString()}
