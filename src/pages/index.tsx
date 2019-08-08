@@ -21,7 +21,11 @@ const githubIssuesUrl = 'https://github.com/rolling-scopes/rsschool-api/issues';
 
 const anyAccess = () => true;
 const isMentor = (_: Course, role: Role, isAdmin: boolean) => role === 'mentor' || isAdmin;
+const isCourseManager = (_1: Course, role: Role, _2: boolean) => role === 'coursemanager';
+
 const isAdmin = (_1: Course, _2: Role, isAdmin: boolean) => isAdmin;
+const isAdminOrManager = (course: Course, role: Role, hasAdminRole: boolean) =>
+  isAdmin(course, role, hasAdminRole) || isCourseManager(course, role, hasAdminRole);
 const isCourseNotCompleted = (course: Course) => !course.completed;
 
 const combine = (...checks: any[]) => (course: Course, role: Role, isAdmin: boolean) =>
@@ -37,6 +41,11 @@ const routes = [
     name: `✅ Check Task`,
     getLink: (course: Course) => `/course/mentor/check-task?course=${course.alias}`,
     access: combine(isCourseNotCompleted, isMentor),
+  },
+  {
+    name: `👨‍🏫 Rate Task By Jury`,
+    getLink: (course: Course) => `/course/rate-task-jury?course=${course.alias}`,
+    access: combine(isCourseNotCompleted, isAdminOrManager),
   },
   {
     name: `👏 Public Feedback (#gratitude)`,

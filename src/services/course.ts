@@ -62,6 +62,11 @@ export class CourseService {
     return result.data.data;
   }
 
+  async getCourseStudents(courseId: number) {
+    const result = await axios.get<{ data: StudentBasic[] }>(`${this.host}/api/course/${courseId}/students`);
+    return result.data.data;
+  }
+
   async getCourseTasksWithTaskCheckers(courseId: number) {
     const result = await axios.get<{ data: CourseTask[] }>(`${this.host}/api/course/${courseId}/tasksCheckers`);
     return result.data.data;
