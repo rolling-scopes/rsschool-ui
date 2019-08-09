@@ -20,16 +20,18 @@ type State = {
 const githubIssuesUrl = 'https://github.com/rolling-scopes/rsschool-api/issues';
 
 const anyAccess = () => true;
-const isMentor = (_: Course, role: Role, isAdmin: boolean) => role === 'mentor' || isAdmin;
-const isCourseManager = (_1: Course, role: Role, _2: boolean) => role === 'coursemanager';
+const isMentor = (_: Course, role: Role, session: Session) => role === 'mentor' || session.isAdmin;
+const isCourseManager = (_1: Course, role: Role, _2: Session) => role === 'coursemanager';
+const isActivist = (_1: Course, _2: Role, session: Session) => session.isActivist;
 
-const isAdmin = (_1: Course, _2: Role, isAdmin: boolean) => isAdmin;
-const isAdminOrManager = (course: Course, role: Role, hasAdminRole: boolean) =>
-  isAdmin(course, role, hasAdminRole) || isCourseManager(course, role, hasAdminRole);
+const isAdminRole = (_1: Course, _2: Role, session: Session) => session.isAdmin;
 const isCourseNotCompleted = (course: Course) => !course.completed;
 
-const combine = (...checks: any[]) => (course: Course, role: Role, isAdmin: boolean) =>
-  checks.every(check => check(course, role, isAdmin));
+const combineAnd = (...checks: any[]) => (course: Course, role: Role, session: Session) =>
+  checks.every(check => check(course, role, session));
+
+const combineOr = (...checks: any[]) => (course: Course, role: Role, session: Session) =>
+  checks.some(check => check(course, role, session));
 
 const routes = [
   {
@@ -40,22 +42,22 @@ const routes = [
   {
     name: `✅ Check Task`,
     getLink: (course: Course) => `/course/mentor/check-task?course=${course.alias}`,
-    access: combine(isCourseNotCompleted, isMentor),
+    access: combineAnd(isCourseNotCompleted, isMentor),
   },
   {
     name: `👨‍🏫 Rate Task By Jury`,
     getLink: (course: Course) => `/course/rate-task-jury?course=${course.alias}`,
-    access: combine(isCourseNotCompleted, isAdminOrManager),
+    access: combineAnd(isCourseNotCompleted, combineOr(isAdminRole, isActivist, isCourseManager)),
   },
   {
     name: `👏 Public Feedback (#gratitude)`,
     getLink: (course: Course) => `/course/gratitude?course=${course.alias}`,
-    access: combine(isCourseNotCompleted, anyAccess),
+    access: combineAnd(isCourseNotCompleted, anyAccess),
   },
   {
     name: `💌 Private Feedback`,
     getLink: (_: Course) => `/private-feedback`,
-    access: combine(isCourseNotCompleted, anyAccess),
+    access: combineAnd(isCourseNotCompleted, anyAccess),
   },
   // {
   //   name: `🎤 Interview Feedback`,
@@ -65,17 +67,17 @@ const routes = [
   {
     name: `😞 Expel Student`,
     getLink: (course: Course) => `/course/mentor/expel?course=${course.alias}`,
-    access: combine(isCourseNotCompleted, isMentor),
+    access: combineAnd(isCourseNotCompleted, isMentor),
   },
   {
     name: `🗂 Course Tasks`,
     getLink: (course: Course) => `/course/admin/tasks?course=${course.alias}`,
-    access: isAdmin,
+    access: isAdminRole,
   },
   {
     name: `🐞 Submit "Bug"`,
     getLink: (_: Course) => `${githubIssuesUrl}/new?assignees=apalchys&labels=&template=bug_report.md`,
-    access: combine(isCourseNotCompleted, anyAccess),
+    access: combineAnd(isCourseNotCompleted, anyAccess),
   },
   {
     name: `🔢 Submit "Data Issue"`,
@@ -111,10 +113,8 @@ class IndexPage extends React.PureComponent<Props, State> {
     }
 
     const role = this.props.session.roles[course.id];
-    const { isAdmin } = this.props.session;
-
     return routes
-      .filter(route => route.access(course, role, isAdmin))
+      .filter(route => route.access(course, role, this.props.session))
       .map(route => ({
         name: route.name,
         link: route.getLink(course),

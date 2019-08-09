@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import * as React from 'react';
 import ReactTable, { RowInfo } from 'react-table';
-import { Alert } from 'reactstrap';
+import { Alert, Button } from 'reactstrap';
 import { Header } from 'components/Header';
 import { LoadingScreen } from 'components/LoadingScreen';
 import withCourseData from 'components/withCourseData';
@@ -73,10 +73,25 @@ class ScorePage extends React.Component<Props, State> {
   numberSort = (a: number, b: number) => b - a;
 
   render() {
+    const isAdmin = this.props.session;
     return (
       <LoadingScreen show={this.state.isLoading}>
         <Header title="Score" username={this.props.session.githubId} courseName={this.props.course.name} />
-        <Alert color="warning">Score is refreshed every 5 minutes</Alert>
+
+        <div className="d-flex justify-content-between mr-1 mb-2">
+          <Alert color="warning" className="mb-0">
+            Score is refreshed every 5 minutes
+          </Alert>
+          {isAdmin && (
+            <Button
+              size="sm"
+              color="info"
+              onClick={() => (window.location.href = `/api/course/${this.props.course.id}/score/csv`)}
+            >
+              Export CSV
+            </Button>
+          )}
+        </div>
         <ReactTable
           defaultSorted={[{ id: 'totalScore', desc: false }]}
           defaultPageSize={100}

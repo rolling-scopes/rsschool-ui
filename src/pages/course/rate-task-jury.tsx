@@ -75,16 +75,6 @@ class RateTaskJuryPage extends React.Component<Props, State> {
   };
 
   render() {
-    if (!this.props.session.roles || !this.props.course) {
-      return null;
-    }
-    const courseId = this.props.course.id;
-    const { isAdmin, roles } = this.props.session;
-
-    if (!isAdmin && !(roles[courseId] === 'coursemanager')) {
-      return `You are not in jury (${this.props.course.alias})`;
-    }
-
     return (
       <>
         <Header courseName={this.props.course.name} username={this.props.session.githubId} />

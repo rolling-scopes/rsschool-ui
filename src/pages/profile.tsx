@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Table, Button } from 'reactstrap';
+import { Table, Button, Card, CardBody, CardSubtitle, CardTitle } from 'reactstrap';
 import { Header } from 'components/Header';
 import axios from 'axios';
 import { LoadingScreen } from '../components/LoadingScreen';
@@ -15,9 +15,74 @@ type Props = {
 };
 
 type State = {
-  profile: any;
+  profile: ProfileResponse | null;
   isLoading: boolean;
   user: { id: number; githubId: string } | null;
+};
+
+type ResponseStudent = {
+  id: number;
+  totalScore: number;
+  completed: boolean;
+  interviews: {
+    score: number;
+    comment: string;
+    courseTask: {
+      id: number;
+      name: string;
+      descriptionUrl: string;
+    };
+  }[];
+  taskResults: {
+    score: number;
+    githubPrUrl: string;
+    comment: string;
+    courseTask: {
+      id: number;
+      name: string;
+      descriptionUrl: string;
+    };
+  }[];
+  mentor: {
+    id: number;
+    githubId: string;
+    lastName: string;
+    firstName: string;
+  } | null;
+};
+
+type ResponseMentor = {
+  id: number;
+  students: {
+    id: number;
+    userId: number;
+    githubId: string;
+    lastName: string;
+    firstName: string;
+  }[];
+};
+
+type ResponseCourse = {
+  id: number;
+  name: string;
+};
+
+type ProfileResponse = {
+  user: {
+    id: string;
+    githubId: string;
+  };
+  students: (ResponseStudent & { course: ResponseCourse })[];
+  mentors: (ResponseMentor & { course: ResponseCourse })[];
+};
+
+type HistoryEntry = {
+  course: {
+    id: number;
+    name: string;
+  };
+  mentor: any;
+  student: any;
 };
 
 class ProfilePage extends React.Component<Props, State> {
@@ -72,25 +137,47 @@ class ProfilePage extends React.Component<Props, State> {
     }
     const { profile } = this.state;
 
-    const mentorCourses = profile.mentors.map((data: any) => data.course.name);
-    const mentorStudents = profile.mentors
-      .map((data: any) =>
-        data.students.map((s: any) => ({
-          githubId: s.user.githubId,
-          name: `${s.user.firstName} ${s.user.lastName}`,
-        })),
+    const entries = profile.mentors
+      .map<HistoryEntry>(({ course, ...mentor }) => {
+        return {
+          course,
+          mentor,
+          student: null,
+        };
+      })
+      .concat(
+        profile.students.map<HistoryEntry>(({ course, ...student }) => {
+          return {
+            course,
+            mentor: null,
+            student,
+          };
+        }),
       )
-      .reduce((acc: any, v: any) => acc.concat(v), []);
+      .sort((a, b) => b.course.name.localeCompare(a.course.name));
+
+    // const mentorCourses = profile.mentors.map(data => data.course.name);
+    // const mentorStudents = profile.mentors
+    //   .map(data =>
+    //     data.students.map(s => ({
+    //       githubId: s.user.githubId,
+    //       name: `${s.user.firstName} ${s.user.lastName}`,
+    //     })),
+    //   )
+    //   .reduce((acc: any, v: any) => acc.concat(v), []);
 
     return (
       <div>
         <Header username={this.props.session.githubId} />
         <div className="profile_container">
-          {this.renderGeneralInfo(profile)}
-          {this.renderBadges(profile)}
-          {this.renderStudentProfile(profile)}
+          {this.renderGeneralInfo(profile.user)}
+          {/* {this.renderBadges(profile.user)} */}
+          {entries.map(entry => {
+            return <>{entry.student && this.renderStudentProfile(entry.course, entry.student)}</>;
+          })}
+          {/* {this.renderStudentProfile(profile)} */}
 
-          <div className="profile_header">Mentor Profile</div>
+          {/* <div className="profile_header">Mentor Profile</div>
           <div className="profile_section">
             <div className="profile_label">Courses</div>
             <div className="profile_value">{mentorCourses.join(', ')}</div>
@@ -107,7 +194,7 @@ class ProfilePage extends React.Component<Props, State> {
                 </span>
               ))}
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     );
@@ -232,83 +319,70 @@ class ProfilePage extends React.Component<Props, State> {
     );
   }
 
-  private renderStudentProfile(profile: any) {
-    if (!profile.students || profile.students.length === 0) {
-      return (
-        <>
-          <div className="profile_header">Student Profile</div>
-          <div className="profile_section">No Data</div>
-        </>
-      );
-    }
+  private renderStudentMentor(student: ResponseStudent) {
     return (
-      <>
-        <div className="profile_header">Student Profile</div>
-        {profile.students.map((student: any, i: number) => {
-          const mentor = student.mentor;
-          const tasks = student.taskResults;
-          const feedback = student.feedback;
-          return (
-            <div key={i}>
-              <div className="profile_subheader">{student.course.name}</div>
-              <div className="profile_section">
-                <div className="profile_label">Mentor</div>
-                <div className="profile_value">
-                  <span key={mentor.githubId}>
-                    <Link key={mentor.githubId} href={{ pathname: '/profile', query: { githubId: mentor.githubId } }}>
-                      <a>
-                        {mentor.firstName} {mentor.lastName}{' '}
-                      </a>
-                    </Link>
-                  </span>
-                </div>
-              </div>
-              {tasks.length > 0 && (
-                <div className="profile_section">
-                  <Table className="profile-task-table mt-3">
-                    <thead>
-                      <tr>
-                        <th>Task</th>
-                        <th>Score</th>
-                        <th>PR</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {tasks
-                        .sort((a: any, b: any) =>
-                          a.studentEndDate ? a.studentEndDate.localeCompare(b.studentEndDate) : -1,
-                        )
-                        .map((t: any, i: any) => {
-                          return (
-                            <tr key={i}>
-                              <th>
-                                {t.task.descriptionUrl ? (
-                                  <a href={t.task.descriptionUrl}>{t.task.name}</a>
-                                ) : (
-                                  t.task.name
-                                )}
-                              </th>
-                              <td>{t.score}</td>
-                              <td>{t.githubPrUrl ? <a href={t.githubPrUrl}>{t.githubPrUrl}</a> : t.githubPrUrl}</td>
-                            </tr>
-                          );
-                        })}
-                    </tbody>
-                  </Table>
-                </div>
-              )}
-              {(feedback as { comment: string }[]).map((f, i) => (
-                <div key={i}>
-                  <div className="profile_section">
-                    <div className="profile_label">Comment </div>
-                    <div className="profile_value">{f.comment}</div>
-                  </div>
-                </div>
-              ))}
+      <div>
+        Mentor:{' '}
+        {student.mentor ? (
+          <a href={`/profile?githubId=${student.mentor.githubId}`}>
+            {student.mentor.firstName} {student.mentor.lastName}
+          </a>
+        ) : (
+          'No Mentor'
+        )}
+      </div>
+    );
+  }
+
+  private renderStudentProfile(course: ResponseCourse, student: ResponseStudent) {
+    const tasks = student.interviews.concat(student.taskResults);
+    return (
+      <Card className="mt-3">
+        <CardBody>
+          <CardTitle tag="h5">{course.name} (Student)</CardTitle>
+          <div>Score: {student.totalScore}</div>
+          <div>Completed: {student.completed ? 'Yes' : 'No'}</div>
+          {this.renderStudentMentor(student)}
+          {tasks.length > 0 && (
+            <Table className="profile-task-table mt-3">
+              <thead>
+                <tr>
+                  <th>Task</th>
+                  <th>Score</th>
+                  <th>Comment</th>
+                  <th>PR</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tasks.map((t: any, i: any) => {
+                  return (
+                    <tr key={i}>
+                      <th className="w-25">
+                        {t.courseTask.descriptionUrl ? (
+                          <a href={t.courseTask.descriptionUrl}>{t.courseTask.name}</a>
+                        ) : (
+                          t.courseTask.name
+                        )}
+                      </th>
+                      <td>{t.score}</td>
+                      <td>{t.comment || ''}</td>
+                      <td>{t.githubPrUrl ? <a href={t.githubPrUrl}>{t.githubPrUrl}</a> : t.githubPrUrl}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </Table>
+          )}
+          {/* {(feedback as { comment: string }[]).map((f, i) => (
+          <div key={i}>
+            <div className="profile_section">
+              <div className="profile_label">Comment </div>
+              <div className="profile_value">{f.comment}</div>
             </div>
-          );
-        })}
-      </>
+          </div>
+        ))} */}
+        </CardBody>
+      </Card>
     );
   }
 
