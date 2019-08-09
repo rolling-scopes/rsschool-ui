@@ -73,7 +73,8 @@ class ScorePage extends React.Component<Props, State> {
   numberSort = (a: number, b: number) => b - a;
 
   render() {
-    const isAdmin = this.props.session;
+    const { isAdmin, isHirer } = this.props.session;
+    const csvEnabled = isAdmin || isHirer;
     return (
       <LoadingScreen show={this.state.isLoading}>
         <Header title="Score" username={this.props.session.githubId} courseName={this.props.course.name} />
@@ -82,7 +83,7 @@ class ScorePage extends React.Component<Props, State> {
           <Alert color="warning" className="mb-0">
             Score is refreshed every 5 minutes
           </Alert>
-          {isAdmin && (
+          {csvEnabled && (
             <Button
               size="sm"
               color="info"
