@@ -62,3 +62,25 @@ body, html {
 .profile-avatar-action {
   display: flex;
 }
+
+.profile-course-name {
+  color: #000;
+}
+
+.profile-task-table {
+  thead {
+    th {
+      background-color: #f7f7f7;
+    }
+  }
+}
+
+.profile-interview-table {
+  th {
+    padding: 0;
+    background-color: #f7f7f7;
+  }
+  td {
+    padding: 0.2rem;
+  }
+}

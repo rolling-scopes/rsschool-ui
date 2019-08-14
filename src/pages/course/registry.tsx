@@ -70,7 +70,7 @@ class CourseRegistryPage extends React.Component<Props, State> {
     const { comment, locationName } = model;
     const registryModel = {
       type,
-      course: course.value,
+      courseId: course.value,
       comment,
     };
     const userModel = {
@@ -100,7 +100,7 @@ class CourseRegistryPage extends React.Component<Props, State> {
       ],
     };
 
-    const requests = [axios.post('api/profile/registry', userModel), axios.post('api/registry', registryModel)];
+    const requests = [axios.post('/api/profile/registry', userModel), axios.post('/api/registry', registryModel)];
 
     try {
       await Promise.all(requests);
