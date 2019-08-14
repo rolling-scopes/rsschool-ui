@@ -59,7 +59,6 @@ class TaskScorePage extends React.Component<Props, State> {
   onChangeTask = async (value: any) => {
     const courseTaskId = Number(value);
     const courseTask = this.state.courseTasks.find(t => t.courseTaskId === courseTaskId);
-    console.log(courseTask);
     if (courseTask == null || this.allStudents == null) {
       return;
     }
