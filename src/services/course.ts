@@ -113,25 +113,16 @@ export class CourseService {
     });
   }
 
-  async getAllStudents(courseId: number) {
+  async getAllMentorStudents(courseId: number) {
     const result = await axios.get<{ data: { students: StudentBasic[]; assignedStudents: AssignedStudent[] } }>(
       `/api/course/${courseId}/mentor/students/all`,
     );
     return result.data.data;
   }
 
-  async getMyStudents(courseId: number) {
-    const result = await axios.get<{ data: { students: StudentBasic[] } }>(
-      `/api/course/${courseId}/mentor/students/all`,
-    );
+  async getMentorStudents(courseId: number) {
+    const result = await axios.get<{ data: { students: StudentBasic[] } }>(`/api/course/${courseId}/mentor/students`);
     return result.data.data.students;
-  }
-
-  async getAssignedStudents(courseId: number) {
-    const result = await axios.get<{ data: { assignedStudents: AssignedStudent[] } }>(
-      `/api/course/${courseId}/mentor/students/all`,
-    );
-    return result.data.data.assignedStudents;
   }
 }
 

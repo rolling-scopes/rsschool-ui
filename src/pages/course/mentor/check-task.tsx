@@ -24,11 +24,13 @@ type State = {
   courseTasks: CourseTask[];
   isLoading: boolean;
   submitted: boolean;
+  isPowerMentor: boolean;
 };
 
 class TaskScorePage extends React.Component<Props, State> {
   state: State = {
     isLoading: false,
+    isPowerMentor: false,
     students: [],
     courseTasks: [],
     submitted: false,
@@ -42,24 +44,34 @@ class TaskScorePage extends React.Component<Props, State> {
 
   async componentDidMount() {
     const courseId = this.props.course.id;
+    const { isAdmin, roles } = this.props.session;
+    const isCourseManager = roles[courseId] === 'coursemanager';
+    const isPowerMentor = isAdmin || isCourseManager;
 
-    const [allStudents, courseTasks] = await Promise.all([
-      this.courseService.getAllStudents(courseId),
-      this.courseService.getCourseTasks(courseId),
-    ]);
+    const students = isPowerMentor
+      ? this.courseService.getCourseStudents(courseId).then(students => ({
+          students,
+          assignedStudents: [],
+        }))
+      : this.courseService.getAllMentorStudents(courseId);
+    const [allStudents, courseTasks] = await Promise.all([students, this.courseService.getCourseTasks(courseId)]);
     this.allStudents = allStudents;
 
     const filteredCourseTasks = courseTasks
       .sort(sortTasksByEndDate)
       .filter(task => task.studentEndDate && task.verification !== 'auto' && !task.useJury);
 
-    this.setState({ courseTasks: filteredCourseTasks });
+    this.setState({ isPowerMentor, courseTasks: filteredCourseTasks });
   }
 
   onChangeTask = async (value: any) => {
     const courseTaskId = Number(value);
     const courseTask = this.state.courseTasks.find(t => t.courseTaskId === courseTaskId);
     if (courseTask == null || this.allStudents == null) {
+      return;
+    }
+    if (this.state.isPowerMentor) {
+      this.setState({ students: this.allStudents.students });
       return;
     }
     if (courseTask.checker !== 'mentor') {
